@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\UsersController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -19,6 +20,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::group(['prefix' => '/users', 'middleware' => []], function () {
-    Route::get('/', [UserController::class, 'list']);
-    Route::get('/:id', [UserController::class, 'byId']);
+    Route::post('/', [UsersController::class, 'register']);
+    // Route::get('/:id', [UserController::class, 'byId']);
 });
