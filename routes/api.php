@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\AppointmentDateController;
 use App\Http\Controllers\API\UsersController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -23,3 +24,4 @@ Route::group(['prefix' => '/users', 'middleware' => []], function () {
     Route::post('/', [UsersController::class, 'register']);
     // Route::get('/:id', [UserController::class, 'byId']);
 });
+Route::get('/hours', [AppointmentDateController::class, 'hours']);

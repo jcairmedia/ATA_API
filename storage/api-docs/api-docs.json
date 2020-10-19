@@ -1,0 +1,136 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "API ATA",
+        "version": "1.0"
+    },
+    "servers": [
+        {
+            "url": "https://apidev.usercenter.mx/"
+        },
+        {
+            "url": "http://localhost:8000/"
+        }
+    ],
+    "paths": {
+        "/api/users": {
+            "post": {
+                "summary": "Registrar usuario",
+                "operationId": "App\\Http\\Controllers\\API\\UsersController::register",
+                "requestBody": {
+                    "description": "Registrar usuario por el medio tradicional",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "password",
+                                    "last_name1",
+                                    "last_name2",
+                                    "phone"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "format": "string",
+                                        "example": "Nombres"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "user1@mail.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "PassWord12345"
+                                    },
+                                    "last_name1": {
+                                        "type": "string",
+                                        "format": "string",
+                                        "example": "Apellido materno"
+                                    },
+                                    "last_name2": {
+                                        "type": "string",
+                                        "format": "string",
+                                        "example": "Apellido paterno"
+                                    },
+                                    "phone": {
+                                        "type": "string",
+                                        "format": "number",
+                                        "pattern": "[0-9]{10}",
+                                        "example": "1234567890"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "code": {
+                                            "type": "int",
+                                            "example": "201"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Usuario creado"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            },
+                                            "collectionFormat": "multi"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "properties": {
+                                                "email": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "El valor del campo email ya está en uso."
+                                                    },
+                                                    "collectionFormat": "multi"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "security": [
+        []
+    ]
+}
