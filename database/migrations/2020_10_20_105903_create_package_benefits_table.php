@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateContractsTable extends Migration
+class CreatePackageBenefitsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,12 @@ class CreateContractsTable extends Migration
      */
     public function up()
     {
-        Schema::create('contracts', function (Blueprint $table) {
+        Schema::create('package_benefits', function (Blueprint $table) {
             $table->id();
-            $table->String('name')->comment('Contract´s name');
-            $table->String('description')->nullable()->comment('Contract´s description');
-            $table->String('url')->comment('Contract´s url');
+            $table->unsignedBigInteger('package_id');
+            $table->string('name')->comment('Benefit´s name');
             $table->timestamps();
+            $table->foreign('package_id')->references('id')->on('packages');
         });
     }
 
@@ -29,6 +29,6 @@ class CreateContractsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('contracts');
+        Schema::dropIfExists('package_benefits');
     }
 }

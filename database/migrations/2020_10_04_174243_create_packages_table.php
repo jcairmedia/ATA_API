@@ -17,8 +17,12 @@ class CreatePackagesTable extends Migration
             $table->id();
             $table->string('name')->comment('Packages´s name');
             $table->string('description')->comment('Packages´s description');
+            $table->enum('periodicity', ['MONTHLY', 'YEARLY'])->comment('Peridicity');
+            $table->decimal('amount', 8, 2)->comment('Amount');
             $table->integer('state')->default(1)->comment('1:active, 0: no active');
             $table->timestamps();
+
+            $table->index('periodicity');
         });
     }
 

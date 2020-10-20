@@ -14,8 +14,8 @@ class AlterServicesContract extends Migration
     public function up()
     {
         Schema::table('services', function (Blueprint $table) {
-            $table->unsignedBigInteger('contract_id');
-            $table->foreign('contract_id')->references('id')->on('contracts');
+            $table->unsignedBigInteger('contract_id')->after('id')->nullable();
+            $table->foreign('contract_id')->references('id')->on('contract_templates');
         });
     }
 

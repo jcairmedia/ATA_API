@@ -16,16 +16,17 @@ class CreateMeetingPaymentsTable extends Migration
         Schema::create('meeting_payments', function (Blueprint $table) {
             $table->id();
 
-            $table->decimal('price', 10, 2)->comment('price');
+            $table->decimal('price', 8, 2)->comment('price');
             $table->string('folio')->nullable()->comment('Folio');
-            $table->string('authorization_bank')->nullable()->comment('authorization bank');
-            $table->enum('type_payment', ['ONLINE', 'OFFLINE'])->nullable()->comment('type payment');
-            $table->string('type_target')->nullable()->comment('type target');
-            $table->string('bank')->nullable()->comment('nombre del banco');
+            $table->string('bank_auth_code')->nullable()->comment('bank authorization code');
+            $table->enum('type_payment', ['ONLINE', 'OFFLINE'])->nullable()->comment('type payment: ONLINE: payment online, OFFLINE: off-site payment');
+            $table->string('card_type')->nullable()->comment('for example:VISA, MASTERCARD, AMEX; etc.');
+            $table->string('bank')->nullable()->comment('bank´s name');
             $table->string('currency')->nullable()->comment('currency');
             $table->string('brand')->nullable()->comment('Brand');
-            $table->string('payment_gateway')->nullable()->comment('Payment gateway');
             $table->timestamps();
+
+            $table->index('type_payment');
         });
     }
 

@@ -15,17 +15,18 @@ class CreateCasesPaymentsTable extends Migration
     {
         Schema::create('cases_payments', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('cases_id')->comment('FK');
             $table->string('folio')->comment('Folio');
             $table->enum('type_paid', ['ONLINE', 'OFFLINE'])->comment('type paid');
-            $table->string('type_target')->nullable()->comment('Type target');
+            $table->string('card_type')->nullable()->comment('PE: AMEX, AMERICAN, VISA');
             $table->string('bank')->nullable()->comment('bank ´s name');
             $table->string('currency')->nullable()->comment('currency');
             $table->string('brand')->nullable()->comment('brand');
-            $table->string('authorization')->nullable()->comment('authorization');
-
-            $table->unsignedBigInteger('cases_id')->comment('FK');
-            $table->foreign('cases_id')->references('id')->on('cases');
+            $table->string('bank_auth_code')->nullable()->comment('authorization');
             $table->timestamps();
+
+            $table->foreign('cases_id')->references('id')->on('cases');
+            $table->index('type_paid');
         });
     }
 

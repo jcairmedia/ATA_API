@@ -4,11 +4,10 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Contract extends Model
+class PackageBenefit extends Model
 {
     protected $fillable = [
+        'package_id',
         'name',
-        'description',
-        'url',
     ];
 }

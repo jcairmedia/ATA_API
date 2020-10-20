@@ -21,12 +21,17 @@ class CreateMeetingsTable extends Migration
             $table->string('url_meeting')->nullable()->comment('url meeting');
             $table->dateTime('dt_start')->comment('date time beginning meeting');
             $table->dateTime('dt_end')->nullable()->comment('date time end meeting');
-            $table->decimal('price', 10, 2)->comment('price');
-            $table->boolean('state_record')->default(1)->comment('record´s state: open = 1/ close = 0');
-            $table->boolean('state_paid')->default(0)->comment('payment´s state: paid = 1/ not paid = 0');
+            $table->decimal('price', 8, 2)->comment('price');
+            $table->boolean('record_state')->default(1)->comment('record´s state: open = 1/ close = 0');
+            $table->boolean('paid_state')->default(0)->comment('payment´s state: paid = 1/ not paid = 0');
             $table->dateTime('dt_cancellation')->nullable()->comment('date time cancellation meeting');
-
             $table->timestamps();
+
+            $table->index('folio');
+            $table->index('category');
+            $table->index('type_meeting');
+            $table->index('dt_start');
+            $table->index('dt_end');
         });
     }
 

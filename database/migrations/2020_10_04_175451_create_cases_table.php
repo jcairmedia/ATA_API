@@ -17,7 +17,7 @@ class CreateCasesTable extends Migration
             $table->id();
             $table->unsignedBigInteger('packages_id')->comment('Foreign key packages id');
 
-            $table->String('url_doc')->comment('Contract document´s Url');
+            $table->string('url_doc')->comment('Contract document´s Url');
             $table->decimal('price', 8, 2)->comment('Price');
             $table->timestamps();
 
