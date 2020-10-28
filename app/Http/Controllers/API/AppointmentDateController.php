@@ -12,16 +12,21 @@ class AppointmentDateController extends Controller
     /**
      * @OA\Get(
      *  path="/api/hours",
-     *  summary="Horas disponibles referente a la fecha seleccionada",
-     *  @OA\RequestBody(
-     *    required=true,
-     *    description="",
-     *    @OA\JsonContent(
-     *       required={"type","date"},
-     *       @OA\Property(property="type", type="string", example="CALL"),
-     *       @OA\Property(property="date", type="string", format="date", example="2020-10-25")
-     *    ),
-     *  ),
+     *  summary="Horas disponibles referente a la fecha seleccionada y al tipo de cita",
+     *  @OA\Parameter(in="query",
+     *       required=true,
+     *       description="Los valores aceptados son FREE y PAID",
+     *       name="type", required=true,
+     *       @OA\Schema(
+     *          type="string",
+     *          format="string",
+     *          pattern="(FREE|CALL)$"
+     *       ),
+     *       example="FREE"),
+     *  @OA\Parameter(in="query", required=true, name="date", @OA\Schema(
+ *       type="string",
+ *       format="date"
+ *    ),example="2020-10-25"),
      *  @OA\Response(
      *    response=422,
      *    description="Unprocessable Entity",
@@ -47,7 +52,7 @@ class AppointmentDateController extends Controller
      *        @OA\Items(
      *            type="string",
      *             example="09:00"
-     *          )
+     *        )
      *      )
      *    )
      *  )

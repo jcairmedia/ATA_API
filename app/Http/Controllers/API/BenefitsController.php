@@ -42,12 +42,12 @@ class BenefitsController extends Controller
 
     /**
      * @OA\Get(
-     *  path="/api/benefits/{id}",
+     *  path="/api/benefits/{idPackage}",
      *  summary="Beneficios por paquete",
      *   @OA\Parameter(
      *    description="Id del paquete",
      *    in="path",
-     *    name="id",
+     *    name="idPackage",
      *    required=true,
      *    example="1"),
      *  @OA\Response(
@@ -69,11 +69,11 @@ class BenefitsController extends Controller
      *  )
      * )
      */
-    public function byPackage(int $id)
+    public function byPackage(int $idPackage)
     {
         $bd = new BenefitDomain();
         $bp = new ByPackageUseCase($bd);
 
-        return response()->json($bp($id, ['id', 'package_id', 'name']));
+        return response()->json($bp($idPackage, ['id', 'package_id', 'name']));
     }
 }

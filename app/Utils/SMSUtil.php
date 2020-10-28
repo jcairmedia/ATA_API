@@ -16,7 +16,7 @@ class SMSUtil
             $sendmsgusecase = new SendSMSUseCase(new SMSService($token));
             $sendmsgusecase($text, $phone);
         } catch (\Exception $ex) {
-            Log::error($ex->getMessage());
+            \Log::error($ex->getMessage());
         }
     }
 }

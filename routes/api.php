@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\API\AppointmentDateController;
 use App\Http\Controllers\API\BenefitsController;
-use App\Http\Controllers\API\MeetingFreeController;
+use App\Http\Controllers\API\FreeMeetingController;
 use App\Http\Controllers\API\PackagesController;
 use App\Http\Controllers\API\ServicesController;
 use App\Http\Controllers\API\UsersController;
@@ -32,10 +32,10 @@ Route::get('/hours', [AppointmentDateController::class, 'hours']);
 
 // Beneficios
 Route::get('/benefits', [BenefitsController::class, 'all']);
-Route::get('/benefits/{id}', [BenefitsController::class, 'byPackage'])->where('id', '[0-9]+');
+Route::get('/benefits/{idPackage}', [BenefitsController::class, 'byPackage'])->where('idPackage', '[0-9]+');
 Route::get('/services', [ServicesController::class, 'all']);
 Route::get('/packages', [PackagesController::class, 'all']);
-Route::post('/meeting/free', [MeetingFreeController::class, 'register']);
+Route::post('/meeting/free', [FreeMeetingController::class, 'register']);
 
 Route::get('/view', function () {
     $view = view('layout_meeting_Free',

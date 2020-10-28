@@ -15,7 +15,7 @@ use App\Utils\CustomMailer\EmailData;
 use App\Utils\CustomMailer\MailLib;
 use App\Utils\DateUtil;
 use App\Utils\SMSUtil;
-class MeetingFreeController extends Controller
+class FreeMeetingController extends Controller
 {
     /**
      * @OA\Post(
@@ -56,7 +56,7 @@ class MeetingFreeController extends Controller
      *            @OA\Property(property="folio", type="string", example="261020201320595f97219b21381"),
      *            @OA\Property(property="category", type="string", example="FREE"),
      *            @OA\Property(property="type_meeting", type="number", example="CALL"),
-     *            @OA\Property(property="url_meeting", type="number", example="1"),
+     *            @OA\Property(property="url_meeting", type="number", example=""),
      *            @OA\Property(property="dt_start", type="string", format="date-time", example="2020-10-26 18:40:00"),
      *            @OA\Property(property="dt_end", type="string", format="date-time", example="2020-10-26 19:20:00"),
      *            @OA\Property(property="price", type="number", example="1650.50"),
@@ -101,6 +101,9 @@ class MeetingFreeController extends Controller
             $data = $request->all();
             $data['category'] = "FREE";
             $data['type_meeting']= 'CALL';
+            // TODO: Verific datetime  handle
+
+            // TODO: Create meeting in calendar
 
             // Search duration meeting
             $val_search_config = '';

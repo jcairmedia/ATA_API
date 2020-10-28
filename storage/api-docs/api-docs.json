@@ -15,34 +15,32 @@
     "paths": {
         "/api/hours": {
             "get": {
-                "summary": "Horas disponibles referente a la fecha seleccionada",
+                "summary": "Horas disponibles referente a la fecha seleccionada y al tipo de cita",
                 "operationId": "App\\Http\\Controllers\\API\\AppointmentDateController::hours",
-                "requestBody": {
-                    "description": "",
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "type",
-                                    "date"
-                                ],
-                                "properties": {
-                                    "type": {
-                                        "type": "string",
-                                        "example": "CALL"
-                                    },
-                                    "date": {
-                                        "type": "string",
-                                        "format": "date",
-                                        "example": "2020-10-25"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
+                "parameters": [
+                    {
+                        "name": "type",
+                        "in": "query",
+                        "description": "Los valores aceptados son FREE y PAID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "string",
+                            "pattern": "(FREE|CALL)$"
+                        },
+                        "example": "FREE"
+                    },
+                    {
+                        "name": "date",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        },
+                        "example": "2020-10-25"
                     }
-                },
+                ],
                 "responses": {
                     "422": {
                         "description": "Unprocessable Entity",
@@ -141,13 +139,13 @@
                 }
             }
         },
-        "/api/benefits/{id}": {
+        "/api/benefits/{idPackage}": {
             "get": {
                 "summary": "Beneficios por paquete",
                 "operationId": "App\\Http\\Controllers\\API\\BenefitsController::byPackage",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "idPackage",
                         "in": "path",
                         "description": "Id del paquete",
                         "required": true,
@@ -194,7 +192,7 @@
         "/api/meeting/free": {
             "post": {
                 "summary": "Registrar una cita gratuita",
-                "operationId": "App\\Http\\Controllers\\API\\MeetingFreeController::register",
+                "operationId": "App\\Http\\Controllers\\API\\FreeMeetingController::register",
                 "requestBody": {
                     "description": "Registrar una cita gratuita",
                     "required": true,
@@ -277,7 +275,7 @@
                                                     },
                                                     "url_meeting": {
                                                         "type": "number",
-                                                        "example": "1"
+                                                        "example": ""
                                                     },
                                                     "dt_start": {
                                                         "type": "string",
@@ -391,6 +389,167 @@
                                                 "type": "object"
                                             },
                                             "collectionFormat": "multi"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/meeting/paid": {
+            "post": {
+                "summary": "Registrar una cita gratuita",
+                "operationId": "App\\Http\\Controllers\\API\\PaidMeetingController::register",
+                "requestBody": {
+                    "description": "Registrar una cita gratuita",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "phone",
+                                    "date",
+                                    "time",
+                                    "type_meeting",
+                                    "category"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "format": "string",
+                                        "example": "Nombres"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "user1@mail.com"
+                                    },
+                                    "phone": {
+                                        "type": "string",
+                                        "format": "number",
+                                        "pattern": "[0-9]{10}",
+                                        "example": "1234567890"
+                                    },
+                                    "date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2020-10-26"
+                                    },
+                                    "time": {
+                                        "type": "string",
+                                        "format": "string",
+                                        "pattern": "/^(09|(1[0-8]))\\:[0-5][0-9]$/",
+                                        "example": "18:00"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "code": {
+                                            "type": "int",
+                                            "example": "201"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Cita creada"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "folio": {
+                                                        "type": "string",
+                                                        "example": "261020201320595f97219b21381"
+                                                    },
+                                                    "category": {
+                                                        "type": "string",
+                                                        "example": "FREE"
+                                                    },
+                                                    "type_meeting": {
+                                                        "type": "number",
+                                                        "example": "CALL"
+                                                    },
+                                                    "url_meeting": {
+                                                        "type": "number",
+                                                        "example": ""
+                                                    },
+                                                    "dt_start": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2020-10-26 18:40:00"
+                                                    },
+                                                    "dt_end": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2020-10-26 19:20:00"
+                                                    },
+                                                    "price": {
+                                                        "type": "number",
+                                                        "example": "1650.50"
+                                                    },
+                                                    "contacts_id": {
+                                                        "type": "number",
+                                                        "example": "1"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "number",
+                                                        "example": "1"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "number",
+                                                        "example": "1"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            },
+                                            "collectionFormat": "multi"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "code": {
+                                            "type": "int",
+                                            "example": "422"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "properties": {
+                                                "email": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "El campo email es obligatorio."
+                                                    },
+                                                    "collectionFormat": "multi"
+                                                }
+                                            },
+                                            "type": "object"
                                         }
                                     },
                                     "type": "object"

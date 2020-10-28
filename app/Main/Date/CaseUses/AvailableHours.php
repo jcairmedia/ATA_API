@@ -13,6 +13,6 @@ class AvailableHours
 
     public function __invoke(\DateTime $date)
     {
-        return ['data' => $this->fh->__invoke($date), 'now' => new \DateTime()];
+        return ['data' => $this->fh->__invoke($date)];
     }
 }

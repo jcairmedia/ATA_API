@@ -27,8 +27,9 @@ class AppointmentDateRequest extends FormRequest
         return [
             'type' => [
                 'required',
-                Rule::in(['CALL', 'VIDEOCALL', 'PRESENTIAL']), ],
-            'date' => 'required|date|after_or_equal:now',
+                Rule::in(['FREE', 'PAID']), ],
+            'date' => 'required|date',
+            // 'date' => 'required|date|after_or_equal:now',
         ];
     }
 }
