@@ -13,8 +13,8 @@ class ByPackageUseCase
         $this->benefitDomain = $benefitDomain;
     }
 
-    public function __invoke(int $id)
+    public function __invoke(int $id, array $array_columns = null)
     {
-        return $this->benefitDomain->byPackage($id);
+        return ['data' => $this->benefitDomain->byPackage($id, $array_columns)];
     }
 }

@@ -17,7 +17,7 @@ class AlterMeetingTable extends Migration
             $table->unsignedBigInteger('contacts_id')->comment('Foreign key Contact id');
             $table->foreign('contacts_id')->references('id')->on('contacts');
 
-            $table->unsignedBigInteger('users_id')->comment('Foreign key User id');
+            $table->unsignedBigInteger('users_id')->nullable()->comment('Foreign key User id');
             $table->foreign('users_id')->references('id')->on('users');
         });
     }

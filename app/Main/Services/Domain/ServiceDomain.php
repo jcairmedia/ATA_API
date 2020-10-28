@@ -10,8 +10,8 @@ class ServiceDomain
     {
     }
 
-    public function all()
+    public function all(array $array_columns = null)
     {
-        return Services::all();
+        return ['data' => is_null($array_columns) || count($array_columns) <= 0 ? Services::all() : Services::all($array_columns)];
     }
 }

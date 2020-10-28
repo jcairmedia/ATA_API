@@ -11,8 +11,8 @@ class ListPackagesUseCases
         $this->packageDomain = $packageDomain;
     }
 
-    public function list()
+    public function list(array $array_columns = null)
     {
-        return $this->packageDomain->all();
+        return ['data' => $this->packageDomain->all($array_columns)];
     }
 }

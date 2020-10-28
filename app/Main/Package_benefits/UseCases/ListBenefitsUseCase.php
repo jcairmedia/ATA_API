@@ -13,8 +13,8 @@ class ListBenefitsUseCase
         $this->benefitDomain = $benefitDomain;
     }
 
-    public function __invoke()
+    public function __invoke(array $array_columns)
     {
-        return $this->benefitDomain->all();
+        return ['data' => $this->benefitDomain->all($array_columns)];
     }
 }

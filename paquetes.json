@@ -1,0 +1,26 @@
+
+-- Beneficios por paquete
+
+(1,'Seguimiento puntual de su caso o trámite');
+(1,'Reporte semana del avance o estado de su caso o trámite');
+(1,'Consulta mensual *');
+(1,'Acompañamiento a las audiencias en que se requiera la presencia del cliente');
+(1,'Gestiones administrativas esenciales ligadas al caso **');
+
+
+
+(2,'Seguimiento puntual de su caso o trámite'),
+(2,'Reporte semanal del avance o estado de su caso o trámite'),
+(2,'Consulta quincenal'),
+(2,'Acompañamiento a las audiencias en que se requiera la presencia del cliente'),
+(2,'Gestiones administrativas esenciales ligadas al caso **'),
+(2,'Gestiones administrativas no esenciales ligadas al caso **'),
+
+
+
+(3, 'Seguimiento puntual de su caso o trámite'),
+(3, 'Reporte semanal del avance o estado de su caso o trámite'),
+(3, 'Consultas ilimitadas sobre su asunto o trámite y tres consultas adicionales al mes sobre temas diversos'),
+(3, 'Acompañamiento a las audiencias en que se requiera la presencia del cliente'),
+(3, 'Gestiones administrativas esenciales ligadas al caso **'),
+(3, 'Gestiones administrativas no esenciales ligadas al caso ***');

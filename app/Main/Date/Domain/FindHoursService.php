@@ -7,8 +7,8 @@ class FindHoursService
     public function __invoke(\DateTime $date)
     {
         return [
-            '9:00',
-            '9:40',
+            '09:00',
+            '09:40',
         ];
     }
 }

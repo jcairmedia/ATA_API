@@ -11,8 +11,8 @@ class ServiceUseCases
         $this->serviceDomain = $serviceDomain;
     }
 
-    public function __invoke()
+    public function __invoke(array $array_columns = null)
     {
-        return $this->serviceDomain->all();
+        return $this->serviceDomain->all($array_columns);
     }
 }
