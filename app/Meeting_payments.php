@@ -9,13 +9,13 @@ class Meeting_payments extends Model
     protected $fillable = [
         'price',
         'folio',
-        'authorization_bank',
+        'bank_auth_code',
         'type_payment',
-        'type_target',
+        'card_type',
         'bank',
         'currency',
         'brand',
-        'payment_gateway',
+        'json',
         'meeting_id',
     ];
 }

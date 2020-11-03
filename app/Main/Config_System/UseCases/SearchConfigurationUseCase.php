@@ -13,6 +13,10 @@ class SearchConfigurationUseCase
 
     public function __invoke(string $value)
     {
-        return $this->searchconfigdomain->__invoke($value);
+        try {
+            return $this->searchconfigdomain->__invoke($value);
+        } catch (\Exception $ex) {
+            throw new Exception($ex->getMessage(), $ex->getCode());
+        }
     }
 }

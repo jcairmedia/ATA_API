@@ -350,6 +350,424 @@
                 }
             }
         },
+        "/api/meeting/paid/offline": {
+            "post": {
+                "summary": "Registrar una cita de pago en tienda",
+                "operationId": "App\\Http\\Controllers\\API\\OfflinePaidMeetingController::index",
+                "requestBody": {
+                    "description": "Registrar una cita por pago en tienda",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "phone",
+                                    "date",
+                                    "time",
+                                    "type_meeting",
+                                    "type_payment",
+                                    "deviceIdHiddenFieldName",
+                                    "token_id"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "format": "string",
+                                        "example": "Nombres"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "user1@mail.com"
+                                    },
+                                    "phone": {
+                                        "type": "string",
+                                        "format": "number",
+                                        "pattern": "[0-9]{10}",
+                                        "example": "1234567890"
+                                    },
+                                    "date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2020-10-26"
+                                    },
+                                    "time": {
+                                        "type": "string",
+                                        "format": "string",
+                                        "pattern": "/^(09|(1[0-8]))\\:[0-5][0-9]$/",
+                                        "example": "18:00"
+                                    },
+                                    "type_meeting": {
+                                        "type": "string",
+                                        "format": "string",
+                                        "pattern": "/^(CALL|VIDEOCALL|PRESENTIAL)$/",
+                                        "example": "CALL"
+                                    },
+                                    "type_payment": {
+                                        "type": "string",
+                                        "format": "string",
+                                        "pattern": "/^(OFFLINE)$/",
+                                        "example": "OFFLINE"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "code": {
+                                            "type": "int",
+                                            "example": "201"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "meeting": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "number",
+                                                            "example": "1"
+                                                        },
+                                                        "folio": {
+                                                            "type": "string",
+                                                            "example": "261020201320595f97219b21381"
+                                                        },
+                                                        "category": {
+                                                            "type": "string",
+                                                            "example": "PAID"
+                                                        },
+                                                        "type_meeting": {
+                                                            "type": "number",
+                                                            "example": "CALL"
+                                                        },
+                                                        "url_meeting": {
+                                                            "type": "number",
+                                                            "example": ""
+                                                        },
+                                                        "dt_start": {
+                                                            "type": "string",
+                                                            "format": "date-time",
+                                                            "example": "2020-10-26 18:40:00"
+                                                        },
+                                                        "dt_end": {
+                                                            "type": "string",
+                                                            "format": "date-time",
+                                                            "example": "2020-10-26 19:20:00"
+                                                        },
+                                                        "price": {
+                                                            "type": "number",
+                                                            "example": "1650.50"
+                                                        },
+                                                        "contacts_id": {
+                                                            "type": "number",
+                                                            "example": "23"
+                                                        },
+                                                        "updated_at": {
+                                                            "type": "number",
+                                                            "example": "1"
+                                                        },
+                                                        "created_at": {
+                                                            "type": "number",
+                                                            "example": "1"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "url_file_charge": {
+                                                    "description": "Url de la referencia de pago de Open pay",
+                                                    "type": "string",
+                                                    "example": "https:\\/\\/sandbox-dashboard.openpay.mx\\/paynet-pdf\\/me4rw2430fbizvozxcq1\\/9988783077895466"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "code": {
+                                            "type": "int",
+                                            "example": "422"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "properties": {
+                                                "email": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "El campo email es obligatorio."
+                                                    },
+                                                    "collectionFormat": "multi"
+                                                },
+                                                "last_name": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "El campo lastname es obligatorio"
+                                                    },
+                                                    "collectionFormat": "multi"
+                                                },
+                                                "deviceIdHiddenFieldName": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "El campo device id hidden field name es obligatorio."
+                                                    },
+                                                    "collectionFormat": "multi"
+                                                },
+                                                "token_id": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "El campo token id es obligatorio."
+                                                    },
+                                                    "collectionFormat": "multi"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/meeting/paid/online": {
+            "post": {
+                "summary": "Registrar una cita de pago en línea",
+                "operationId": "App\\Http\\Controllers\\API\\OnlinePaidMeetingController::index",
+                "requestBody": {
+                    "description": "Registrar una cita por pago en línea",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "phone",
+                                    "date",
+                                    "time",
+                                    "type_meeting",
+                                    "type_payment",
+                                    "deviceIdHiddenFieldName",
+                                    "token_id"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "description": "Nombre y apellidos del cliente",
+                                        "type": "string",
+                                        "format": "string",
+                                        "example": "Nombres"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "user1@mail.com"
+                                    },
+                                    "phone": {
+                                        "type": "string",
+                                        "format": "number",
+                                        "pattern": "[0-9]{10}",
+                                        "example": "1234567890"
+                                    },
+                                    "date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2020-10-26"
+                                    },
+                                    "time": {
+                                        "type": "string",
+                                        "format": "string",
+                                        "pattern": "/^(09|(1[0-8]))\\:[0-5][0-9]$/",
+                                        "example": "18:00"
+                                    },
+                                    "type_meeting": {
+                                        "type": "string",
+                                        "format": "string",
+                                        "pattern": "/^(CALL|VIDEOCALL|PRESENTIAL)$/",
+                                        "example": "CALL"
+                                    },
+                                    "type_payment": {
+                                        "type": "string",
+                                        "format": "string",
+                                        "pattern": "/^(ONLINE)$/",
+                                        "example": "ONLINE"
+                                    },
+                                    "deviceIdHiddenFieldName": {
+                                        "description": "Identificador del dispositivo generado con la herramienta antifraudes",
+                                        "type": "string",
+                                        "format": "string",
+                                        "example": "236454545454848484"
+                                    },
+                                    "token_id": {
+                                        "description": "Identificador único del cargo. Debe ser único entre todas las transacciones",
+                                        "type": "string",
+                                        "format": "string",
+                                        "example": "4545454445454"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "code": {
+                                            "type": "int",
+                                            "example": "201"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "meeting": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "number",
+                                                            "example": "1"
+                                                        },
+                                                        "folio": {
+                                                            "type": "string",
+                                                            "example": "261020201320595f97219b21381"
+                                                        },
+                                                        "category": {
+                                                            "type": "string",
+                                                            "example": "PAID"
+                                                        },
+                                                        "type_meeting": {
+                                                            "type": "number",
+                                                            "example": "CALL"
+                                                        },
+                                                        "url_meeting": {
+                                                            "type": "number",
+                                                            "example": ""
+                                                        },
+                                                        "dt_start": {
+                                                            "type": "string",
+                                                            "format": "date-time",
+                                                            "example": "2020-10-26 18:40:00"
+                                                        },
+                                                        "dt_end": {
+                                                            "type": "string",
+                                                            "format": "date-time",
+                                                            "example": "2020-10-26 19:20:00"
+                                                        },
+                                                        "price": {
+                                                            "type": "number",
+                                                            "example": "1650.50"
+                                                        },
+                                                        "contacts_id": {
+                                                            "type": "number",
+                                                            "example": "23"
+                                                        },
+                                                        "updated_at": {
+                                                            "type": "number",
+                                                            "example": "1"
+                                                        },
+                                                        "created_at": {
+                                                            "type": "number",
+                                                            "example": "1"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "code": {
+                                            "type": "int",
+                                            "example": "422"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "properties": {
+                                                "email": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "El campo email es obligatorio."
+                                                    },
+                                                    "collectionFormat": "multi"
+                                                },
+                                                "last_name": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "El campo lastname es obligatorio"
+                                                    },
+                                                    "collectionFormat": "multi"
+                                                },
+                                                "deviceIdHiddenFieldName": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "El campo device id hidden field name es obligatorio."
+                                                    },
+                                                    "collectionFormat": "multi"
+                                                },
+                                                "token_id": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "El campo token id es obligatorio."
+                                                    },
+                                                    "collectionFormat": "multi"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/packages": {
             "get": {
                 "summary": "Todos los paquetes",
@@ -389,167 +807,6 @@
                                                 "type": "object"
                                             },
                                             "collectionFormat": "multi"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/meeting/paid": {
-            "post": {
-                "summary": "Registrar una cita gratuita",
-                "operationId": "App\\Http\\Controllers\\API\\PaidMeetingController::register",
-                "requestBody": {
-                    "description": "Registrar una cita gratuita",
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "name",
-                                    "email",
-                                    "phone",
-                                    "date",
-                                    "time",
-                                    "type_meeting",
-                                    "category"
-                                ],
-                                "properties": {
-                                    "name": {
-                                        "type": "string",
-                                        "format": "string",
-                                        "example": "Nombres"
-                                    },
-                                    "email": {
-                                        "type": "string",
-                                        "format": "email",
-                                        "example": "user1@mail.com"
-                                    },
-                                    "phone": {
-                                        "type": "string",
-                                        "format": "number",
-                                        "pattern": "[0-9]{10}",
-                                        "example": "1234567890"
-                                    },
-                                    "date": {
-                                        "type": "string",
-                                        "format": "date",
-                                        "example": "2020-10-26"
-                                    },
-                                    "time": {
-                                        "type": "string",
-                                        "format": "string",
-                                        "pattern": "/^(09|(1[0-8]))\\:[0-5][0-9]$/",
-                                        "example": "18:00"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "code": {
-                                            "type": "int",
-                                            "example": "201"
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Cita creada"
-                                        },
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "properties": {
-                                                    "folio": {
-                                                        "type": "string",
-                                                        "example": "261020201320595f97219b21381"
-                                                    },
-                                                    "category": {
-                                                        "type": "string",
-                                                        "example": "FREE"
-                                                    },
-                                                    "type_meeting": {
-                                                        "type": "number",
-                                                        "example": "CALL"
-                                                    },
-                                                    "url_meeting": {
-                                                        "type": "number",
-                                                        "example": ""
-                                                    },
-                                                    "dt_start": {
-                                                        "type": "string",
-                                                        "format": "date-time",
-                                                        "example": "2020-10-26 18:40:00"
-                                                    },
-                                                    "dt_end": {
-                                                        "type": "string",
-                                                        "format": "date-time",
-                                                        "example": "2020-10-26 19:20:00"
-                                                    },
-                                                    "price": {
-                                                        "type": "number",
-                                                        "example": "1650.50"
-                                                    },
-                                                    "contacts_id": {
-                                                        "type": "number",
-                                                        "example": "1"
-                                                    },
-                                                    "updated_at": {
-                                                        "type": "number",
-                                                        "example": "1"
-                                                    },
-                                                    "created_at": {
-                                                        "type": "number",
-                                                        "example": "1"
-                                                    }
-                                                },
-                                                "type": "object"
-                                            },
-                                            "collectionFormat": "multi"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Unprocessable Entity",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "code": {
-                                            "type": "int",
-                                            "example": "422"
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "The given data was invalid."
-                                        },
-                                        "errors": {
-                                            "properties": {
-                                                "email": {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "type": "string",
-                                                        "example": "El campo email es obligatorio."
-                                                    },
-                                                    "collectionFormat": "multi"
-                                                }
-                                            },
-                                            "type": "object"
                                         }
                                     },
                                     "type": "object"

@@ -3,7 +3,10 @@
 use App\Http\Controllers\API\AppointmentDateController;
 use App\Http\Controllers\API\BenefitsController;
 use App\Http\Controllers\API\FreeMeetingController;
+use App\Http\Controllers\API\OfflinePaidMeetingController;
+use App\Http\Controllers\API\OnlinePaidMeetingController;
 use App\Http\Controllers\API\PackagesController;
+use App\Http\Controllers\API\PaidMeetingController;
 use App\Http\Controllers\API\ServicesController;
 use App\Http\Controllers\API\UsersController;
 use Illuminate\Http\Request;
@@ -36,6 +39,9 @@ Route::get('/benefits/{idPackage}', [BenefitsController::class, 'byPackage'])->w
 Route::get('/services', [ServicesController::class, 'all']);
 Route::get('/packages', [PackagesController::class, 'all']);
 Route::post('/meeting/free', [FreeMeetingController::class, 'register']);
+Route::post('/meeting/paid', [PaidMeetingController::class, 'register']);
+Route::post('/meeting/paid/offline', [OfflinePaidMeetingController::class, 'index']);
+Route::post('/meeting/paid/online', [OnlinePaidMeetingController::class, 'index']);
 
 Route::get('/view', function () {
     $view = view('layout_meeting_Free',

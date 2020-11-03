@@ -20,4 +20,9 @@ class Meeting extends Model
         'contacts_id',
         'users_id',
     ];
+    protected $casts = [
+        'dt_start' => 'datetime:Y-m-d H:i:s',
+        'dt_end' => 'datetime:Y-m-d H:i:s',
+        'price' => 'decimal:2'
+ ];
 }

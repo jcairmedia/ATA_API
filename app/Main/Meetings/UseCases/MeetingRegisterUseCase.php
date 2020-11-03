@@ -15,8 +15,8 @@ class MeetingRegisterUseCase
     {
         //2. Prepare Meeting
         $meetingD = new MeetingCreatorDomain();
-        $amount_meeting = $data['category'] == 'FREE' ? 0 : '';
-        $paid = $data['category'] == 'FREE';
+        // $amount_meeting = $data['category'] == 'FREE' ? 0 : '';
+        // $paid = $data['category'] == 'FREE' ? 1 : 0;
 
         // 3. Register
         return $meetingD(new Meeting([
@@ -26,9 +26,9 @@ class MeetingRegisterUseCase
             'url_meeting' => '',
             'dt_start' => $data['date'].' '.$data['time'],
             'dt_end' => $this->getDate($data['date'].' '.$data['time'], $durationMeeting),
-            'price' => $amount_meeting,
+            'price' => $data['amount'],
             'record_state' => 1, // 1: open, 0:close
-            'paid_state' => $paid, // 1: paid, 0: no paid
+            'paid_state' => $data['paid'], // 1: paid, 0: no paid
             'contacts_id' => $contact_id,
             ]));
     }

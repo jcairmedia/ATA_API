@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Meetings\MeetingFreeRequest;
+use App\Http\Requests\Meetings\FreeMeetingRequest;
 use App\Main\Config_System\Domain\SearchConfigDomain;
 use App\Main\Config_System\UseCases\SearchConfigurationUseCase;
 use App\Main\Contact\Domain\ContactCreatorDomain;
@@ -15,6 +15,7 @@ use App\Utils\CustomMailer\EmailData;
 use App\Utils\CustomMailer\MailLib;
 use App\Utils\DateUtil;
 use App\Utils\SMSUtil;
+
 class FreeMeetingController extends Controller
 {
     /**
@@ -94,13 +95,13 @@ class FreeMeetingController extends Controller
      *  )
      * )
      */
-    public function register(MeetingFreeRequest $request)
+    public function register(FreeMeetingRequest $request)
     {
         $contact_id = 0;
         try {
             $data = $request->all();
-            $data['category'] = "FREE";
-            $data['type_meeting']= 'CALL';
+            $data['category'] = 'FREE';
+            $data['type_meeting'] = 'CALL';
             // TODO: Verific datetime  handle
 
             // TODO: Create meeting in calendar
@@ -130,6 +131,8 @@ class FreeMeetingController extends Controller
 
             // Meeting
             $meetingUseCase = new MeetingRegisterUseCase();
+            $data['amount'] = 0;
+            $data['paid'] = 1;
             $meetingObj = $meetingUseCase($data, $contact_id, $config->value);
 
             // Send SMS
@@ -151,10 +154,10 @@ class FreeMeetingController extends Controller
                 'phone_office' => $config->value,
                 'day' => $day,
                 'month' => $month,
-                'hours' => $time
+                'hours' => $time,
             ]);
 
-            $this->sendEmail($data['email'], "ATA | Cita Gratuita",'', $view);
+            $this->sendEmail($data['email'], 'ATA | Cita Gratuita', '', $view);
 
             return response()->json([
                 'code' => 201,
@@ -203,18 +206,18 @@ class FreeMeetingController extends Controller
     private function createTextMsg($day, $month, $time, $phone_office)
     {
         $textMsg = 'Gracias por contactar a Abogados a Tu Alcance\n
-        Agendate una guía gratuita para el día '.$day.' de '. $month.
-        ' a las '.$time.'\nRecuerda comunicarte en la
+        Agendate una guía gratuita para el día '.$day.' de '.$month.
+        ' a las '.$time.'hrs \nRecuerda comunicarte en la
         hora antes mencionada al télefono '.$phone_office;
 
         return $textMsg;
     }
 
-    private function getViewEmail($array){
+    private function getViewEmail($array)
+    {
         $view = view('layout_meeting_Free',
                 $array);
+
         return $view;
     }
-
-
 }

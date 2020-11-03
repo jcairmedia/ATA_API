@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class PaidReferenceOpenPay extends Model
+class OpenpayPaymentReference extends Model
 {
     protected $fillable = [
         'meeting_id',

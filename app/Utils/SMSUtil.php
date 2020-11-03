@@ -12,11 +12,10 @@ class SMSUtil
         try {
 
             $token = env('MSG_TOKEN');
-
             $sendmsgusecase = new SendSMSUseCase(new SMSService($token));
-            $sendmsgusecase($text, $phone);
+            $sendmsgusecase->__invoke($text, $phone);
         } catch (\Exception $ex) {
-            \Log::error($ex->getMessage());
+            \Log::error("(".__FILE__.") ".$ex->getMessage());
         }
     }
 }

@@ -18,7 +18,7 @@ class CreateMeetingsTable extends Migration
             $table->string('folio')->comment('uuid');
             $table->enum('category', ['FREE', 'PAID'])->comment('category');
             $table->enum('type_meeting', ['CALL', 'VIDEOCALL', 'PRESENTIAL'])->comment('Type meeting');
-            $table->string('url_meeting')->nullable()->comment('url meeting');
+            $table->text('url_meeting')->nullable()->comment('url meeting');
             $table->dateTime('dt_start')->comment('date time beginning meeting');
             $table->dateTime('dt_end')->nullable()->comment('date time end meeting');
             $table->decimal('price', 8, 2)->comment('price');
