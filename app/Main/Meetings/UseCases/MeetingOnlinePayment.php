@@ -89,7 +89,9 @@ class MeetingOnlinePayment
         $month = $dateUtil->getNameMonthByDate($date);
         $textSMS = $this->createTxtForSMS($data['type_meeting'], $day, $month, $data['time']);
         $smsUtil = new SMSUtil();
-        // $smsUtil->__invoke($textSMS, $data['phone']);
+        if(env("APP_ENV") != 'local'){
+            $smsUtil->__invoke($textSMS, $data['phone']);
+        }
 
         // 8. Generación de url de zoom
 
@@ -234,7 +236,11 @@ class MeetingOnlinePayment
         );
 
         try {
-            $maillib = new MailLib([]);
+            $maillib = new MailLib([
+                "username" => env("MAIL_USERNAME"),
+                "password" => env("MAIL_PASSWORD"),
+                "host" => env("MAIL_HOST"),
+                "port" => env("MAIL_PORT"),]);
             $maillib->Send($emailData);
         } catch (\Exception $ex) {
             \Log::error($ex->getMessage());

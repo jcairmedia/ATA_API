@@ -34,14 +34,20 @@ class MailLib
     public function Send(EmailData $emailData)
     {
         $mail = new PHPMailer(true);
-        // $mail->Username = $this->config['username'];
-        // $mail->Password = $this->config['password'];
-        //$phpmail->SMTPSecure = 'ssl';
         $mail->SMTPAutoTLS = false;
-        // $mail->Host = $this->config['host'];
-        // $mail->Port = $this->config['port'];
+
         $mail->IsSMTP();
         // $mail->SMTPAuth = true;
+        $_ENV_ = env("APP_ENV");
+        if($_ENV_ != 'local'){
+            $mail->Username = $this->config['username'];
+            $mail->Password = $this->config['password'];
+            // $phpmail->SMTPSecure = 'ssl';
+            $mail->Host = $this->config['host'];
+            $mail->Port = $this->config['port'];
+            $mail->SMTPAutoTLS = false;
+            $mail->SMTPAuth = true;
+        }
 
         try {
             //Server settings

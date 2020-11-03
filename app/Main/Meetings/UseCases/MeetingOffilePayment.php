@@ -172,7 +172,12 @@ class MeetingOffilePayment
         );
 
         try {
-            $maillib = new MailLib([]);
+            $maillib = new MailLib([
+                "username" => env("MAIL_USERNAME"),
+                "password" => env("MAIL_PASSWORD"),
+                "host" => env("MAIL_HOST"),
+                "port" => env("MAIL_PORT"),
+            ]);
             $maillib->Send($emailData);
         } catch (\Exception $ex) {
             \Log::error($ex->getMessage());
