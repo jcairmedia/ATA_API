@@ -44,12 +44,13 @@ class MeetingOffilePayment
             $chargeData = [
                 'method' => 'store',
                 'amount' => (float) $amount_paid,
-                'description' => 'Cargo para cita de pago',
-                'due_date' => $this->getDateValid($data['date']),
+                'description' => 'ATA| Cargo para cita pagada por tienda',
+                'due_date' => $this->getDateValid(new \DateTime()),
                 'customer' => $customer,
             ];
-            $response_OPEN_PAY_JSON_charge = file_get_contents('C:\\Users\\Leo\\Desktop\\ataapi\\storage\\responseOpenPay\\examples\\cargoexitososinexpiracion.json');
-            //$this->storepaymentopenpay->__invoke($chargeData);
+            $response_OPEN_PAY_JSON_charge =
+            // file_get_contents(storage_path('responseOpenPay/examples/').'cargoexitososinexpiracion.json');
+            $this->storepaymentopenpay->__invoke($chargeData);
             $array_charge = json_decode($response_OPEN_PAY_JSON_charge, true);
             \Log::error(__FILE__.PHP_EOL.$response_OPEN_PAY_JSON_charge);
 
@@ -124,12 +125,13 @@ class MeetingOffilePayment
         }
     }
 
-    private function getDateValid($date)
+    private function getDateValid(\DateTime $date)
     {
-        $date = new \DateTime($date);
+        // $date = new \DateTime($date);
+        $date->setTimezone(new \DateTimeZone('UTC'));
         $date->modify('+24 hours');
 
-        return $date->format('Y-m-d H:i:s');
+        return $date->format('Y-m-d\TH:i:s\Z');
     }
 
     private function getURLFileCharge($payment_method_reference)

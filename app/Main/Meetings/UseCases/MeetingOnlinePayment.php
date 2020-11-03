@@ -48,17 +48,17 @@ class MeetingOnlinePayment
             'method' => 'card',
             'source_id' => $data['token_id'],
             'amount' => (float) $amount_paid,
-            'description' => 'Cargo para cita de pago en línea',
+            'description' => 'ATA| Cargo para cita de pago en línea',
             'device_session_id' => $data['deviceIdHiddenFieldName'],
             'customer' => $customer,
         ];
-        /*$response_OPEN_PAY_JSON_charge = //file_get_contents('C:\\Users\\Leo\\Desktop\\ataapi\\storage\\responseOpenPay\\examples\\cargoexitososinexpiracion.json');
-        $this->storepaymentopenpay->__invoke($chargeData);
+        $response_OPEN_PAY_JSON_charge = //file_get_contents('C:\\Users\\Leo\\Desktop\\ataapi\\storage\\responseOpenPay\\examples\\cargoexitososinexpiracion.json');
+                                        $this->storepaymentopenpay->__invoke($chargeData);
         $array_charge = json_decode($response_OPEN_PAY_JSON_charge, true);
-        \Log::error(__FILE__.' PAGO online: '.PHP_EOL.$response_OPEN_PAY_JSON_charge);*/
+        \Log::error(__FILE__.' PAGO online: '.PHP_EOL.$response_OPEN_PAY_JSON_charge);
 
-        $array_charge = $this->mockupPaymentOpenpay();
-        // \Log::error('array_cargo: '.json_encode($array_charge));
+        // $array_charge = $this->mockupPaymentOpenpay();
+
         // 4. Registar el contacto
         $contact_id = $this->registerContact($data);
         // 5. Registrar una reunión en BD
@@ -111,6 +111,7 @@ class MeetingOnlinePayment
         return ['meeting' => $meetingObj];
     }
 
+    // method Mockup for test
     private function mockupPaymentOpenpay()
     {
         return ['id' => 'trzjaozcik8msyqshka4',

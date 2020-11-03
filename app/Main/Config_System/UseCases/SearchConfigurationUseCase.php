@@ -16,7 +16,7 @@ class SearchConfigurationUseCase
         try {
             return $this->searchconfigdomain->__invoke($value);
         } catch (\Exception $ex) {
-            throw new Exception($ex->getMessage(), $ex->getCode());
+            throw new \Exception($ex->getMessage(), $ex->getCode());
         }
     }
 }
