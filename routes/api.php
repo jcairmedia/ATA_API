@@ -61,3 +61,4 @@ Route::get('/online', function () {
 });
 
 Route::get('/hook', [WebHookOfflinePaidMeetingController::class, 'index']);
+Route::post('/hook', [WebHookOfflinePaidMeetingController::class, 'index']);
