@@ -98,6 +98,7 @@ class MeetingOnlinePayment
         $zoomresponse = $this->getUrlZoom($meetingObj->id, $data['date'].' '.$data['time'], $data['type_meeting'], 'ATA | Cita');
 
         // // 9. Envio de EMail
+        //TODO: Falta el formateo de correos, estoy en espera
         $textHtml = $this->createTextForEmail(
             $data['type_meeting'],
             $day,
@@ -113,7 +114,7 @@ class MeetingOnlinePayment
         return ['meeting' => $meetingObj];
     }
 
-    // method Mockup for test
+    // Only test: method Mockup response Open pay
     private function mockupPaymentOpenpay()
     {
         return ['id' => 'trzjaozcik8msyqshka4',

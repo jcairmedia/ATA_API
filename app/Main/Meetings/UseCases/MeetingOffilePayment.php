@@ -33,6 +33,28 @@ class MeetingOffilePayment
     public function __invoke(array $data, $duration, $phone_office, $amount_paid)
     {
         try {
+            /**
+             *
+             * si la fecha es igual a hoy no puede agendar cita pago
+             * en tienda
+             *
+             * {
+             * "message": "The given data was invalid.",
+             * "errors": {
+             *  "date": [
+             *    "El date no puede ser una fecha anterior a la fecha actual"
+             *  ]
+             * }
+             * }
+             *
+             */
+            $date = new \DateTime($data['date']);
+            $now = new \DateTime();
+            $dt_interval = $now->diff($date);
+            if ((int) $dt_interval->invert == 1){
+                throw new \Exception('El date no puede ser una fecha anterior o igual a la fecha actual', 422);
+            }
+
             // 1. Verificar en el motor de calendar que la fecha este disponible
             // 2. Registar un evento al calendar
             // 3. Crear un cargo
@@ -97,6 +119,7 @@ class MeetingOffilePayment
             $chargeObj = $this->registeropenpaychargeusecase->__invoke($charge);
 
             // 7. Enviar SMS
+            // TODO: Espera de confirmación
             // $dateUtil = new DateUtil();
             // $date = $data['date'];
             // $day = $dateUtil->getDayByDate($date);
@@ -110,6 +133,7 @@ class MeetingOffilePayment
             $url_file_charge = $this->getURLFileCharge($array_charge['payment_method']['reference']);
 
             // 9. Enviar correo
+            // TODO: Formateo de correos
             $textHtml = $this->getTextInHTML($url_file_charge);
             $this->sendEmail($data['email'], 'ATA | Cita', '', $textHtml);
 

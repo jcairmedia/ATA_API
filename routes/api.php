@@ -10,6 +10,7 @@ use App\Http\Controllers\API\PaidMeetingController;
 use App\Http\Controllers\API\ServicesController;
 use App\Http\Controllers\API\UsersController;
 use Illuminate\Http\Request;
+use App\Http\Controllers\API\WebHookOfflinePaidMeetingController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -43,6 +44,7 @@ Route::post('/meeting/paid', [PaidMeetingController::class, 'register']);
 Route::post('/meeting/paid/offline', [OfflinePaidMeetingController::class, 'index']);
 Route::post('/meeting/paid/online', [OnlinePaidMeetingController::class, 'index']);
 
+// test
 Route::get('/view', function () {
     $view = view('layout_meeting_Free',
                 [
@@ -53,3 +55,9 @@ Route::get('/view', function () {
                 ]);
     echo $view;
 });
+
+Route::get('/online', function () {
+    return view('formpaidonline');
+});
+
+Route::get('/hook', [WebHookOfflinePaidMeetingController::class, 'index']);

@@ -125,11 +125,12 @@ class OfflinePaidMeetingController extends Controller
      */
     public function index(OfflinePaidMeetingRequest $request)
     {
-        // code...
-        $contact_id = 0;
 
         try {
+
             $data = $request->all();
+
+
             // Search duration meeting
             $searchconfusecase = new SearchConfigurationUseCase(new SearchConfigDomain());
             $response_CONFIG_PHONE_OFFICE = $searchconfusecase($this->CONFIG_PHONE_OFFICE);

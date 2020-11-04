@@ -31,7 +31,7 @@ class CustomDateMeeting implements Rule
         $date = new \DateTime($value);
         $now = new \DateTime();
         $dt_interval = $now->diff($date);
-        if ((int) $dt_interval->invert == 1) {
+        if ((int) $dt_interval->invert == 1 && $dt_interval->days >0) {
             // $fail('Fecha pasada invalida');
             $this->message = 'El :attribute no puede ser una fecha anterior a la fecha actual';
 
