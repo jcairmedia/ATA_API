@@ -7,7 +7,7 @@ class LoginController extends Controller
     /**
      * @OA\Post(
      *  path="/oauth/token",
-     *  summary="Obtener token para el usuario",
+     *  summary="Log In",
      *  @OA\RequestBody(
      *   required=true ,
      *   description="Log In con el método tradicional",

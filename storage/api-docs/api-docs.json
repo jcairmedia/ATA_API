@@ -352,7 +352,7 @@
         },
         "/oauth/token": {
             "post": {
-                "summary": "Obtener token para el usuario",
+                "summary": "Log In",
                 "operationId": "App\\Http\\Controllers\\LoginController::index",
                 "requestBody": {
                     "description": "Log In con el método tradicional",
