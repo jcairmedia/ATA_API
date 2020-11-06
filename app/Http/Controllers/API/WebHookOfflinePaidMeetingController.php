@@ -13,5 +13,6 @@ class WebHookOfflinePaidMeetingController extends Controller
         \Log::info('respuesta hook Open pay: '.print_r($request->all(),1));
         $cu = new EventRequestOfflinePaidUseCase();
         $cu($request->all());
+        return response("Ok", 200);
     }
 }
