@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Utils\CustomMailer\EmailData;
 use App\Utils\CustomMailer\MailLib;
+use App\Utils\SendEmail;
 use GuzzleHttp\Client;
 use Illuminate\Console\Command;
 
@@ -233,15 +234,14 @@ class test extends Command
 
         $this->line($base64header. '.'. $base64payload. '.'.$base64_signature);*/
 
-        $date = new \DateTime('2020-11-03');
-
-        // $this->line($date->format('Y-m-d H:i:s'));
         // $date->modify('+24 hours');
         // $this->line($date->format('Y-m-d H:i:s'));
-        // echo($date->format('Y-m-d H:i:s'))."\n";
-        // $now = new \DateTime();
         // $this->line(print_r($now, 1));
         // $this->line(print_r($date, 1));
+        // $this->line($date->format('Y-m-d H:i:s'));
+        // $date = new \DateTime('2020-11-03');
+        // echo($date->format('Y-m-d H:i:s'))."\n";
+        // $now = new \DateTime();
         // $interval = $now->diff($date);
         // $this->line(print_r($interval, 1));
 
@@ -260,5 +260,39 @@ class test extends Command
         // if ($dia_semana >= 6) {
         //     $this->error('No se realizan citas los fines de semana');
         // }
+        // // TEST EMAIL
+        /*$emailData = new EmailData(
+            (object) ['email' => 'atanoreplay@gmail.com'],
+            ['erika@airmedia.com.mx'],
+            'probando email',
+            'hola',
+            ''
+        );
+
+        try {
+            $maillib = new MailLib([]);
+            $maillib->Send($emailData);
+        } catch (\Exception $ex) {
+            \Log::error($ex->getMessage());
+        }*/
+        // $sendEmail = new SendEmail();
+        // $dt = date('dmYHis');
+        // $data = ['customer_name' => 'usuario.cliente', 'confirmation_code' => uniqid($dt)];
+        // $view = view('layout_verify_email', $data);
+        // $sendEmail(['email' => 'atanoreplay@gmail.com'], ['erika@airmedia.com.mx'], 'ATA| Confirmación de email', '', $view);
+
+        $openpay = \Openpay::getInstance(env('OPENPAY_ID'),
+                                        env('OPENPAY_KEY_PRIVATE'));
+
+        $payoutData = [
+                'method' => 'bank_account',
+                'amount' => 500.00,
+                'bank_account' => [
+                    'clabe' => '012298026516924616',
+                    'holder_name' => 'Juan Tapia Trejo', ],
+                'description' => 'Pago a tercero', ];
+
+        $payout = $openpay->payouts->create($payoutData);
+        $this->line(print_r($payout,1));
     }
 }

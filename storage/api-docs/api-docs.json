@@ -350,6 +350,131 @@
                 }
             }
         },
+        "/oauth/token": {
+            "post": {
+                "summary": "Obtener token para el usuario",
+                "operationId": "App\\Http\\Controllers\\LoginController::index",
+                "requestBody": {
+                    "description": "Log In con el método tradicional",
+                    "required": true,
+                    "content": {
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "required": [
+                                    "grant_type",
+                                    "client_id",
+                                    "client_secret",
+                                    "username",
+                                    "password",
+                                    "scope"
+                                ],
+                                "properties": {
+                                    "grant_type": {
+                                        "type": "string",
+                                        "example": "password"
+                                    },
+                                    "client_id": {
+                                        "type": "string",
+                                        "example": "4"
+                                    },
+                                    "client_secret": {
+                                        "type": "string",
+                                        "example": "Kagy4h0z9QsXJBNRgvL5VXwbeUmwEeTdbAYwt4lA"
+                                    },
+                                    "username": {
+                                        "type": "string",
+                                        "example": "erika@airmedia.com.mx"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "12345678"
+                                    },
+                                    "scope": {
+                                        "type": "string",
+                                        "example": "2"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "invalid_grant"
+                                        },
+                                        "error_description": {
+                                            "type": "string",
+                                            "example": "The provided authorization grant (e.g., authorization code, resource owner credentials) or refresh token is invalid, expired, revoked, does not match the redirection URI used in the authorization request, or was issued to another client."
+                                        },
+                                        "hint": {
+                                            "type": "string",
+                                            "example": ""
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The provided authorization grant (e.g., authorization code, resource owner credentials) or refresh token is invalid, expired, revoked, does not match the redirection URI used in the authorization request, or was issued to another client."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "token_type": {
+                                            "type": "string",
+                                            "example": "Bearer"
+                                        },
+                                        "expires_in": {
+                                            "type": "string",
+                                            "example": "1296000"
+                                        },
+                                        "access_token": {
+                                            "type": "string",
+                                            "example": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9...."
+                                        },
+                                        "refresh_token": {
+                                            "type": "string",
+                                            "example": "def5020073e0ffbc1c1d8888481987032b6ef29733bb29f396df4680f1fa0628dd81f2cb5154d72c933dd898f0422bd72700281a96bc509e08ba6d9851493f312d86228ed1140666e0bbd71e4253ac55b7cf361cf5dde350f19bd30db8da277b5882f5873c3b9fed61dd4d9c81a8ccaf313febeda3041c1776493127c9aab5534aeb46df27020e4d9e8013cb24bf7669f99f0da42ae1be0a21a4b684461a8d0948c625934edbdd2ac35f33633f4f25d4eb31262c61fe66495f82cadd1b0ccafba105b09b54278e1e3c3600bd80b1e3195c3f2fcb83158b61d20f811c2a263ede290697bec8a4ff62ca7d537993af6776b0fc57f11e077f3efaa4a90fb33fcd27cea40e690ccdff1a6116bbc34a25470043f5ed0ced0c6691434b1892c31e6805c0603fd5892f6efc3c9b6846ec8b4e08fca8067ac20c54f1da7bd3f7dad2176423143ddd1b7546aca879b9fd18bae67c4d22ae5cba3276b7f3a21813127428e596f157c8"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/meeting/paid/offline": {
             "post": {
                 "summary": "Registrar una cita de pago en tienda",
@@ -968,6 +1093,134 @@
                         }
                     }
                 }
+            }
+        },
+        "/api/user": {
+            "get": {
+                "summary": "Obtener información del usuario usando el JWT",
+                "description": "El header debe enviarse así -> Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI0IiwianRpIjoiMDMxYTEyOWJkODU2ODI3NzJlYzUwODM1OTAwNDgxN2Y3MjRmYzAyODhhZWNiNTMwODc1MTQxMDUwZjU4MWUxYTgwNDUyZDc5ZmRkMDRkZjMiLCJpYXQiOjE2MDQ2MDE4ODgsIm5iZiI6MTYwNDYwMTg4OCwiZXhwIjoxNjA1ODk3ODg3LCJzdWIiOiIxMiIsInNjb3BlcyI6WyIqIl19.WqONJJREL1Ai8GSd2pNXFY2NEmNqWKWmt0wdJFIM-MIvs_lcbmHvM0ZFqeteDh5f5bkKul7u74qCIV1x_LQafgjrKAp7LIyYhyxzXQitYgDuV4Um_dJnHbXIiNS3S3_BfvC6iWRuA1fvqOgmNH4b-3Xxfnhh362Ahf9vBWazwnHAqhydN7gNFM2jETUPs87ugT4fK_xYUJOH1k9nMNr1UkjXx-fy0BZSeUc7qJ3fGURTdiRJKpjrFUklQFeWTbT2CwrR2Wi8UacKKuob8yFTbP4zF5qw0qGeoRzr734YT2-D9TeNyfsVO2tpLuI9k-rXi3S1e_Snemc1JaDgZ5ucDqw1ZutmrcN4aSLThium-bYy3mAUa-bmvcxxW9bbB_KOPawUhe4Zm1J7a5m2ycOxLOXYWLvxf_yfnX7JYW6biL32QHh74xnOOoLD4dX_N2Irrxlg3iSzBhmnUaXFxQ2Zt6nT-XArCs_Bo7sWohg3UtNkphhapWRtMT7tMekSK3ezoeYBgI38-TQ7dV9Mzki495-eBqeadSuD_zjbtzXkh2dlH0jfxD7dpwhc9Pfc6m0xlTotgioK2t_-xhulZLJMaADM2RQGz7jP_xWjVkxVtK59AlTVwy4Wsq7KIDfI2EW5PlsGgcwssl3o0mdmBpdFnDZgbyeSPMXeDOOPLO3wit4",
+                "operationId": "App\\Http\\Controllers\\API\\UsersController::getuser",
+                "responses": {
+                    "200": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "code": {
+                                            "type": "int",
+                                            "example": "200"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "number",
+                                                        "example": "1"
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "usuario"
+                                                    },
+                                                    "last_name1": {
+                                                        "type": "number",
+                                                        "example": "Apellido paterno"
+                                                    },
+                                                    "last_name2": {
+                                                        "type": "number",
+                                                        "example": "Apellido materno"
+                                                    },
+                                                    "email": {
+                                                        "type": "string",
+                                                        "example": "use1@gmail.com"
+                                                    },
+                                                    "email_verified_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2020-10-26 19:20:00"
+                                                    },
+                                                    "confirmation_code": {
+                                                        "type": "string",
+                                                        "example": ""
+                                                    },
+                                                    "url_image": {
+                                                        "type": "string",
+                                                        "example": ""
+                                                    },
+                                                    "phone": {
+                                                        "type": "string",
+                                                        "example": "1234567890"
+                                                    },
+                                                    "state": {
+                                                        "type": "number",
+                                                        "example": "1"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2020-10-26 19:20:00"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2020-10-26 19:20:00"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            },
+                                            "collectionFormat": "multi"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Your email address is not verified."
+                                        },
+                                        "exception": {
+                                            "type": "string",
+                                            "example": "Symfony\\\\Component\\\\HttpKernel\\\\Exception\\\\HttpException"
+                                        },
+                                        "file": {
+                                            "type": "string",
+                                            "example": "..Application.php"
+                                        },
+                                        "line": {
+                                            "type": "number",
+                                            "example": "1067"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "bearer_token": {
+                "type": "apiKey",
+                "description": "Enter token in format (Bearer <token>)",
+                "name": "Authorization",
+                "in": "header"
             }
         }
     },

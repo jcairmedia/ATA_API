@@ -20,6 +20,7 @@ class CreateUsersTable extends Migration
             $table->string('last_name2')->nullable()->comment('User´s last name');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
+            $table->string('confirmation_code')->comment('code verify email');
 
             $table->string('password')->nullable()->comment('Este campo en nullo cuando el usuario se autentico con facebook');
 

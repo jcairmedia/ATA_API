@@ -9,8 +9,8 @@ use App\Http\Controllers\API\PackagesController;
 use App\Http\Controllers\API\PaidMeetingController;
 use App\Http\Controllers\API\ServicesController;
 use App\Http\Controllers\API\UsersController;
-use Illuminate\Http\Request;
 use App\Http\Controllers\API\WebHookOfflinePaidMeetingController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -24,9 +24,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
+Route::get('/user', [UsersController::class, 'getuser'])->middleware(['auth:api', 'verified']);
 
 Route::group(['prefix' => '/users', 'middleware' => []], function () {
     Route::post('/', [UsersController::class, 'register']);
@@ -43,6 +41,15 @@ Route::post('/meeting/free', [FreeMeetingController::class, 'register']);
 Route::post('/meeting/paid', [PaidMeetingController::class, 'register']);
 Route::post('/meeting/paid/offline', [OfflinePaidMeetingController::class, 'index']);
 Route::post('/meeting/paid/online', [OnlinePaidMeetingController::class, 'index']);
+// valid code for activate user
+Route::get('/register/verify/{code}', [UsersController::class, 'verify']);
+// request in open pay
+Route::post('/hook', [WebHookOfflinePaidMeetingController::class, 'index']);
+
+
+
+
+
 
 // test
 Route::get('/view', function () {
@@ -55,10 +62,10 @@ Route::get('/view', function () {
                 ]);
     echo $view;
 });
-
 Route::get('/online', function () {
     return view('formpaidonline');
 });
-
-Route::get('/hook', [WebHookOfflinePaidMeetingController::class, 'index']);
-Route::post('/hook', [WebHookOfflinePaidMeetingController::class, 'index']);
+Route::get('/tarjeta', function () {
+    return view('crear_cliente_tarjeta');
+});
+// Route::get('/hook', [WebHookOfflinePaidMeetingController::class, 'index']);

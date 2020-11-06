@@ -2,11 +2,12 @@
 
 namespace App;
 
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     use Notifiable;
     use HasApiTokens;
@@ -20,7 +21,9 @@ class User extends Authenticatable
         'last_name1',
         'last_name2',
         'url_image',
+        'confirmation_code',
         'phone',
+        'email_verified_at',
         'facebook_user_id',
         'state',
     ];

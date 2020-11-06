@@ -16,6 +16,7 @@ class RegisterUseCase
     {
         $userObj = new User($user);
         $userObj->password = \Hash::make($userObj->password);
-        $this->userCreatorDomain->__invoke($userObj);
+
+        return $this->userCreatorDomain->__invoke($userObj);
     }
 }
