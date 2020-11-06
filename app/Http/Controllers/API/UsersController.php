@@ -93,7 +93,7 @@ class UsersController extends Controller
             $sendEmail = new SendEmail();
             $data = ['customer_name' => $userSaved->name, 'confirmation_code' => $userSaved->confirmation_code];
             $view = view('layout_verify_email', $data);
-            $sendEmail(['email' => 'atanoreplay@gmail.com'], [$user['email']], 'ATA| Confirmación de email', '', $view);
+            $sendEmail(['email' => 'noreply@usercenter.mx'], [$user['email']], 'ATA| Confirmación de email', '', $view);
 
             return response()->json([
                 'code' => 201,

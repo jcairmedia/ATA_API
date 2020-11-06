@@ -188,7 +188,7 @@ class MeetingOffilePayment
     private function sendEmail($email_customer, $subject, $bodyText, $bodyHtml)
     {
         $emailData = new EmailData(
-            (object) ['email' => 'atanoreplay@gmail.com'],
+            (object) ['email' => 'noreply@usercenter.mx'],
             [$email_customer],
             $subject,
             $bodyText,

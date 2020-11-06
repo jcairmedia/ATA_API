@@ -261,8 +261,8 @@ class test extends Command
         //     $this->error('No se realizan citas los fines de semana');
         // }
         // // TEST EMAIL
-        /*$emailData = new EmailData(
-            (object) ['email' => 'atanoreplay@gmail.com'],
+        $emailData = new EmailData(
+            (object) ['email' => 'noreply@usercenter.mx'],
             ['erika@airmedia.com.mx'],
             'probando email',
             'hola',
@@ -274,25 +274,30 @@ class test extends Command
             $maillib->Send($emailData);
         } catch (\Exception $ex) {
             \Log::error($ex->getMessage());
-        }*/
+        }
+
+
         // $sendEmail = new SendEmail();
         // $dt = date('dmYHis');
         // $data = ['customer_name' => 'usuario.cliente', 'confirmation_code' => uniqid($dt)];
         // $view = view('layout_verify_email', $data);
-        // $sendEmail(['email' => 'atanoreplay@gmail.com'], ['erika@airmedia.com.mx'], 'ATA| Confirmación de email', '', $view);
+        // $sendEmail(['email' => 'noreply@usercenter.mx'], ['erika@airmedia.com.mx'], 'ATA| Confirmación de email', '', $view);
 
-        $openpay = \Openpay::getInstance(env('OPENPAY_ID'),
-                                        env('OPENPAY_KEY_PRIVATE'));
+        /**
+         * Open pay pago con SPEI
+         */
+        // $openpay = \Openpay::getInstance(env('OPENPAY_ID'),
+        //                                 env('OPENPAY_KEY_PRIVATE'));
 
-        $payoutData = [
-                'method' => 'bank_account',
-                'amount' => 500.00,
-                'bank_account' => [
-                    'clabe' => '012298026516924616',
-                    'holder_name' => 'Juan Tapia Trejo', ],
-                'description' => 'Pago a tercero', ];
+        // $payoutData = [
+        //         'method' => 'bank_account',
+        //         'amount' => 500.00,
+        //         'bank_account' => [
+        //             'clabe' => '012298026516924616',
+        //             'holder_name' => 'Juan Tapia Trejo', ],
+        //         'description' => 'Pago a tercero', ];
 
-        $payout = $openpay->payouts->create($payoutData);
-        $this->line(print_r($payout,1));
+        // $payout = $openpay->payouts->create($payoutData);
+        // $this->line(print_r($payout,1));
     }
 }
