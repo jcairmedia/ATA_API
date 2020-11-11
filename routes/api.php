@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\API\AppointmentDateController;
 use App\Http\Controllers\API\BenefitsController;
+use App\Http\Controllers\API\CRUDMeetingController;
 use App\Http\Controllers\API\FreeMeetingController;
 use App\Http\Controllers\API\OfflinePaidMeetingController;
 use App\Http\Controllers\API\OnlinePaidMeetingController;
@@ -46,10 +47,7 @@ Route::get('/register/verify/{code}', [UsersController::class, 'verify']);
 // request in open pay
 Route::post('/hook', [WebHookOfflinePaidMeetingController::class, 'index']);
 
-
-
-
-
+Route::get('/meetings/list', [CRUDMeetingController::class, 'list']);
 
 // test
 Route::get('/view', function () {
@@ -65,6 +63,8 @@ Route::get('/view', function () {
 Route::get('/online', function () {
     return view('formpaidonline');
 });
+
+Route::post('/meeting/state', [CRUDMeetingController::class, 'updateStateMeeting']);
 Route::get('/tarjeta', function () {
     return view('crear_cliente_tarjeta');
 });

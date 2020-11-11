@@ -14,6 +14,8 @@ class MeetingUpdateDomain
     {
         try {
             Meeting::where('id', $meeting_id)->update($array);
+
+            return Meeting::findOrFail($meeting_id);
         } catch (\Exception $ex) {
             \Log::error($ex->getMessage().'('.$ex->getCode().')');
             throw new \Exception($ex->getMessage(), $ex->getCode(), $ex);

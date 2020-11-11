@@ -25,6 +25,7 @@ class CreateMeetingsTable extends Migration
             $table->boolean('record_state')->default(1)->comment('record´s state: open = 1/ close = 0');
             $table->boolean('paid_state')->default(0)->comment('payment´s state: paid = 1/ not paid = 0');
             $table->dateTime('dt_cancellation')->nullable()->comment('date time cancellation meeting');
+            $table->dateTime('dt_close')->nullable()->comment('date time close meeting');
             $table->timestamps();
 
             $table->index('folio');
