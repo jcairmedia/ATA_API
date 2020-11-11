@@ -25,6 +25,7 @@ class MeetingListDomain
         if ($filter != '') {
             $meetingTable = $meetingTable->where('type_meeting', 'like', '%'.$filter.'%');
         }
+        $meetingTable->join('contacts', 'meetings.contacts_id', '=', 'contacts.id');
         $contador = $meetingTable->count();
         $respuesta = $meetingTable->skip($index)->limit($byPage)->orderByRaw('dt_start DESC')->get();
 
