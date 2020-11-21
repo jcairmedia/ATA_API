@@ -15,10 +15,15 @@ class CRUDMeetingController extends Controller
         $index = $request->input('index') ?? 0;
         $filter = $request->input('filter') ?? '';
         $byPage = $request->input('byPage') ?? 10;
+        $category = $request->input('category') ?? '';
 
         $meetings = new MeetingListUseCase();
+        $array = [];
+        if ($category != '') {
+            $array = ['category' => $category];
+        }
 
-        return response()->json($meetings($filter, $index, $byPage));
+        return response()->json($meetings($filter, $index, $byPage, $array));
     }
 
     public function updateStateMeeting(Request $request)

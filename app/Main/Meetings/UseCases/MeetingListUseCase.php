@@ -6,10 +6,10 @@ use App\Main\Meetings\Domain\MeetingListDomain;
 
 class MeetingListUseCase
 {
-    public function __invoke(string $filter, int $index, int $byPage = 10)
+    public function __invoke(string $filter, int $index, int $byPage = 10, array $config = [])
     {
         $list = new MeetingListDomain();
 
-        return $list($filter, $index, $byPage);
+        return $list($filter, $index, $byPage, $config);
     }
 }

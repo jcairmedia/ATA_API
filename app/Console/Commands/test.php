@@ -41,8 +41,9 @@ class test extends Command
      */
     public function handle()
     {
-        /*
-        $path_file = storage_path('app'.DIRECTORY_SEPARATOR.'infraestructure').DIRECTORY_SEPARATOR.env('GOOGLE_SERVICE_ACCOUNT_FILE_NAME');
+        /*$path_file = storage_path('app'.
+                                    DIRECTORY_SEPARATOR.'infraestructure').
+                                    DIRECTORY_SEPARATOR.env('GOOGLE_SERVICE_ACCOUNT_FILE_NAME');
 
         $this->line($path_file);
 
@@ -60,6 +61,7 @@ class test extends Command
         foreach ($calendarios as $key => $value) {
             $this->line($value->getSummary());
         }
+
         // Print the next 10 events on the user's calendar.
         $calendarId = 'primary';
         $optParams = [
@@ -71,8 +73,8 @@ class test extends Command
         $results = $service->events->listEvents($calendarId, $optParams);
         $events = $results->getItems();
 
-        $this->line(print_r($events, 1));
-        */
+        $this->line(print_r($events, 1));*/
+
         // $emailData = new EmailData((object) ['email' => 'atanoreply@gmail.com'], ['erika@airmedia.com.mx'], 'Probando', 'Esto es un ejemplo');
         // try {
         //     //code...
@@ -212,9 +214,12 @@ class test extends Command
             echo "pass: ". $json['password'];
         }*/
 
+        // GENERANDO UN JWT
+        $parametro = '2020/11/18';
+
+
+
         /*
-            // GENERANDO UN JWT
-        $date_utc = new \DateTime("30-10-2020 16:30");
         $header = [
             "alg" => 'HS256',
             "typ" => "JWT"
@@ -261,7 +266,7 @@ class test extends Command
         //     $this->error('No se realizan citas los fines de semana');
         // }
         // // TEST EMAIL
-        $emailData = new EmailData(
+        /*$emailData = new EmailData(
             (object) ['email' => 'noreply@usercenter.mx'],
             ['erika@airmedia.com.mx'],
             'probando email',
@@ -274,8 +279,7 @@ class test extends Command
             $maillib->Send($emailData);
         } catch (\Exception $ex) {
             \Log::error($ex->getMessage());
-        }
-
+        }*/
 
         // $sendEmail = new SendEmail();
         // $dt = date('dmYHis');
@@ -283,7 +287,7 @@ class test extends Command
         // $view = view('layout_verify_email', $data);
         // $sendEmail(['email' => 'noreply@usercenter.mx'], ['erika@airmedia.com.mx'], 'ATA| Confirmación de email', '', $view);
 
-        /**
+        /*
          * Open pay pago con SPEI
          */
         // $openpay = \Openpay::getInstance(env('OPENPAY_ID'),

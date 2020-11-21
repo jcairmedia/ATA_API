@@ -28,8 +28,11 @@ class AppointmentDateRequest extends FormRequest
             'type' => [
                 'required',
                 Rule::in(['FREE', 'PAID']), ],
-            'date' => 'required|date',
-            // 'date' => 'required|date|after_or_equal:now',
+            'date' => [
+                'required',
+                'date',
+                new \App\Rules\CustomDateMeeting(),
+            ],
         ];
     }
 }

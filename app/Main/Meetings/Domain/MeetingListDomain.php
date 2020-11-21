@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\DB;
 
 class MeetingListDomain
 {
-    public function __invoke(string $filter, int $index, int $byPage)
+    public function __invoke(string $filter, int $index, int $byPage, array $config = [])
     // public function __invoke()
     {
         $filter = trim($filter);
@@ -25,9 +25,12 @@ class MeetingListDomain
         if ($filter != '') {
             $meetingTable = $meetingTable->where('type_meeting', 'like', '%'.$filter.'%');
         }
+        if (count($config) > 0) {
+            $meetingTable = $meetingTable->where($config);
+        }
         $meetingTable->join('contacts', 'meetings.contacts_id', '=', 'contacts.id');
         $contador = $meetingTable->count();
-        $respuesta = $meetingTable->skip($index)->limit($byPage)->orderByRaw('dt_start DESC')->get();
+        $respuesta = $meetingTable->select(['meetings.*', 'contacts.name'])->skip($index)->limit($byPage)->orderByRaw('dt_start DESC')->get();
 
         $markup['rows'] = $respuesta;
         $markup['total'] = $contador;
