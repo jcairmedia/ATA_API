@@ -8,8 +8,13 @@ use Exception;
 
 class AvailableHoursCaseUse
 {
-    public function __construct()
+    private $configHourStart = null;
+    private $configHourEnd = null;
+
+    public function __construct(string $configHourStart, string $configHourEnd)
     {
+        $this->configHourStart = $configHourStart;
+        $this->configHourEnd = $configHourEnd;
     }
 
     public function __invoke(\DateTime $dt, string $typeMeeting = 'FREE', string $idCalendar)
@@ -80,8 +85,8 @@ class AvailableHoursCaseUse
         $dtParam = $parameter;
         if ($now->format('Y-m-d') != $dtParam->format('Y-m-d')) {
             return [
-                'start' => new \DateTime($parameter->format('Y-m-d').' 09:00:00'),
-                'end' => new \DateTime($parameter->format('Y-m-d').' 17:59:59'),
+                'start' => new \DateTime($parameter->format('Y-m-d').' '.$this->configHourStart),
+                'end' => new \DateTime($parameter->format('Y-m-d').' '.$this->configHourEnd),
             ];
         }
 
@@ -91,14 +96,14 @@ class AvailableHoursCaseUse
 
         if ((int) $now->format('H') < 9) {
             return [
-                'start' => new \DateTime($now->format('Y-m-d 09:00:00')),
-                'end' => new \DateTime($parameter->format('Y-m-d').' 17:59:59'),
+                'start' => new \DateTime($now->format('Y-m-d '.$this->configHourStart)),
+                'end' => new \DateTime($parameter->format('Y-m-d '.$this->configHourEnd)),
             ];
         }
 
         return [
             'start' => $now,
-            'end' => new \DateTime($parameter->format('Y-m-d').' 17:59:59'),
+            'end' => new \DateTime($parameter->format('Y-m-d '.$this->configHourEnd)),
         ];
     }
 }

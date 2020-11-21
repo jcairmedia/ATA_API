@@ -14,7 +14,7 @@ class AppointmentDateController extends Controller
     /**
      * @OA\Get(
      *  path="/api/hours",
-     *  summary="Horas disponibles referente a la fecha seleccionada y al tipo de cita",
+     *  summary="Horarios disponibles referente a la fecha seleccionada y al tipo de cita",
      *  @OA\Parameter(in="query",
      *       required=true,
      *       description="Los valores aceptados son FREE y PAID",
@@ -22,7 +22,7 @@ class AppointmentDateController extends Controller
      *       @OA\Schema(
      *          type="string",
      *          format="string",
-     *          pattern="(FREE|CALL)$"
+     *          pattern="^(FREE|PAID)$"
      *       ),
      *       example="FREE"),
      *  @OA\Parameter(in="query", required=true, name="date", @OA\Schema(
@@ -70,16 +70,28 @@ class AppointmentDateController extends Controller
             $numberPlaces = 1;
             $idCalendar = '';
 
+            $CONFIG_HOUR_START = '09:00:00';
+            $CONFIG_HOUR_END = '17:59:59';
+
             switch ($typeMeeting) {
                 case 'FREE':
                     $config = $searchconfusecase('CALENDAR_ID_MEETING_FREE');
                     $config_places = $searchconfusecase('NUMBER_PLACES_MEETING_FREE');
+
+                    $CONFIG_HOUR_START = $searchconfusecase('HOUR_START_MEETING_FREE')->value;
+                    $CONFIG_HOUR_END = $searchconfusecase('HOUR_END_MEETING_FREE')->value;
+
                     $numberPlaces = (int) $config_places->value;
+
                     $idCalendar = $config->value;
                 break;
                 case 'PAID':
                     $config = $searchconfusecase('CALENDAR_ID_MEETING_PAID');
                     $config_places = $searchconfusecase('NUMBER_PLACES_MEETING_PAID');
+
+                    $CONFIG_HOUR_START = $searchconfusecase('HOUR_START_MEETING_PAID')->value;
+                    $CONFIG_HOUR_END = $searchconfusecase('HOUR_END_MEETING_PAID')->value;
+
                     $numberPlaces = (int) $config_places->value;
                     $idCalendar = $config->value;
                 break;
@@ -87,7 +99,8 @@ class AppointmentDateController extends Controller
                     throw new \Exception('No hay calendario para el tipo de reunión que esta solicitando', 500);
                 break;
             }
-            $hours = new AvailableHoursCaseUse();
+
+            $hours = new AvailableHoursCaseUse($CONFIG_HOUR_START, $CONFIG_HOUR_END);
 
             $obj = $hours($dt, $typeMeeting, $idCalendar);
 
