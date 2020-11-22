@@ -2,19 +2,25 @@
 
 namespace App\Http\Controllers\API;
 
+use App\CalendarEventMeeting;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Meetings\FreeMeetingRequest;
+use App\Main\CalendarEventMeeting\Domain\AddEventDomain;
 use App\Main\Config_System\Domain\SearchConfigDomain;
 use App\Main\Config_System\UseCases\SearchConfigurationUseCase;
 use App\Main\Contact\Domain\ContactCreatorDomain;
 use App\Main\Contact\Domain\ContactSelectDomain;
 use App\Main\Contact\UseCases\ContactFindUseCase;
 use App\Main\Contact\UseCases\ContactRegisterUseCase;
+use App\Main\Date\CaseUses\IsEnabledHourCaseUse;
 use App\Main\Meetings\UseCases\MeetingRegisterUseCase;
+use App\Main\Scheduler\Domain\SearchSchedulerDomain;
 use App\Utils\CustomMailer\EmailData;
 use App\Utils\CustomMailer\MailLib;
 use App\Utils\DateUtil;
 use App\Utils\SMSUtil;
+use Carbon\Carbon;
+use Spatie\GoogleCalendar\Event;
 
 class FreeMeetingController extends Controller
 {
@@ -102,9 +108,46 @@ class FreeMeetingController extends Controller
             $data = $request->all();
             $data['category'] = 'FREE';
             $data['type_meeting'] = 'CALL';
+
             // TODO: Verific datetime  handle
+            $searchconfusecase = new SearchConfigurationUseCase(new SearchConfigDomain());
+
+            $config = $searchconfusecase('CALENDAR_ID_MEETING_FREE');
+            $config_places = $searchconfusecase('NUMBER_PLACES_MEETING_FREE');
+
+            $numberPlaces = (int) $config_places->value;
+            $idCalendar = $config->value;
+
+            $n = new IsEnabledHourCaseUse();
+            $isEnableHour = $n(
+                $data['date'],
+                $data['time'],
+                'FREE',
+                $idCalendar,
+                $numberPlaces
+            );
+            if (!$isEnableHour) {
+                throw new \Exception('Hora no disponible', 400);
+            }
 
             // TODO: Create meeting in calendar
+            $scheduler = new SearchSchedulerDomain();
+            $rangeHour = $scheduler->_searchRangeHour($data['time'], 'FREE');
+            if ($rangeHour == null) {
+                throw new Exception('Horario no encontrado');
+            }
+
+            $dtStart = ($data['date'].' '.$rangeHour->start);
+            $dtEnd = ($data['date'].' '.$rangeHour->end);
+
+            $event = new Event();
+            $eventResult = $event->create(
+                [
+                    'name' => 'Llamar a '.$data['name'],
+                    'startDateTime' => new Carbon($dtStart),
+                    'endDateTime' => new Carbon($dtEnd), ],
+                    $idCalendar
+            );
 
             // Search duration meeting
             $val_search_config = '';
@@ -136,18 +179,24 @@ class FreeMeetingController extends Controller
             $meetingObj = $meetingUseCase($data, $contact_id, $config->value);
 
             // Send SMS
-            $phone = $data['phone'];
-            $config = $this->searchConfig($CONFIG_PHONE_OFFICE);
+            // $phone = $data['phone'];
+            // $config = $this->searchConfig($CONFIG_PHONE_OFFICE);
+            $time = $data['time'];
+            // $textMsg = $this->createTextMsg($day, $month, $time, $config->value);
+            // $smsUtil = new SMSUtil();
+            // $smsUtil->__invoke($textMsg, $phone);
+
+            // SAVE Event in Google Calendar
+            $calendar = new AddEventDomain();
+            $calendar(new CalendarEventMeeting([
+                'meetings_id' => $meetingObj->id,
+                'idevent' => $eventResult->id,
+                'idcalendar' => $idCalendar, ]));
 
             $dateUtil = new DateUtil();
             $date = $data['date'];
             $day = $dateUtil->getDayByDate($date);
             $month = $dateUtil->getNameMonthByDate($date);
-
-            $time = $data['time'];
-            $textMsg = $this->createTextMsg($day, $month, $time, $config->value);
-            $smsUtil = new SMSUtil();
-            $smsUtil->__invoke($textMsg, $phone);
 
             // Send Email
             $view = $this->getViewEmail([
@@ -197,10 +246,10 @@ class FreeMeetingController extends Controller
 
         try {
             $maillib = new MailLib([
-                "username" => env("MAIL_USERNAME"),
-                "password" => env("MAIL_PASSWORD"),
-                "host" => env("MAIL_HOST"),
-                "port" => env("MAIL_PORT"),]);
+                'username' => env('MAIL_USERNAME'),
+                'password' => env('MAIL_PASSWORD'),
+                'host' => env('MAIL_HOST'),
+                'port' => env('MAIL_PORT'), ]);
             $maillib->Send($emailData);
         } catch (\Exception $ex) {
             \Log::error($ex->getMessage());

@@ -15,6 +15,11 @@ class SearchSchedulerDomain
         ->get();
     }
 
+    public function _searchRangeHour(string $hour, string $type_meeting)
+    {
+        return Scheduler::where(['start' => $hour, 'type_scheduler' => $type_meeting])->first();
+    }
+
     public function __searchStart(string $hour, string $typeMeeting)
     {
         return Scheduler::whereRaw('? BETWEEN `start` AND `end`', [$hour])
