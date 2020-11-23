@@ -54,35 +54,33 @@ class subopay extends Command
         \Log::info("Subscripcion:". print_r($plan,1));
         $this->line(print_r($plan));*/
 
-        /**
+        /*
          * Crear cliente y asociar tarjeta
          */
-    //     $customerData = array(
-    //         'name' => 'Mi cliente dos',
-    //         'email' => 'erika@airmedia.com.mx'
-    //       );
+        $customerData = [
+            'name' => 'Mi cliente dos',
+            'email' => 'erika@airmedia.com.mx',
+          ];
 
-    //    $customer = $openpay->customers->add($customerData);
-    //    \Log::info("creacion de cliente: ". print_r($customer, 1));
-    //    $cardData = [
+        $customer = $openpay->customers->add($customerData);
+        \Log::info('creacion de cliente: '.print_r($customer, 1));
+        //    $cardData = [
     //     'token_id' => "kosyllhwpfn6uwvfn75i",
     //     'device_session_id' => "1JmL04I4GKFQGwwB0tutnoQhIhx6V0ZO"
     //    ];
     //    $card = $customer->cards->add($cardData);
     //    \Log::info("creacion de tarjeta del cliente: ". print_r($card, 1));
 
-    /**
+    /*
      * Crear subscripción
      */
-    $subscriptionDataRequest = array(
+    /*$subscriptionDataRequest = array(
         // "trial_end_date" => "2020-11-11",
         'plan_id' => 'p2fw0e8f3sihemvh0mi8',
         'card_id' => 'kosyllhwpfn6uwvfn75i');
     $id_cliente = "avxdawriyk3mjuxnju1r";
     $customer = $openpay->customers->get($id_cliente);
     $subscription = $customer->subscriptions->add($subscriptionDataRequest);
-        \Log::info("suscripción". print_r($subscription,1));
-
-
+        \Log::info("suscripción". print_r($subscription,1));*/
     }
 }
