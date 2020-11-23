@@ -2,6 +2,8 @@
 
 namespace App\Console\Commands;
 
+use App\Main\Date\CaseUses\IsEnabledHourCaseUse;
+use App\Main\Scheduler\Domain\SearchSchedulerDomain;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Spatie\GoogleCalendar\Event;
@@ -40,7 +42,42 @@ class testGoogle extends Command
      */
     public function handle()
     {
-        // $event = new Event();
+        $event = new Event();
+        $event->create(['name' => 'Cita free con Al',
+         'startDateTime' => new Carbon('2020-11-27 10:21:00'),
+         'description' => 'La descripcion de prueba',
+         'addAttendee' => [
+            'email' => 'john@example.com',
+            'name' => 'John Doe',
+            'comment' => 'Lorum ipsum', ],
+         'endDateTime' => new Carbon('2020-11-27 11:00:00'), ],
+         'io7n2prsu83uc8isfcke2eqnrg@group.calendar.google.com');
+
+        /*$n = new IsEnabledHourCaseUse();
+        $isEnableHour = $n('2020-11-21',
+        '12:15:00',
+        'PAID',
+        'io7n2prsu83uc8isfcke2eqnrg@group.calendar.google.com', 2);
+        */
+        /*$event = new Event();
+        $eventos = $event->get(new Carbon('2020-11-23 09:00:00'),
+             new Carbon('2020-11-23 11:30:00'),[],
+            'io7n2prsu83uc8isfcke2eqnrg@group.calendar.google.com');
+        $array = [];
+        foreach ($eventos as $key => $value) {
+            $array[] = [
+                'start' => $value->start->dateTime,
+                'end' => $value->end->dateTime,
+            ];
+        }
+        print_r($array);*/
+
+        /*$scheduler = new SearchSchedulerDomain();
+        $rangeHour = $scheduler->_searchRangeHour('12:15:00', 'PAID');
+        if ($rangeHour == null) {
+            throw new \Exception('No encotrado', 1);
+        }
+        print_r($rangeHour->toArray());*/
 
         // $event->name = 'A new full day event';
         // $event->startDate = Carbon::now();
@@ -48,14 +85,14 @@ class testGoogle extends Command
 
         // $event->save();
 
-        $google = GoogleCalendarFactory
-        ::
-        createForCalendarId(env('GOOGLE_CALENDAR_ID'));
-        $list = $google->listEvents(
-            new Carbon('2020-11-20 14:00:00'),
-             new Carbon('2020-11-22 23:00:00'));
+        // $google = GoogleCalendarFactory
+        // ::
+        // createForCalendarId(env('GOOGLE_CALENDAR_ID'));
+        // $list = $google->listEvents(
+        //     new Carbon('2020-11-20 14:00:00'),
+        //      new Carbon('2020-11-22 23:00:00'));
 
-        $this->line(print_r($list->items, true));
+        // $this->line(print_r($list->items, true));
 
         return 0;
     }

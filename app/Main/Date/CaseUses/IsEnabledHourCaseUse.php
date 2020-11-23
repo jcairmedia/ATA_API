@@ -19,7 +19,7 @@ class IsEnabledHourCaseUse
         $scheduler = new SearchSchedulerDomain();
         $rangeHour = $scheduler->_searchRangeHour($hour, $typeMeeting);
         if ($rangeHour == null) {
-            throw new Exception('Horario no encontrado');
+            throw new \Exception('Horario no encontrado');
         }
 
         $dtStart = ($dt.' '.$rangeHour->start);

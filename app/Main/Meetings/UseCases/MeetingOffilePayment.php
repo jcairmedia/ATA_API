@@ -2,17 +2,21 @@
 
 namespace App\Main\Meetings\UseCases;
 
+use App\CalendarEventMeeting;
+use App\Main\CalendarEventMeeting\Domain\AddEventDomain;
 use App\Main\Config_System\Domain\SearchConfigDomain;
 use App\Main\Config_System\UseCases\SearchConfigurationUseCase;
 use App\Main\Contact\UseCases\ContactFindUseCase;
 use App\Main\Contact\UseCases\ContactRegisterUseCase;
 use App\Main\OpenPay_payment_references\UseCases\RegisterOpenPayChargeUseCase;
+use App\Main\Scheduler\Domain\SearchSchedulerDomain;
 use App\Utils\CustomMailer\EmailData;
 use App\Utils\CustomMailer\MailLib;
 use App\Utils\DateUtil;
 use App\Utils\SMSUtil;
 use App\Utils\StorePaymentOpenPay;
 use App\Utils\ZoomMeetings;
+use Spatie\GoogleCalendar\Event;
 
 class MeetingOffilePayment
 {
@@ -34,9 +38,8 @@ class MeetingOffilePayment
     {
         try {
             /**
-             *
              * si la fecha es igual a hoy no puede agendar cita pago
-             * en tienda
+             * en tienda.
              *
              * {
              * "message": "The given data was invalid.",
@@ -46,17 +49,38 @@ class MeetingOffilePayment
              *  ]
              * }
              * }
-             *
              */
             $date = new \DateTime($data['date']);
             $now = new \DateTime();
             $dt_interval = $now->diff($date);
-            if ((int) $dt_interval->invert == 1){
+            if ((int) $dt_interval->invert == 1) {
                 throw new \Exception('El date no puede ser una fecha anterior o igual a la fecha actual', 422);
             }
+            $config = $searchconfusecase('CALENDAR_ID_MEETING_PAID');
+            $config_places = $searchconfusecase('NUMBER_PLACES_MEETING_PAID');
 
-            // 1. Verificar en el motor de calendar que la fecha este disponible
-            // 2. Registar un evento al calendar
+            $numberPlaces = (int) $config_places->value;
+            $idCalendar = $config->value;
+
+            // 1. is enabled hour in Calendar
+            $n = new IsEnabledHourCaseUse();
+            $isEnableHour = $n(
+                $data['date'],
+                $data['time'],
+                'PAID',
+                $idCalendar,
+                $numberPlaces
+            );
+            if (!$isEnableHour) {
+                throw new \Exception('Hora no disponible', 400);
+            }
+            // Exist hour in work's scheduler
+            $scheduler = new SearchSchedulerDomain();
+            $rangeHour = $scheduler->_searchRangeHour($data['time'], 'PAID');
+            if ($rangeHour == null) {
+                throw new Exception('Horario no encontrado');
+            }
+
             // 3. Crear un cargo
             $customer = [
                 'name' => $data['name'],
@@ -93,6 +117,19 @@ class MeetingOffilePayment
                 'method' => $array_charge['method'],
                 'json_create_reference' => json_encode($array_charge),
             ];
+            // 2. Registar un evento al calendar
+            $dtStart = ($data['date'].' '.$rangeHour->start);
+            $dtEnd = ($data['date'].' '.$rangeHour->end);
+
+            $event = new Event();
+            $eventResult = $event->create(
+                [
+                    'name' => 'Llamar a '.$data['name'],
+                    'description' => $this->setTextSubjectEventInCalendar($data['type_meeting']),
+                    'startDateTime' => new Carbon($dtStart),
+                    'endDateTime' => new Carbon($dtEnd), ],
+                    $idCalendar
+            );
 
             // 4. Registar el contacto
             try {
@@ -114,6 +151,16 @@ class MeetingOffilePayment
             $data['paid'] = 0;
             $meetingObj = $this->meetingUseCase->__invoke($data, $contact_id, $duration);
 
+            // 5.1 Add event in DB
+            try {
+                $calendar = new AddEventDomain();
+                $calendar(new CalendarEventMeeting([
+                'meetings_id' => $meetingObj->id,
+                'idevent' => $eventResult->id,
+                'idcalendar' => $idCalendar, ]));
+            } catch (\Exception $ex) {
+                \Log::error('ErrorOfflineAddEvent: '.$ex->getMessage());
+            }
             // 6. Persistir el cargo en BD
             $charge['meeting_id'] = $meetingObj->id;
             $chargeObj = $this->registeropenpaychargeusecase->__invoke($charge);
@@ -139,7 +186,6 @@ class MeetingOffilePayment
 
             // Enviar la url de la reunión
             // $responseUrl_meeting = $this->getUrlZoom($data['date'], $data['type_meeting'], 'ATA | Cita');
-
             return [
                 'meeting' => $meetingObj->toArray(),
                 'url_file_charge' => $url_file_charge,
@@ -164,6 +210,24 @@ class MeetingOffilePayment
         '/paynet-pdf'.
         '/'.env('OPENPAY_ID').
         '/'.$payment_method_reference;
+    }
+
+    private function setTextSubjectEventInCalendar($type_meeting)
+    {
+        $text = '';
+        switch ($type_meeting) {
+            case 'CALL':
+                $text .= 'Tipo de cita: llamada';
+            break;
+            case 'VIDEOCALL':
+                $text .= 'Tipo de cita: videollada';
+                break;
+            case 'PRESENTIAL':
+                $text .= 'Tipo de cita: presencial';
+            break;
+        }
+
+        return $text;
     }
 
     private function createTxt($day, $month, $time, $type_meeting)
@@ -197,10 +261,10 @@ class MeetingOffilePayment
 
         try {
             $maillib = new MailLib([
-                "username" => env("MAIL_USERNAME"),
-                "password" => env("MAIL_PASSWORD"),
-                "host" => env("MAIL_HOST"),
-                "port" => env("MAIL_PORT"),
+                'username' => env('MAIL_USERNAME'),
+                'password' => env('MAIL_PASSWORD'),
+                'host' => env('MAIL_HOST'),
+                'port' => env('MAIL_PORT'),
             ]);
             $maillib->Send($emailData);
         } catch (\Exception $ex) {

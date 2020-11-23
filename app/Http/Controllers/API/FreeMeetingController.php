@@ -18,7 +18,6 @@ use App\Main\Scheduler\Domain\SearchSchedulerDomain;
 use App\Utils\CustomMailer\EmailData;
 use App\Utils\CustomMailer\MailLib;
 use App\Utils\DateUtil;
-use App\Utils\SMSUtil;
 use Carbon\Carbon;
 use Spatie\GoogleCalendar\Event;
 
@@ -118,6 +117,7 @@ class FreeMeetingController extends Controller
             $numberPlaces = (int) $config_places->value;
             $idCalendar = $config->value;
 
+            // Is Enabled hour in google calendar calendar
             $n = new IsEnabledHourCaseUse();
             $isEnableHour = $n(
                 $data['date'],
@@ -130,7 +130,7 @@ class FreeMeetingController extends Controller
                 throw new \Exception('Hora no disponible', 400);
             }
 
-            // TODO: Create meeting in calendar
+            //Create meeting in calendar
             $scheduler = new SearchSchedulerDomain();
             $rangeHour = $scheduler->_searchRangeHour($data['time'], 'FREE');
             if ($rangeHour == null) {
@@ -178,15 +178,9 @@ class FreeMeetingController extends Controller
             $data['paid'] = 1;
             $meetingObj = $meetingUseCase($data, $contact_id, $config->value);
 
-            // Send SMS
-            // $phone = $data['phone'];
-            // $config = $this->searchConfig($CONFIG_PHONE_OFFICE);
             $time = $data['time'];
-            // $textMsg = $this->createTextMsg($day, $month, $time, $config->value);
-            // $smsUtil = new SMSUtil();
-            // $smsUtil->__invoke($textMsg, $phone);
 
-            // SAVE Event in Google Calendar
+            // Add Event in DB
             $calendar = new AddEventDomain();
             $calendar(new CalendarEventMeeting([
                 'meetings_id' => $meetingObj->id,

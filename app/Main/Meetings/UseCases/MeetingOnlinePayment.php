@@ -2,12 +2,16 @@
 
 namespace App\Main\Meetings\UseCases;
 
+use App\CalendarEventMeeting;
+use App\Main\CalendarEventMeeting\Domain\AddEventDomain;
 use App\Main\Config_System\Domain\SearchConfigDomain;
 use App\Main\Config_System\UseCases\SearchConfigurationUseCase;
 use App\Main\Contact\UseCases\ContactFindUseCase;
 use App\Main\Contact\UseCases\ContactRegisterUseCase;
+use App\Main\Date\CaseUses\IsEnabledHourCaseUse;
 use App\Main\Meetings\Domain\MeetingUpdateDomain;
 use App\Main\Meetings_payments\UseCases\RegisterPaymentUseCases;
+use App\Main\Scheduler\Domain\SearchSchedulerDomain;
 use App\Main\ZoomRequest\Domain\ZoomRequestDomain;
 use App\Main\ZoomRequest\UseCases\RegisterZoomUseCase;
 use App\Utils\CustomMailer\EmailData;
@@ -17,6 +21,8 @@ use App\Utils\SMSUtil;
 use App\Utils\StorePaymentOpenPay;
 use App\Utils\ZoomMeetings;
 use App\ZoomRequest;
+use Carbon\Carbon;
+use Spatie\GoogleCalendar\Event;
 
 class MeetingOnlinePayment
 {
@@ -37,8 +43,36 @@ class MeetingOnlinePayment
     public function __invoke(array $data, $amount_paid, $durationMeeting, $phone_office)
     {
         // 1. Verificar en el motor de calendar que la fecha este disponible
-        // 2. Registar un evento al calendar
-        // 3. Crear un cargo
+        $searchconfusecase = new SearchConfigurationUseCase(new SearchConfigDomain());
+
+        $config = $searchconfusecase('CALENDAR_ID_MEETING_PAID');
+        $config_places = $searchconfusecase('NUMBER_PLACES_MEETING_PAID');
+
+        $numberPlaces = (int) $config_places->value;
+        $idCalendar = $config->value;
+
+        // 1. is enabled hour in Calendar
+        $n = new IsEnabledHourCaseUse();
+        $isEnableHour = $n(
+                $data['date'],
+                $data['time'],
+                'PAID',
+                $idCalendar,
+                $numberPlaces
+            );
+        if (!$isEnableHour) {
+            throw new \Exception('Hora no disponible', 400);
+        }
+        $scheduler = new SearchSchedulerDomain();
+        $rangeHour = $scheduler->_searchRangeHour($data['time'], 'PAID');
+        if ($rangeHour == null) {
+            throw new Exception('Horario no encontrado');
+        }
+
+        $dtStart = ($data['date'].' '.$rangeHour->start);
+        $dtEnd = ($data['date'].' '.$rangeHour->end);
+
+        // 2. Create charge OPEN PAY
         $customer = [
             'name' => $data['name'],
             'phone_number' => $data['phone'],
@@ -58,16 +92,26 @@ class MeetingOnlinePayment
         \Log::error(__FILE__.' PAGO online: '.PHP_EOL.$response_OPEN_PAY_JSON_charge);
 
         // $array_charge = $this->mockupPaymentOpenpay();
-
-        // 4. Registar el contacto
+        // 3. Add event in google Calendar
+        $event = new Event();
+        $eventResult = $event->create(
+            [
+                'name' => 'Llamar a '.$data['name'],
+                'description' => $this->setTextSubjectEventInCalendar($data['type_meeting']),
+                'startDateTime' => new Carbon($dtStart),
+                'endDateTime' => new Carbon($dtEnd), ],
+                $idCalendar
+        );
+        // 4. Add contact
         $contact_id = $this->registerContact($data);
-        // 5. Registrar una reunión en BD
+
+        // 5. Add meeting in BD
         $data['amount'] = $amount_paid;
         $data['category'] = 'PAID';
         $data['paid'] = 1;
         $meetingObj = $this->meetingUseCase->__invoke($data, $contact_id, $durationMeeting);
 
-        // 6. Registrar el pago
+        // 6. Add payment in DB
         $payment = [
             'price' => $amount_paid,
             'folio' => $array_charge['id'],
@@ -82,22 +126,31 @@ class MeetingOnlinePayment
         ];
         $this->registerPayment->__invoke($payment);
 
-        // 7. De acuerdo al Tipo de pago se envia un email o un sms
+        // 7. Add Event and meeting in DB
+        try {
+            $calendar = new AddEventDomain();
+            $calendar(new CalendarEventMeeting([
+                'meetings_id' => $meetingObj->id,
+                'idevent' => $eventResult->id,
+                'idcalendar' => $idCalendar, ]));
+        } catch (\Exception $ex) {
+            \Log::error('Error add Event in DB: '.$ex->getMessage());
+        }
+        // 8. Send email: type payment email or a sms
         $dateUtil = new DateUtil();
         $date = $data['date'];
         $day = $dateUtil->getDayByDate($date);
         $month = $dateUtil->getNameMonthByDate($date);
         $textSMS = $this->createTxtForSMS($data['type_meeting'], $day, $month, $data['time']);
         $smsUtil = new SMSUtil();
-        if(env("APP_ENV") != 'local'){
+        if (env('APP_ENV') != 'local') {
             $smsUtil->__invoke($textSMS, $data['phone']);
         }
 
-        // 8. Generación de url de zoom
-
+        // 9. Generate de url de zoom
         $zoomresponse = $this->getUrlZoom($meetingObj->id, $data['date'].' '.$data['time'], $data['type_meeting'], 'ATA | Cita');
 
-        // // 9. Envio de EMail
+        // 10. Send EMail
         //TODO: Falta el formateo de correos, estoy en espera
         $textHtml = $this->createTextForEmail(
             $data['type_meeting'],
@@ -112,6 +165,24 @@ class MeetingOnlinePayment
             $textHtml);
 
         return ['meeting' => $meetingObj];
+    }
+
+    private function setTextSubjectEventInCalendar($type_meeting)
+    {
+        $text = '';
+        switch ($type_meeting) {
+            case 'CALL':
+                $text .= 'Tipo de cita: llamada';
+            break;
+            case 'VIDEOCALL':
+                $text .= 'Tipo de cita: videollada';
+                break;
+            case 'PRESENTIAL':
+                $text .= 'Tipo de cita: presencial';
+            break;
+        }
+
+        return $text;
     }
 
     // Only test: method Mockup response Open pay
@@ -238,10 +309,10 @@ class MeetingOnlinePayment
 
         try {
             $maillib = new MailLib([
-                "username" => env("MAIL_USERNAME"),
-                "password" => env("MAIL_PASSWORD"),
-                "host" => env("MAIL_HOST"),
-                "port" => env("MAIL_PORT"),]);
+                'username' => env('MAIL_USERNAME'),
+                'password' => env('MAIL_PASSWORD'),
+                'host' => env('MAIL_HOST'),
+                'port' => env('MAIL_PORT'), ]);
             $maillib->Send($emailData);
         } catch (\Exception $ex) {
             \Log::error($ex->getMessage());

@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\API;
-use App\Main\Meetings\UseCases\MeetingOnlinePayment;
+
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Meetings\PaidMeetingRequest;
 use App\Main\Config_System\Domain\SearchConfigDomain;
@@ -11,12 +11,13 @@ use App\Main\Contact\Domain\ContactSelectDomain;
 use App\Main\Contact\UseCases\ContactFindUseCase;
 use App\Main\Contact\UseCases\ContactRegisterUseCase;
 use App\Main\Meetings\UseCases\MeetingOffilePayment;
+use App\Main\Meetings\UseCases\MeetingOnlinePayment;
 use App\Main\Meetings\UseCases\MeetingRegisterUseCase;
+use App\Main\Meetings_payments\Domain\PaymentDomain;
+use App\Main\Meetings_payments\UseCases\RegisterPaymentUseCases;
 use App\Main\OpenPay_payment_references\Domain\CreaterChargeDomain;
 use App\Main\OpenPay_payment_references\UseCases\RegisterOpenPayChargeUseCase;
-use App\Main\Meetings_payments\Domain\PaymentDomain;
 use App\Utils\StorePaymentOpenPay;
-use App\Main\Meetings_payments\UseCases\RegisterPaymentUseCases;
 
 class PaidMeetingController extends Controller
 {
@@ -27,7 +28,6 @@ class PaidMeetingController extends Controller
         $this->CONFIG_MEETING_PAID_AMOUNT = 'MEETING_PAID_AMOUNT';
     }
 
-
     public function register(PaidMeetingRequest $request)
     {
         $contact_id = 0;
@@ -35,6 +35,8 @@ class PaidMeetingController extends Controller
         try {
             $data = $request->all();
             // Search duration meeting
+            $searchconfusecase = new SearchConfigurationUseCase(new SearchConfigDomain());
+
             $searchconfusecase = new SearchConfigurationUseCase(new SearchConfigDomain());
             $response_CONFIG_PHONE_OFFICE = $searchconfusecase($this->CONFIG_PHONE_OFFICE);
             $response_CONFIG_MEETING_PAID_DURATION = $searchconfusecase($this->CONFIG_MEETING_PAID_DURATION);
