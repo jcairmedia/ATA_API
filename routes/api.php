@@ -37,35 +37,25 @@ Route::get('/hours', [AppointmentDateController::class, 'hours']);
 Route::get('/benefits', [BenefitsController::class, 'all']);
 Route::get('/benefits/{idPackage}', [BenefitsController::class, 'byPackage'])->where('idPackage', '[0-9]+');
 Route::get('/services', [ServicesController::class, 'all']);
+
 Route::get('/packages', [PackagesController::class, 'all']);
+Route::group(['prefix' => 'contracts', 'middleware' => 'auth:api'], function () {
+    Route::post('', [PackagesController::class, 'contract']);
+});
+
 Route::post('/meeting/free', [FreeMeetingController::class, 'register']);
 Route::post('/meeting/paid', [PaidMeetingController::class, 'register']);
 Route::post('/meeting/paid/offline', [OfflinePaidMeetingController::class, 'index']);
 Route::post('/meeting/paid/online', [OnlinePaidMeetingController::class, 'index']);
+
 // valid code for activate user
 Route::get('/register/verify/{code}', [UsersController::class, 'verify']);
+
 // request in open pay
 Route::post('/hook', [WebHookOfflinePaidMeetingController::class, 'index']);
 
 Route::get('/meetings/list', [CRUDMeetingController::class, 'list']);
 
-// test
-Route::get('/view', function () {
-    $view = view('layout_meeting_Free',
-                [
-                    'phone_office' => '2228630218',
-                    'day' => 12,
-                    'month' => '02',
-                    'hours' => '13:50',
-                ]);
-    echo $view;
-});
-Route::get('/online', function () {
-    return view('formpaidonline');
-});
-
 Route::post('/meeting/state', [CRUDMeetingController::class, 'updateStateMeeting']);
-Route::get('/tarjeta', function () {
-    return view('crear_cliente_tarjeta');
-});
+
 // Route::get('/hook', [WebHookOfflinePaidMeetingController::class, 'index']);

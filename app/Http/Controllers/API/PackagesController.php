@@ -3,8 +3,14 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Packages\PackagesRequest;
+use App\Main\Cases\CasesUses\CasesCasesUse;
 use App\Main\Packages\Domain\PackageDomain;
+use App\Main\Packages\Domain\WherePackageDomain;
 use App\Main\Packages\UseCases\ListPackagesUseCases;
+use App\Main\Subscription\CaseUses\SubscriptionCaseUses;
+use App\Main\Subscription\CaseUses\SubscriptionOpenPayCaseUses;
+use Exception;
 
 class PackagesController extends Controller
 {
@@ -39,5 +45,75 @@ class PackagesController extends Controller
         $lp = new ListPackagesUseCases($pd);
 
         return response()->json($lp->list(['id', 'name', 'periodicity', 'amount']));
+    }
+
+    public function contract(PackagesRequest $request)
+    {
+        $user = $request->user();
+
+        try {
+            $data = $request->all();
+            $planId = '';
+
+            // Buscar el paquete para obtener el identificador del plan
+            $packageId = $data['packageId'];
+            $arrayPackages = (new WherePackageDomain())(['id' => $packageId]);
+
+            if (count($arrayPackages) <= 0) {
+                throw new Exception('Paquete no encontrado', 404);
+            }
+            $packageObj = $arrayPackages[0];
+            if ($packageObj->id_plan_openpay == '') {
+                throw new Exception('El paquete no cuenta con un plan de open pay', 401);
+            }
+            $planId = $packageObj->id_plan_openpay;
+
+            // -- PROCESO DE SUSCRIPCIÓN --
+            $arrayResponseSubscription = (new SubscriptionOpenPayCaseUses())(
+                $user,
+                $data['tokenId'],
+                $data['deviceSessionId'],
+                $planId
+            );
+            \Log::error(print_r($arrayResponseSubscription, 1));
+
+            // return $packageObj->toArray();
+            // Generar pdf
+            $urlDoc = 'una url de prueba';
+
+            // Persistir un Caso
+            $objCase = (new CasesCasesUse())(
+                $packageObj,
+                $arrayResponseSubscription['customerId'],
+                $user->id,
+                $data['serviceId'],
+                $urlDoc
+            );
+
+            // Persistir la subscripción
+            $subs = (new SubscriptionCaseUses())(
+                $objCase->id,
+                $arrayResponseSubscription['cardId'],
+                $arrayResponseSubscription['subscriptionId'],
+                $arrayResponseSubscription['customerId']
+            );
+
+            // -- ENVIAR DATOS AL USUARIO
+            // enviar SMS
+            // enviar correo
+            // response cliente
+            return response()->json($subs->toArray(), 201);
+        } catch (Exception $ex) {
+            \Log::error($ex->getMessage());
+            $code = (int) $ex->getCode();
+            if (!(($code >= 400 && $code <= 422) || ($code >= 500 && $code <= 503))) {
+                $code = 500;
+            }
+
+            return response()->json([
+                'code' => (int) $ex->getCode(),
+                'message' => $ex->getMessage(),
+            ], $code);
+        }
     }
 }

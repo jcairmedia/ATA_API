@@ -15,5 +15,6 @@ class Cases extends Model
         'services_id',
         'users_id',
         'customer_id',
+        'id_customer_openpay',
     ];
 }
