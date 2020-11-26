@@ -25,7 +25,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/user', [UsersController::class, 'getuser'])->middleware(['auth:api', 'verified']);
+Route::get('/user', [UsersController::class, 'getuser'])->middleware(['auth:api']);
 
 Route::group(['prefix' => '/users', 'middleware' => []], function () {
     Route::post('/', [UsersController::class, 'register']);

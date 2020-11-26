@@ -51,6 +51,14 @@ class PackagesController extends Controller
      * @OA\POST(
      *  path="/api/contracts",
      *  summary="Contración de paquetes: El tipo de autenticacion es bearer",
+     *  @OA\SecurityScheme(
+     *      securityScheme="bearerAuth",
+     *      in="header",
+     *      name="bearerAuth",
+     *      type="http",
+     *      scheme="bearer",
+     *      bearerFormat="JWT",
+     * ),
      *  @OA\RequestBody(
      *   required=true ,
      *   description="Registrar una cita gratuita",
