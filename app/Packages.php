@@ -10,5 +10,6 @@ class Packages extends Model
         'name',
         'description',
         'state',
+        'id_plan_openpay',
     ];
 }

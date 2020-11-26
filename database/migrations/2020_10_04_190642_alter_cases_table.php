@@ -17,7 +17,7 @@ class AlterCasesTable extends Migration
             $table->unsignedBigInteger('services_id');
             $table->foreign('services_id')->references('id')->on('services');
 
-            $table->unsignedBigInteger('users_id')->comment('Foreign key User id: user in charge of case');
+            $table->unsignedBigInteger('users_id')->nullable()->comment('Foreign key User id: user responsible of case');
             $table->foreign('users_id')->references('id')->on('users');
 
             $table->unsignedBigInteger('customer_id')->comment('Foreign key User id: customer of case');

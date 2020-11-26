@@ -942,6 +942,112 @@
                 }
             }
         },
+        "/api/contracts": {
+            "post": {
+                "summary": "Contración de paquetes: El tipo de autenticacion es bearer",
+                "operationId": "App\\Http\\Controllers\\API\\PackagesController::contract",
+                "requestBody": {
+                    "description": "Registrar una cita gratuita",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "tokenId",
+                                    "deviceSessionId",
+                                    "packageId",
+                                    "serviceId"
+                                ],
+                                "properties": {
+                                    "tokenId": {
+                                        "type": "string",
+                                        "example": "kl8gm1x69epllqw1sqdj"
+                                    },
+                                    "deviceSessionId": {
+                                        "type": "string",
+                                        "example": "kl8gm1x69epllqw1sqdj"
+                                    },
+                                    "packageId": {
+                                        "description": "Id del paquete",
+                                        "type": "number",
+                                        "example": "1"
+                                    },
+                                    "serviceId": {
+                                        "description": "Id del servicio",
+                                        "type": "number",
+                                        "example": "1"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "400": {
+                        "description": "List",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "code": {
+                                            "type": "int",
+                                            "example": "201"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Token ID does not exist"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "List",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "cases_id": {
+                                                        "description": "Id interno de la BD de ATA",
+                                                        "type": "number",
+                                                        "example": "kl8gm1x69epllqw1sqdj"
+                                                    },
+                                                    "id_card_openpay": {
+                                                        "description": "Id de la tarjeta registrada en openpay",
+                                                        "type": "string",
+                                                        "example": "9823987m1x69epllqw1sqdj"
+                                                    },
+                                                    "id_suscription_openpay": {
+                                                        "description": "Id de la suscripción de en openpay",
+                                                        "type": "string",
+                                                        "example": "hj3gm1x69epllqw1sqdj"
+                                                    },
+                                                    "id_customer_openpay": {
+                                                        "description": "Id del cliente registrado en openpay",
+                                                        "type": "string",
+                                                        "example": "9823bbgm1x69epllqw1sqdj"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            },
+                                            "collectionFormat": "multi"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/services": {
             "get": {
                 "summary": "Todos los servicios",

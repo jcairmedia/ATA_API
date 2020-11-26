@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AlterMeetingPayment extends Migration
+class AlterCasesTable01 extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,8 @@ class AlterMeetingPayment extends Migration
      */
     public function up()
     {
-        Schema::table('meeting_payments', function (Blueprint $table) {
-            $table->text('json')->nullable()->after('brand')->comment('json payment open pay');
+        Schema::table('packages', function (Blueprint $table) {
+            $table->string('id_plan_openpay')->after('amount')->comment('id plan open pay');
         });
     }
 
@@ -25,8 +25,8 @@ class AlterMeetingPayment extends Migration
      */
     public function down()
     {
-        Schema::table('meeting_payments', function (Blueprint $table) {
-            $table->dropColumn('json');
+        Schema::table('packages', function (Blueprint $table) {
+            $table->dropColumn('id_plan_openpay');
         });
     }
 }
