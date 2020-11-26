@@ -47,6 +47,57 @@ class PackagesController extends Controller
         return response()->json($lp->list(['id', 'name', 'periodicity', 'amount']));
     }
 
+    /**
+     * @OA\Get(
+     *  path="/api/contracts",
+     *  summary="Contración de paquetes",
+     *  @OA\RequestBody(
+     *   required=true ,
+     *   description="Registrar una cita gratuita",
+     *   @OA\JsonContent(
+     *    required={"tokenId", "deviceSessionId", "packageId", "serviceId"},
+     *    @OA\Property(property="tokenId", type="string", example="kl8gm1x69epllqw1sqdj"),
+     *    @OA\Property(property="deviceSessionId", type="string", example="kl8gm1x69epllqw1sqdj"),
+     *    @OA\Property(property="packageId", type="number", example="1"),
+     *    @OA\Property(property="serviceId", type="number", example="1"),
+     *   )
+     *  ),
+     *  @OA\Response(
+     *    response=400,
+     *    description="List",
+     *    @OA\JsonContent(
+     *      @OA\Property(
+     *        property="code",
+     *        type="int",
+     *        example="201"
+     *      ),
+     *      @OA\Property(
+     *        property="message",
+     *        type="string",
+     *        example="Token ID does not exist"
+     *      ),
+     *     )
+     *  ),
+     *  @OA\Response(
+     *    response=201,
+     *    description="List",
+     *    @OA\JsonContent(
+     *      @OA\Property(
+     *        property="data",
+     *        type="array",
+     *        collectionFormat="multi",
+     *        @OA\Items(
+     *            type="object",
+     *            @OA\Property(property="cases_id", type="number", example="kl8gm1x69epllqw1sqdj", description="Id interno de la BD de ATA"),
+     *            @OA\Property(property="id_card_openpay", type="string", example="9823987m1x69epllqw1sqdj", description="Id de la tarjeta registrada en openpay"),
+     *            @OA\Property(property="id_suscription_openpay", type="string", example="hj3gm1x69epllqw1sqdj", description="Id de la suscripción de en openpay"),
+     *            @OA\Property(property="id_customer_openpay", type="string", example="9823bbgm1x69epllqw1sqdj", description="Id del cliente registrado en openpay")
+     *          )
+     *      )
+     *     )
+     *  )
+     * )
+     */
     public function contract(PackagesRequest $request)
     {
         $user = $request->user();
@@ -102,7 +153,7 @@ class PackagesController extends Controller
             // enviar SMS
             // enviar correo
             // response cliente
-            return response()->json($subs->toArray(), 201);
+            return response()->json(['data' => $subs->toArray()], 201);
         } catch (Exception $ex) {
             \Log::error($ex->getMessage());
             $code = (int) $ex->getCode();
