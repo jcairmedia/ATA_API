@@ -48,9 +48,9 @@ class PackagesController extends Controller
     }
 
     /**
-     * @OA\Get(
+     * @OA\POST(
      *  path="/api/contracts",
-     *  summary="Contración de paquetes",
+     *  summary="Contración de paquetes: El tipo de autenticacion es bearer",
      *  @OA\RequestBody(
      *   required=true ,
      *   description="Registrar una cita gratuita",
@@ -58,8 +58,8 @@ class PackagesController extends Controller
      *    required={"tokenId", "deviceSessionId", "packageId", "serviceId"},
      *    @OA\Property(property="tokenId", type="string", example="kl8gm1x69epllqw1sqdj"),
      *    @OA\Property(property="deviceSessionId", type="string", example="kl8gm1x69epllqw1sqdj"),
-     *    @OA\Property(property="packageId", type="number", example="1"),
-     *    @OA\Property(property="serviceId", type="number", example="1"),
+     *    @OA\Property(property="packageId", type="number", example="1", description="Id del paquete"),
+     *    @OA\Property(property="serviceId", type="number", example="1", description="Id del servicio"),
      *   )
      *  ),
      *  @OA\Response(

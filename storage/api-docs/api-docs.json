@@ -943,8 +943,8 @@
             }
         },
         "/api/contracts": {
-            "get": {
-                "summary": "Contración de paquetes",
+            "post": {
+                "summary": "Contración de paquetes: El tipo de autenticacion es bearer",
                 "operationId": "App\\Http\\Controllers\\API\\PackagesController::contract",
                 "requestBody": {
                     "description": "Registrar una cita gratuita",
@@ -968,10 +968,12 @@
                                         "example": "kl8gm1x69epllqw1sqdj"
                                     },
                                     "packageId": {
+                                        "description": "Id del paquete",
                                         "type": "number",
                                         "example": "1"
                                     },
                                     "serviceId": {
+                                        "description": "Id del servicio",
                                         "type": "number",
                                         "example": "1"
                                     }
