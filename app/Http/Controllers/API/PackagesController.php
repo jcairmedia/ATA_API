@@ -10,6 +10,7 @@ use App\Main\Packages\Domain\WherePackageDomain;
 use App\Main\Packages\UseCases\ListPackagesUseCases;
 use App\Main\Subscription\CaseUses\SubscriptionCaseUses;
 use App\Main\Subscription\CaseUses\SubscriptionOpenPayCaseUses;
+use App\Utils\SendEmail;
 use Exception;
 
 class PackagesController extends Controller
@@ -159,7 +160,15 @@ class PackagesController extends Controller
 
             // -- ENVIAR DATOS AL USUARIO
             // enviar SMS
-            // enviar correo
+            // TODO:
+
+            // Enviar correo
+            $view = view('layout_contract_package');
+            (new SendEmail())(
+                ['email' => 'noreply@usercenter.mx'],
+                [$user->email],
+                'ATA| Contratación de paquetes', '', $view
+            );
             // response cliente
             return response()->json(['data' => $subs->toArray()], 201);
         } catch (Exception $ex) {
