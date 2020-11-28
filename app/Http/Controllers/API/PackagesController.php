@@ -10,6 +10,7 @@ use App\Main\Packages\Domain\WherePackageDomain;
 use App\Main\Packages\UseCases\ListPackagesUseCases;
 use App\Main\Subscription\CaseUses\SubscriptionCaseUses;
 use App\Main\Subscription\CaseUses\SubscriptionOpenPayCaseUses;
+use App\Utils\SendEmail;
 use Exception;
 
 class PackagesController extends Controller
@@ -47,6 +48,65 @@ class PackagesController extends Controller
         return response()->json($lp->list(['id', 'name', 'periodicity', 'amount']));
     }
 
+    /**
+     * @OA\POST(
+     *  path="/api/contracts",
+     *  summary="Contración de paquetes: El tipo de autenticacion es bearer",
+     *  @OA\SecurityScheme(
+     *      securityScheme="bearerAuth",
+     *      in="header",
+     *      name="bearerAuth",
+     *      type="http",
+     *      scheme="bearer",
+     *      bearerFormat="JWT",
+     * ),
+     *  @OA\RequestBody(
+     *   required=true ,
+     *   description="Registrar una cita gratuita",
+     *   @OA\JsonContent(
+     *    required={"tokenId", "deviceSessionId", "packageId", "serviceId"},
+     *    @OA\Property(property="tokenId", type="string", example="kl8gm1x69epllqw1sqdj"),
+     *    @OA\Property(property="deviceSessionId", type="string", example="kl8gm1x69epllqw1sqdj"),
+     *    @OA\Property(property="packageId", type="number", example="1", description="Id del paquete"),
+     *    @OA\Property(property="serviceId", type="number", example="1", description="Id del servicio"),
+     *   )
+     *  ),
+     *  @OA\Response(
+     *    response=400,
+     *    description="List",
+     *    @OA\JsonContent(
+     *      @OA\Property(
+     *        property="code",
+     *        type="int",
+     *        example="201"
+     *      ),
+     *      @OA\Property(
+     *        property="message",
+     *        type="string",
+     *        example="Token ID does not exist"
+     *      ),
+     *     )
+     *  ),
+     *  @OA\Response(
+     *    response=201,
+     *    description="List",
+     *    @OA\JsonContent(
+     *      @OA\Property(
+     *        property="data",
+     *        type="array",
+     *        collectionFormat="multi",
+     *        @OA\Items(
+     *            type="object",
+     *            @OA\Property(property="cases_id", type="number", example="kl8gm1x69epllqw1sqdj", description="Id interno de la BD de ATA"),
+     *            @OA\Property(property="id_card_openpay", type="string", example="9823987m1x69epllqw1sqdj", description="Id de la tarjeta registrada en openpay"),
+     *            @OA\Property(property="id_suscription_openpay", type="string", example="hj3gm1x69epllqw1sqdj", description="Id de la suscripción de en openpay"),
+     *            @OA\Property(property="id_customer_openpay", type="string", example="9823bbgm1x69epllqw1sqdj", description="Id del cliente registrado en openpay")
+     *          )
+     *      )
+     *     )
+     *  )
+     * )
+     */
     public function contract(PackagesRequest $request)
     {
         $user = $request->user();
@@ -100,9 +160,17 @@ class PackagesController extends Controller
 
             // -- ENVIAR DATOS AL USUARIO
             // enviar SMS
-            // enviar correo
+            // TODO:
+
+            // Enviar correo
+            $view = view('layout_contract_package');
+            (new SendEmail())(
+                ['email' => 'noreply@usercenter.mx'],
+                [$user->email],
+                'ATA| Contratación de paquetes', '', $view
+            );
             // response cliente
-            return response()->json($subs->toArray(), 201);
+            return response()->json(['data' => $subs->toArray()], 201);
         } catch (Exception $ex) {
             \Log::error($ex->getMessage());
             $code = (int) $ex->getCode();

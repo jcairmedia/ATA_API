@@ -10,7 +10,6 @@ use App\Main\Users\UseCases\RegisterUseCase;
 use App\Utils\SendEmail;
 use Illuminate\Http\Request;
 
-
 class UsersController extends Controller
 {
     /**
@@ -111,18 +110,18 @@ class UsersController extends Controller
     }
 
     /**
-     * Valid user's account
+     * Valid user's account.
      */
     public function verify(string $code)
     {
         $findUser = new FindUserDomain();
         $user = $findUser($code);
-        \Log::error('code'. $code);
-        \Log::error('User'. print_r($user, 1));
-        if(!$user){
+        \Log::error('code'.$code);
+        \Log::error('User'.print_r($user, 1));
+        if (!$user) {
             return response()->json([
                 'code' => 404,
-                'message' => "Not Found"
+                'message' => 'Not Found',
             ]);
         }
         $user->email_verified_at = (new \DateTime())->format('Y-m-d H:i:s');
@@ -135,7 +134,6 @@ class UsersController extends Controller
             'message' => 'Usuario verificado',
             'data' => [],
         ], 200);
-
     }
 
     /**
@@ -203,9 +201,10 @@ class UsersController extends Controller
      *  )
      * )
      */
-    public function getuser(Request $request){
+    public function getuser(Request $request)
+    {
         return response()->json(
-            ["code" => 200,
-            "data" => [$request->user()]]);
+            ['code' => 200,
+            'data' => [$request->user()], ]);
     }
 }

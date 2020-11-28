@@ -26,8 +26,8 @@ class PackagesRequest extends FormRequest
         return [
             'tokenId' => 'required|string', // id card token open pay
             'deviceSessionId' => 'required|string',
-            'packageId' => 'required',
-            'serviceId' => 'required',
+            'packageId' => 'required|exists:packages,id',
+            'serviceId' => 'required|exists:services,id',
         ];
     }
 }

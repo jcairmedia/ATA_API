@@ -9,15 +9,15 @@ class SendEmail
 {
     public function __invoke(array $from, array $email_customer, string $subject, string $bodyText, string $bodyHtml)
     {
-        $emailData = new EmailData(
-            (object) $from,
-            $email_customer,
-            $subject,
-            $bodyText,
-            $bodyHtml
-        );
-
         try {
+            $emailData = new EmailData(
+                (object) $from,
+                $email_customer,
+                $subject,
+                $bodyText,
+                $bodyHtml
+            );
+
             $maillib = new MailLib([
                 'username' => env('MAIL_USERNAME'),
                 'password' => env('MAIL_PASSWORD'),

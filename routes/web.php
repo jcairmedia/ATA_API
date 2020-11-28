@@ -1,5 +1,6 @@
 <?php
 
+use App\Utils\SendEmail;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,4 +16,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
+});
+Route::get('/contract', function () {
+    $sendEmail = new SendEmail();
+    $view = view('layout_contract_package');
+    $sendEmail(['email' => 'noreply@usercenter.mx'], ['erika@airmedia.com.mx'], 'ATA| Confirmación de email', '', $view);
+
+    return view('layout_contract_package');
 });
