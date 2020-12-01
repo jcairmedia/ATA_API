@@ -8,6 +8,7 @@ use App\Http\Controllers\API\OfflinePaidMeetingController;
 use App\Http\Controllers\API\OnlinePaidMeetingController;
 use App\Http\Controllers\API\PackagesController;
 use App\Http\Controllers\API\PaidMeetingController;
+use App\Http\Controllers\API\RCasesController;
 use App\Http\Controllers\API\ServicesController;
 use App\Http\Controllers\API\UsersController;
 use App\Http\Controllers\API\WebHookOfflinePaidMeetingController;
@@ -59,3 +60,4 @@ Route::get('/meetings/list', [CRUDMeetingController::class, 'list']);
 Route::post('/meeting/state', [CRUDMeetingController::class, 'updateStateMeeting']);
 
 // Route::get('/hook', [WebHookOfflinePaidMeetingController::class, 'index']);
+Route::get('/cases', [RCasesController::class, 'list']);
