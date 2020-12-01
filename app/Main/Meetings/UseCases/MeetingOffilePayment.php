@@ -4,10 +4,9 @@ namespace App\Main\Meetings\UseCases;
 
 use App\CalendarEventMeeting;
 use App\Main\CalendarEventMeeting\Domain\AddEventDomain;
-use App\Main\Config_System\Domain\SearchConfigDomain;
-use App\Main\Config_System\UseCases\SearchConfigurationUseCase;
 use App\Main\Contact\UseCases\ContactFindUseCase;
 use App\Main\Contact\UseCases\ContactRegisterUseCase;
+use App\Main\Date\CaseUses\IsEnabledHourCaseUse;
 use App\Main\OpenPay_payment_references\UseCases\RegisterOpenPayChargeUseCase;
 use App\Main\Scheduler\Domain\SearchSchedulerDomain;
 use App\Utils\CustomMailer\EmailData;
@@ -15,7 +14,7 @@ use App\Utils\CustomMailer\MailLib;
 use App\Utils\DateUtil;
 use App\Utils\SMSUtil;
 use App\Utils\StorePaymentOpenPay;
-use App\Utils\ZoomMeetings;
+use Carbon\Carbon;
 use Spatie\GoogleCalendar\Event;
 
 class MeetingOffilePayment
@@ -34,7 +33,7 @@ class MeetingOffilePayment
         $this->contactfindusecase = $contactfindusecase;
     }
 
-    public function __invoke(array $data, $duration, $phone_office, $amount_paid)
+    public function __invoke(array $data, $duration, $phone_office, $amount_paid, $numberPlaces, $idCalendar)
     {
         try {
             /**
@@ -56,11 +55,7 @@ class MeetingOffilePayment
             if ((int) $dt_interval->invert == 1) {
                 throw new \Exception('El date no puede ser una fecha anterior o igual a la fecha actual', 422);
             }
-            $config = $searchconfusecase('CALENDAR_ID_MEETING_PAID');
-            $config_places = $searchconfusecase('NUMBER_PLACES_MEETING_PAID');
-
-            $numberPlaces = (int) $config_places->value;
-            $idCalendar = $config->value;
+            \Log::error('Antes enable: '.print_r($data, 1));
 
             // 1. is enabled hour in Calendar
             $n = new IsEnabledHourCaseUse();
@@ -74,13 +69,14 @@ class MeetingOffilePayment
             if (!$isEnableHour) {
                 throw new \Exception('Hora no disponible', 400);
             }
+            \Log::error('Despues enable: ');
+
             // Exist hour in work's scheduler
             $scheduler = new SearchSchedulerDomain();
             $rangeHour = $scheduler->_searchRangeHour($data['time'], 'PAID');
             if ($rangeHour == null) {
                 throw new Exception('Horario no encontrado');
             }
-
             // 3. Crear un cargo
             $customer = [
                 'name' => $data['name'],
@@ -191,6 +187,7 @@ class MeetingOffilePayment
                 'url_file_charge' => $url_file_charge,
             ];
         } catch (\Exception $ex) {
+            \Log::error($ex->getMessage());
             throw new \Exception($ex->getMessage(), $ex->getCode());
         }
     }
@@ -276,51 +273,5 @@ class MeetingOffilePayment
     {
         return '<h1> Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugiat illo dicta veniam vitae minima eius laborum tenetur reprehenderit pariatur nisi voluptates optio rem magnam, iste officiis dignissimos quaerat dolore praesentium!</h1>'.
         'Este es su <a href="'.$url_charge.'">recibo de pago</a>, favor de pagarlo antes de 24 hrs.';
-    }
-
-    private function getUrlZoom($date, $type_meeting, $subject)
-    {
-        $zoomresponse = [
-            'code' => 500,
-            'message' => '',
-            'data' => [],
-        ];
-        if ($type_meeting != 'VIDEOCALL') {
-            return $zoomresponse;
-        }
-        try {
-            $search = new SearchConfigurationUseCase(new SearchConfigDomain());
-            $config = $search->__invoke('ZOOM_ACCESS_TOKEN');
-            $zoomMeeting = new ZoomMeetings(env('ZOOM_USER_ID'), $config->value);
-            $response = $zoomMeeting->build($date, $subject);
-            $zoomRequestArray = [
-                'join_url' => $response['join_url'],
-                'password' => $response['password'],
-                'start_time' => $response['start_time'],
-                'json' => json_encode($response),
-            ];
-            $this->saveZoomRequest($zoomRequestArray);
-        } catch (\Exception $ex) {
-            $zoomRequestArray = [
-                'join_url' => '',
-                'password' => '',
-                'start_time' => $date,
-                'state_request' => false,
-                'json' => json_encode($ex->getMessage()),
-            ];
-            $this->saveZoomRequest($zoomRequestArray);
-
-            return [
-                'code' => 500,
-                'message' => 'Error al obtener la url de zoom.('.$ex->getMessage().').'.
-                            ' Contacte a su administrador
-                            para que le proporcione una url de reunión.',
-            ];
-        }
-
-        return
-            [
-                'code' => 200,
-                'data' => $response, ];
     }
 }
