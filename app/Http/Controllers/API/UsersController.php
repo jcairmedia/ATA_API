@@ -7,8 +7,10 @@ use App\Http\Requests\User\UserRequest;
 use App\Main\Users\Domain\FindUserDomain;
 use App\Main\Users\Domain\UserCreatorDomain;
 use App\Main\Users\UseCases\RegisterUseCase;
+use App\User;
 use App\Utils\SendEmail;
 use Illuminate\Http\Request;
+use Spatie\Permission\Models\Role;
 
 class UsersController extends Controller
 {
@@ -206,5 +208,67 @@ class UsersController extends Controller
         return response()->json(
             ['code' => 200,
             'data' => [$request->user()], ]);
+    }
+
+    public function associate_rol(Request $request)
+    {
+        try {
+            $id = $request->input('id_user');
+            $user = User::where(['id' => $id])->first();
+            if ($user == null) {
+                throw new Exception('Usuario no encontrado', 400);
+            }
+            $rol = $request->input('rol_id');
+            $rolObj = Role::where(['id' => $rol])->first();
+            if ($rolObj == null) {
+                throw new Exception('Rol no existe', 500);
+            }
+            \Log::error('rol: '.$user->hasRole($rol));
+            if ($user->hasRole($rol)) {
+                throw new \Exception('El usuario ya tiene asociado el rol', 500);
+            }
+
+            $user->assignRole($rol);
+
+            return response()->json([
+                'code' => 201,
+                'message' => 'Rol asignado al usuario',
+                'data' => [],
+            ], 201);
+        } catch (\Exception $ex) {
+            \Log::error('Asociar rol al usuario: '.$ex->getMessage().$ex->getCode());
+
+            return response()->json([
+                    'code' => (int) $ex->getCode(),
+                    'message' => $ex->getMessage(),
+            ], (int) $ex->getCode());
+        }
+    }
+
+    public function getUserByRol(Request $request)
+    {
+        try {
+            $rol = $request->input('rol');
+
+            $rol = $request->input('rol');
+            $rolObj = Role::where(['name' => $rol])->first();
+            if ($rolObj == null) {
+                throw new \Exception('Rol no existe', 500);
+            }
+            $users = User::role('abogado')->select(['id', 'name', 'email'])->get();
+
+            return response()->json([
+                'code' => 200,
+                'message' => '',
+                'data' => $users,
+            ], 200);
+        } catch (\Exception $ex) {
+            \Log::error('Error en registro de usuario'.$ex->getMessage().$ex->getCode());
+
+            return response()->json([
+                    'code' => (int) $ex->getCode(),
+                    'message' => $ex->getMessage(),
+            ], (int) $ex->getCode());
+        }
     }
 }

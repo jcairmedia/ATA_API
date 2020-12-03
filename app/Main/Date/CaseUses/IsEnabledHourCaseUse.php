@@ -24,7 +24,6 @@ class IsEnabledHourCaseUse
 
         $dtStart = ($dt.' '.$rangeHour->start);
         $dtEnd = ($dt.' '.$rangeHour->end);
-
         $event = new Event();
         $events = $event->get(new Carbon($dtStart), new Carbon($dtEnd), [], $idCalendar);
 

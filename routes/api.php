@@ -4,11 +4,14 @@ use App\Http\Controllers\API\AppointmentDateController;
 use App\Http\Controllers\API\BenefitsController;
 use App\Http\Controllers\API\CRUDMeetingController;
 use App\Http\Controllers\API\FreeMeetingController;
+use App\Http\Controllers\API\MeetingReSchedulerController;
 use App\Http\Controllers\API\OfflinePaidMeetingController;
 use App\Http\Controllers\API\OnlinePaidMeetingController;
 use App\Http\Controllers\API\PackagesController;
 use App\Http\Controllers\API\PaidMeetingController;
+use App\Http\Controllers\API\PermissionController;
 use App\Http\Controllers\API\RCasesController;
+use App\Http\Controllers\API\RolesController;
 use App\Http\Controllers\API\ServicesController;
 use App\Http\Controllers\API\UsersController;
 use App\Http\Controllers\API\WebHookOfflinePaidMeetingController;
@@ -61,3 +64,11 @@ Route::post('/meeting/state', [CRUDMeetingController::class, 'updateStateMeeting
 
 // Route::get('/hook', [WebHookOfflinePaidMeetingController::class, 'index']);
 Route::get('/cases', [RCasesController::class, 'list']);
+Route::post('/case/lawyer', [RCasesController::class, 'setLawyer']);
+Route::post('/roles/add', [RolesController::class, 'add']);
+Route::post('/permission', [PermissionController::class, 'add']);
+Route::post('/roles/permission', [RolesController::class, 'associate']);
+Route::post('/user/rol', [UsersController::class, 'associate_rol']);
+Route::get('/users/rol', [UsersController::class, 'getUserByRol']);
+
+Route::post('/meeting/rescheduler', [MeetingReSchedulerController::class, 'index']);

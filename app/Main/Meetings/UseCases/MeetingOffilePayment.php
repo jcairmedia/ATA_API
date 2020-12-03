@@ -8,6 +8,7 @@ use App\Main\Config_System\Domain\SearchConfigDomain;
 use App\Main\Config_System\UseCases\SearchConfigurationUseCase;
 use App\Main\Contact\UseCases\ContactFindUseCase;
 use App\Main\Contact\UseCases\ContactRegisterUseCase;
+use App\Main\Date\CaseUses\IsEnabledHourCaseUse;
 use App\Main\OpenPay_payment_references\UseCases\RegisterOpenPayChargeUseCase;
 use App\Main\Scheduler\Domain\SearchSchedulerDomain;
 use App\Utils\CustomMailer\EmailData;
