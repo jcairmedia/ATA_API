@@ -77,7 +77,9 @@ class CRUDMeetingController extends Controller
                 $zoomToken = $config->value;
                 $zoomUserId = env('ZOOM_USER_ID');
                 $zoom = (new ZoomRequestGetDomain())($meetingObj->id);
-                (new ZoomDelete($zoomUserId, $zoomToken))($zoom->idmeetingzoom);
+                if ($zoom) {
+                    (new ZoomDelete($zoomUserId, $zoomToken))($zoom->idmeetingzoom);
+                }
             }
 
             return response()->json([

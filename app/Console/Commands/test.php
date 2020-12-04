@@ -217,8 +217,6 @@ class test extends Command
         // GENERANDO UN JWT
         $parametro = '2020/11/18';
 
-
-
         /*
         $header = [
             "alg" => 'HS256',
@@ -303,5 +301,40 @@ class test extends Command
 
         // $payout = $openpay->payouts->create($payoutData);
         // $this->line(print_r($payout,1));
+
+        // $hoy = new \DateTime('2020-12-02 18:00');
+        // $agendada = new \DateTime('2020-12-01 9:00');
+
+        $hoy = new \DateTime();
+        $agendada = new \DateTime('2020-12-04 10:00');
+
+        // $hoy = new \DateTime('2020-12-02 10:00');
+        // $agendada = new \DateTime('2020-12-03 10:00');
+
+        $diff = $agendada->diff($hoy);
+
+        // la fecha a agendada es menor a hoy
+        if ($diff->invert == 0) {
+            $this->line('menor a hoy');
+            exit;
+        }
+        if (($diff->days * 24 + $diff->h) < 24) {
+            // throw new Exception('No puede agendar con menor a 25 días');
+            echo 'No puede agendar con menor a 25 días';
+            exit;
+        }
+        echo PHP_EOL;
+        $poragendar = new \DateTime('2020-12-01 10:00');
+
+        $diff_ = $poragendar->diff($hoy);
+        // fecha de reagenda es menor  a hoy
+        if ($diff_->invert == 0) {
+            echo 'Fecha seleccionada para reagendar es menor a hoy';
+            exit;
+        }
+        if (($diff_->days * 24 + $diff_->h) <= 1) {
+            echo 'no se puede reagendar';
+            exit;
+        }
     }
 }
