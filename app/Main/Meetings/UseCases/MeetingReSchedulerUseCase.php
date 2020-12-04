@@ -9,7 +9,13 @@ use App\Main\Date\CaseUses\IsEnabledHourCaseUse;
 use App\Main\Meetings\Domain\MeetingCreatorDomain;
 use App\Main\Meetings\Domain\MeetingWhereDomain;
 use App\Main\Meetings\Domain\MeetingWithContactDomain;
+use App\Main\Meetings\Utils\DoURLZoomMeetingPaidUtils;
+use App\Main\Meetings\Utils\TextForEmailMeetingPaidUtils;
+use App\Main\Meetings\Utils\TextForSMSMeetingPaidUtils;
 use App\Main\Scheduler\Domain\SearchSchedulerDomain;
+use App\Utils\DateUtil;
+use App\Utils\SendEmail;
+use App\Utils\SMSUtil;
 use Carbon\Carbon;
 use Spatie\GoogleCalendar\Event;
 
@@ -56,24 +62,55 @@ class MeetingReSchedulerUseCase
             } catch (\Exception $ex) {
                 \Log::error('Error add Event in DB: '.$ex->getMessage());
             }
-            $meetingObj->dt_start_rescheduler = $data['date'].' '.$rangeHour->start;
-            $meetingObj->dt_end_rescheduler = $data['date'].' '.$rangeHour->end;
-            $meetingObjNew = (new MeetingCreatorDomain())($meetingObj);
+        } else {
+            $_idEvent_ = $event->idevent;
+            $_idCalendar_ = $event->idcalendar;
+            $eventObj = Event::find($_idEvent_, $_idCalendar_);
 
-            return $meetingObjNew;
+            $eventObj->startDateTime = new Carbon($data['date'].' '.$rangeHour->start);
+            $eventObj->endDateTime = new Carbon($data['date'].' '.$rangeHour->end);
+            $eventObj->summary .= ' (re agendada)';
+            $eventObj->save();
         }
-        $_idEvent_ = $event->idevent;
-        $_idCalendar_ = $event->idcalendar;
-        $eventObj = Event::find($_idEvent_, $_idCalendar_);
-
-        $eventObj->startDateTime = new Carbon($data['date'].' '.$rangeHour->start);
-        $eventObj->endDateTime = new Carbon($data['date'].' '.$rangeHour->end);
-        $eventObj->summary .= ' (re agendada)';
 
         $meetingObj->dt_start_rescheduler = $data['date'].' '.$rangeHour->start;
         $meetingObj->dt_end_rescheduler = $data['date'].' '.$rangeHour->end;
         $meetingObjUpdate = (new MeetingCreatorDomain())($meetingObj);
-        $eventObj->save();
+
+        $meetingObjWithContact = (new MeetingWithContactDomain())($meetingObj->id);
+
+        // send mail
+        $dateUtil = new DateUtil();
+        $date = $data['date'];
+        $day = $dateUtil->getDayByDate($date);
+        $month = $dateUtil->getNameMonthByDate($date);
+
+        $zoomresponse = (new DoURLZoomMeetingPaidUtils())(
+            $meetingObj->id,
+            $data['date'].' '.$data['time'],
+            $meetingObj->type_meeting,
+            'ATA | Cita');
+
+        if (env('APP_ENV') != 'local') {
+            $textSMS = (new TextForSMSMeetingPaidUtils())($meetingObj->type_meeting, $day, $month, $data['time']);
+            (new SMSUtil())($textSMS, $meetingObjWithContact->phone);
+        }
+
+        $textEmail = (new TextForEmailMeetingPaidUtils())(
+            $meetingObj->type_meeting,
+            $day,
+            $month,
+            $data['time'],
+            $zoomresponse
+         );
+
+        (new SendEmail())(
+            ['email' => 'noreply@usercenter.mx'],
+            [$meetingObjWithContact->email],
+            'ATA | Cita',
+            '',
+            $textEmail
+        );
 
         return $meetingObjUpdate;
     }

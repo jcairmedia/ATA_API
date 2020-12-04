@@ -10,7 +10,7 @@ class MeetingWithContactDomain
     {
         return Meeting::where(['meetings.id' => $meetingId])
         ->join('contacts', 'contacts.id', '=', 'meetings.contacts_id')
-        ->select(['meetings.*', 'contacts.name as contact'])
+        ->select(['meetings.*', 'contacts.name as contact', 'contacts.phone', 'contacts.email'])
         ->first();
         // code...
     }

@@ -31,9 +31,8 @@ class CRUDMeetingController extends Controller
         try {
             $id = $request->input('id');
             $option = $request->input('option');
-            // $array = ['record_state' => 0];
-            // $id = 0;
-            // $option = 'CANCELL'; // CANCELL, COMPLETE
+            $reason = $request->input('reason');
+
             $meeting = new MeetingWhereDomain();
             $meetingObj = $meeting(['id' => $id]);
             if (count($meetingObj) <= 0) {
@@ -45,11 +44,15 @@ class CRUDMeetingController extends Controller
                 // record_state : -1 cancelado, 0 completado, 1 pendiente
                 $stateNewMeeting = 0; //$meetingObj->record_state == 0 ? 1 : 0;
                 $meetingNew = $updateDomain($meetingObj->id, [
+                    'msg_cancellation' => $reason,
                     'record_state' => $stateNewMeeting,
                     'dt_close' => (new \DateTime())->format('Y-m-d H:i:s'),
                 ]);
             } else {
+                // eliminar evento de calendar
+
                 $meetingNew = $updateDomain($meetingObj->id, [
+                    'msg_cancellation' => $reason,
                     'record_state' => -1,
                     'dt_cancellation' => (new \DateTime())->format('Y-m-d H:i:s'),
                 ]);

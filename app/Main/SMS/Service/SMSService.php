@@ -24,7 +24,7 @@ class SMSService
      */
     public function __invoke($message, $phone)
     {
-        $phone = '+52'. $phone;
+        $phone = '+52'.$phone;
         $response = $this->client->request(
             'POST',
             'https://api.mailjet.com/v4/sms-send', [
@@ -38,7 +38,10 @@ class SMSService
         $statusCode = (int) $response->getStatusCode();
         $stringResponse = (string) $response->getBody();
         $data = json_decode((string) $response->getBody());
-        \Log::error((__FILE__.'error en el envio de SMS'.$stringResponse));
+        \Log::error('Msn: '.$message);
+        \Log::error('phone: '.$phone);
+        \Log::error('token: '.$this->token);
+        \Log::error((__FILE__.' error en el envio de SMS'.$stringResponse));
 
         return [
             'statusCode' => $statusCode,

@@ -9,18 +9,15 @@ use App\Main\Config_System\UseCases\SearchConfigurationUseCase;
 use App\Main\Contact\UseCases\ContactFindUseCase;
 use App\Main\Contact\UseCases\ContactRegisterUseCase;
 use App\Main\Date\CaseUses\IsEnabledHourCaseUse;
-use App\Main\Meetings\Domain\MeetingUpdateDomain;
+use App\Main\Meetings\Utils\DoURLZoomMeetingPaidUtils;
+use App\Main\Meetings\Utils\TextForEmailMeetingPaidUtils;
+use App\Main\Meetings\Utils\TextForSMSMeetingPaidUtils;
 use App\Main\Meetings_payments\UseCases\RegisterPaymentUseCases;
 use App\Main\Scheduler\Domain\SearchSchedulerDomain;
-use App\Main\ZoomRequest\Domain\ZoomRequestDomain;
-use App\Main\ZoomRequest\UseCases\RegisterZoomUseCase;
-use App\Utils\CustomMailer\EmailData;
-use App\Utils\CustomMailer\MailLib;
 use App\Utils\DateUtil;
+use App\Utils\SendEmail;
 use App\Utils\SMSUtil;
 use App\Utils\StorePaymentOpenPay;
-use App\Utils\ZoomMeetings;
-use App\ZoomRequest;
 use Carbon\Carbon;
 use Spatie\GoogleCalendar\Event;
 
@@ -141,28 +138,36 @@ class MeetingOnlinePayment
         $date = $data['date'];
         $day = $dateUtil->getDayByDate($date);
         $month = $dateUtil->getNameMonthByDate($date);
-        $textSMS = $this->createTxtForSMS($data['type_meeting'], $day, $month, $data['time']);
-        $smsUtil = new SMSUtil();
         if (env('APP_ENV') != 'local') {
-            $smsUtil->__invoke($textSMS, $data['phone']);
+            $textSMS = (new TextForSMSMeetingPaidUtils())($data['type_meeting'], $day, $month, $data['time']);
+            (new SMSUtil())($textSMS, $data['phone']);
         }
 
         // 9. Generate de url de zoom
-        $zoomresponse = $this->getUrlZoom($meetingObj->id, $data['date'].' '.$data['time'], $data['type_meeting'], 'ATA | Cita');
+
+        $zoomresponse = (new DoURLZoomMeetingPaidUtils())(
+            $meetingObj->id,
+            $data['date'].' '.$data['time'],
+            $data['type_meeting'],
+            'ATA | Cita'
+        );
 
         // 10. Send EMail
         //TODO: Falta el formateo de correos, estoy en espera
-        $textHtml = $this->createTextForEmail(
+        $textEmail = (new TextForEmailMeetingPaidUtils())(
             $data['type_meeting'],
             $day,
             $month,
             $data['time'],
-            $zoomresponse);
-        $this->sendEmail(
-            $data['email'],
+            $zoomresponse
+        );
+        (new SendEmail())(
+            ['email' => 'noreply@usercenter.mx'],
+            [$data['email']],
             'ATA | Cita',
             '',
-            $textHtml);
+            $textEmail
+        );
 
         return ['meeting' => $meetingObj];
     }
@@ -242,139 +247,5 @@ class MeetingOnlinePayment
         }
 
         return $contact_id;
-    }
-
-    private function createTxtForSMS($type_meeting, $day, $month, $time)
-    {
-        $textMsg = '';
-        switch ($type_meeting) {
-            case 'CALL':
-                $textMsg .= 'Recuerda estar atento al teléfono que nos proporcionaste para tomar tu llamada.';
-            break;
-            case 'VIDEOCALL':
-                $textMsg .= 'Ingresa al correo electrónico que nos proporcionaste y obtén el enlace de tu videollamada';
-                break;
-            case 'PRESENTIAL':
-                $textMsg .= 'Ingresa al correo electrónico que nos proporcionaste y te daremos detalles de tu cita.';
-            break;
-        }
-
-        return $textMsg;
-    }
-
-    private function createTextForEmail($type_meeting, $day, $month, $time, $objZoom)
-    {
-        $textMsg = '';
-        switch ($type_meeting) {
-            case 'CALL':
-                $textMsg = 'El día '.$day.' de '.$month.' a las '.$time.', tiene programada su primer  guía legal con ATA.';
-            break;
-            case 'VIDEOCALL':
-                $messageZoom = $objZoom['code'] == 200 ?
-                ' Recuerda seguir el enlace indicado debajo y presentarte en tiempo y forma'.
-                '</br>'.
-                '<a href="'.$objZoom['data']['join_url'].'">'.'Enlace'.'</a>' : $objZoom['message'];
-
-                $textMsg = 'El día '.$day.' de '.$month.' a las '.$time.', tiene programada su primer  guía legal con ATA.\n'.
-                        $messageZoom.'</br>'.
-                        '1. En caso de no poder'.
-                        '2. La tolerancia'.
-                        '3. En caso de alguna llamada ';
-                break;
-            case 'PRESENTIAL':
-                $textMsg = '
-                        El día '.$day.' de '.$month.' a las '.$time.', tiene programada su primer  guía legal con ATA.
-                        Recuerda llegar a la dirección indicada debajo y presentarte en tiempo y forma.
-                        Av. Cuauhtemoc 145, Roma Norte,
-                        06700,CDMX.
-
-                        1. En caso de no poder recibir asesoria
-                        2. La tolerancia de espera por parte de nuestros abogados, será de 15 minutos
-                        ';
-            break;
-        }
-
-        return $textMsg;
-    }
-
-    private function sendEmail($email_customer, $subject, $bodyText, $bodyHtml)
-    {
-        $emailData = new EmailData(
-            (object) ['email' => 'noreply@usercenter.mx'],
-            [$email_customer],
-            $subject,
-            $bodyText,
-            $bodyHtml
-        );
-
-        try {
-            $maillib = new MailLib([
-                'username' => env('MAIL_USERNAME'),
-                'password' => env('MAIL_PASSWORD'),
-                'host' => env('MAIL_HOST'),
-                'port' => env('MAIL_PORT'), ]);
-            $maillib->Send($emailData);
-        } catch (\Exception $ex) {
-            \Log::error($ex->getMessage());
-        }
-    }
-
-    private function getUrlZoom($meeting_id, $date, $type_meeting, $subject)
-    {
-        $zoomresponse = [
-            'code' => 500,
-            'message' => '',
-            'data' => [],
-        ];
-        if ($type_meeting != 'VIDEOCALL') {
-            return $zoomresponse;
-        }
-        try {
-            $search = new SearchConfigurationUseCase(new SearchConfigDomain());
-            $config = $search->__invoke('ZOOM_ACCESS_TOKEN');
-            $zoomMeeting = new ZoomMeetings(env('ZOOM_USER_ID'), $config->value);
-            $response = $zoomMeeting->build($date.':00', $subject);
-            // Save request Zoom
-            $dt_meeting_zoom = new \DateTime($response['start_time'], new \DateTimeZone($response['timezone']));
-
-            $zoomRequestArray = [
-                'join_url' => $response['join_url'],
-                'password' => $response['password'],
-                'start_time' => $dt_meeting_zoom->format('Y-m-d H:i:s'),
-                'timezone' => $response['timezone'], //$response['start_time'],
-                'json' => json_encode($response),
-            ];
-            $this->saveZoomRequest($zoomRequestArray);
-            // update url meeting
-            $meetingUpdate = new MeetingUpdateDomain();
-            $meetingUpdate->__invoke($meeting_id, ['url_meeting' => $response['join_url']]);
-        } catch (\Exception $ex) {
-            $zoomRequestArray = [
-                'join_url' => '',
-                'password' => '',
-                'start_time' => $date,
-                'state_request' => false,
-                'json' => json_encode($ex->getMessage()),
-            ];
-            $this->saveZoomRequest($zoomRequestArray);
-
-            return [
-                'code' => 500,
-                'message' => 'Error al obtener la url de zoom.('.$ex->getMessage().').'.
-                            ' Contacte a su administrador
-                            para que le proporcione una url de reunión.',
-            ];
-        }
-
-        return
-            [
-                'code' => 200,
-                'data' => $response, ];
-    }
-
-    private function saveZoomRequest($array)
-    {
-        $registerzoom = new RegisterZoomUseCase(new ZoomRequestDomain());
-        $registerzoom->__invoke(new ZoomRequest($array));
     }
 }
