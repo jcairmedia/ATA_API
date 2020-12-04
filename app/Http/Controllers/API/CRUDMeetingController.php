@@ -3,9 +3,15 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Main\CalendarEventMeeting\Domain\GetEventDomain;
+use App\Main\Config_System\Domain\SearchConfigDomain;
+use App\Main\Config_System\UseCases\SearchConfigurationUseCase;
+use App\Main\EventsCalendar\Services\EventDelete;
 use App\Main\Meetings\Domain\MeetingUpdateDomain;
 use App\Main\Meetings\Domain\MeetingWhereDomain;
 use App\Main\Meetings\UseCases\MeetingListUseCase;
+use App\Main\ZoomRequest\Domain\ZoomRequestGetDomain;
+use App\Utils\ZoomDelete;
 use Illuminate\Http\Request;
 
 class CRUDMeetingController extends Controller
@@ -26,6 +32,9 @@ class CRUDMeetingController extends Controller
         return response()->json($meetings($filter, $index, $byPage, $array));
     }
 
+    /**
+     * Cancell or finish meeting.
+     */
     public function updateStateMeeting(Request $request)
     {
         try {
@@ -50,12 +59,25 @@ class CRUDMeetingController extends Controller
                 ]);
             } else {
                 // eliminar evento de calendar
-
+                $event = (new GetEventDomain())($meetingObj->id);
+                if ($event != null) {
+                    $_idEvent_ = $event->idevent;
+                    $_idCalendar_ = $event->idcalendar;
+                    (new EventDelete())($_idEvent_, $_idCalendar_);
+                }
                 $meetingNew = $updateDomain($meetingObj->id, [
                     'msg_cancellation' => $reason,
                     'record_state' => -1,
                     'dt_cancellation' => (new \DateTime())->format('Y-m-d H:i:s'),
                 ]);
+
+                // Get id de la reunión de zoom
+
+                $config = (new SearchConfigurationUseCase(new SearchConfigDomain()))('ZOOM_ACCESS_TOKEN');
+                $zoomToken = $config->value;
+                $zoomUserId = env('ZOOM_USER_ID');
+                $zoom = (new ZoomRequestGetDomain())($meetingObj->id);
+                (new ZoomDelete($zoomUserId, $zoomToken))($zoom->idmeetingzoom);
             }
 
             return response()->json([

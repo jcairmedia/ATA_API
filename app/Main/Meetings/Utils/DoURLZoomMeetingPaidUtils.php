@@ -29,8 +29,11 @@ class DoURLZoomMeetingPaidUtils
             $response = $zoomMeeting->build($date.':00', $subject);
             // Save request Zoom
             $dt_meeting_zoom = new \DateTime($response['start_time'], new \DateTimeZone($response['timezone']));
-
+            \Log::error('Id: '. print_r($response,1));
+            \Log::error('Id: '. $response['id']);
             $zoomRequestArray = [
+                'meeting_id' => $meeting_id,
+                'idmeetingzoom' => (string)$response['id'],
                 'join_url' => $response['join_url'],
                 'password' => $response['password'],
                 'start_time' => $dt_meeting_zoom->format('Y-m-d H:i:s'),
@@ -43,6 +46,8 @@ class DoURLZoomMeetingPaidUtils
             $meetingUpdate->__invoke($meeting_id, ['url_meeting' => $response['join_url']]);
         } catch (\Exception $ex) {
             $zoomRequestArray = [
+                'meeting_id' => $meeting_id,
+                'idmeetingzoom' =>'',
                 'join_url' => '',
                 'password' => '',
                 'start_time' => $date,

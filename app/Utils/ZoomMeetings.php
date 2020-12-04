@@ -57,6 +57,5 @@ class ZoomMeetings
         }
 
         return $json;
-        // return ['url' => $json['join_url'], 'password' => $json['password']];
     }
 }

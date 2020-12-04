@@ -36,7 +36,7 @@ class MeetingListDomain
         $markup['total'] = $contador;
         $markup['complete'] = ($index + $byPage) > $markup['total'];
 
-        \Log::error('Datos de la busqueda: '.print_r($markup, 1));
+        // \Log::error('Datos de la busqueda: '.print_r($markup, 1));
 
         return $markup;
     }

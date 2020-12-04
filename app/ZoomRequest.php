@@ -12,6 +12,7 @@ class ZoomRequest extends Model
         'password',
         'start_time',
         'timezone',
+        'idmeetingzoom',
         'json',
         'state_request',
     ];

@@ -17,6 +17,7 @@ class CreateZoomRequestsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('meeting_id')->nullable()->comment('Id meeting');
             $table->string('join_url')->nullable()->comment('Url meeting');
+            $table->string('idmeetingzoom')->nullable()->comment('Meeting´s id zoom');
             $table->string('password')->nullable()->comment('password meeting');
             $table->timestamp('start_time')->nullable()->comment('start time meeting');
             $table->string('timezone')->nullable()->comment('time zone zoom');

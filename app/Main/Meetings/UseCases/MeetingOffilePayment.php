@@ -16,7 +16,6 @@ use App\Utils\CustomMailer\MailLib;
 use App\Utils\DateUtil;
 use App\Utils\SMSUtil;
 use App\Utils\StorePaymentOpenPay;
-use App\Utils\ZoomMeetings;
 use Spatie\GoogleCalendar\Event;
 
 class MeetingOffilePayment
@@ -166,16 +165,6 @@ class MeetingOffilePayment
             $charge['meeting_id'] = $meetingObj->id;
             $chargeObj = $this->registeropenpaychargeusecase->__invoke($charge);
 
-            // 7. Enviar SMS
-            // TODO: Espera de confirmación
-            // $dateUtil = new DateUtil();
-            // $date = $data['date'];
-            // $day = $dateUtil->getDayByDate($date);
-            // $month = $dateUtil->getNameMonthByDate($date);
-            // $textSMS = $this->createTxt($day, $month, $data['time'], $data['type_meeting']);
-            // $smsUtil = new SMSUtil();
-            // $smsUtil->__invoke($textSMS, $data['phone']);
-
             // 7. Enviar la url del recibo del pago
             // {DASHBOARD_PATH}/paynet-pdf/{MERCHANT_ID}/{REFERENCE}
             $url_file_charge = $this->getURLFileCharge($array_charge['payment_method']['reference']);
@@ -279,49 +268,5 @@ class MeetingOffilePayment
         'Este es su <a href="'.$url_charge.'">recibo de pago</a>, favor de pagarlo antes de 24 hrs.';
     }
 
-    private function getUrlZoom($date, $type_meeting, $subject)
-    {
-        $zoomresponse = [
-            'code' => 500,
-            'message' => '',
-            'data' => [],
-        ];
-        if ($type_meeting != 'VIDEOCALL') {
-            return $zoomresponse;
-        }
-        try {
-            $search = new SearchConfigurationUseCase(new SearchConfigDomain());
-            $config = $search->__invoke('ZOOM_ACCESS_TOKEN');
-            $zoomMeeting = new ZoomMeetings(env('ZOOM_USER_ID'), $config->value);
-            $response = $zoomMeeting->build($date, $subject);
-            $zoomRequestArray = [
-                'join_url' => $response['join_url'],
-                'password' => $response['password'],
-                'start_time' => $response['start_time'],
-                'json' => json_encode($response),
-            ];
-            $this->saveZoomRequest($zoomRequestArray);
-        } catch (\Exception $ex) {
-            $zoomRequestArray = [
-                'join_url' => '',
-                'password' => '',
-                'start_time' => $date,
-                'state_request' => false,
-                'json' => json_encode($ex->getMessage()),
-            ];
-            $this->saveZoomRequest($zoomRequestArray);
 
-            return [
-                'code' => 500,
-                'message' => 'Error al obtener la url de zoom.('.$ex->getMessage().').'.
-                            ' Contacte a su administrador
-                            para que le proporcione una url de reunión.',
-            ];
-        }
-
-        return
-            [
-                'code' => 200,
-                'data' => $response, ];
-    }
 }
