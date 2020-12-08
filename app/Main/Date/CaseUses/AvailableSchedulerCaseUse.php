@@ -9,9 +9,10 @@ class AvailableSchedulerCaseUse
         if (count($listMetings) <= 0) {
             return ['data' => []];
         }
+
         $arrayAvailableHours = [];
         foreach ($listMetings as $k => $v) {
-            if ((int) $v['time'] < $numberPlaces && $v['enabled'] == $numberPlaces) {
+            if ((int) $v['time'] < $numberPlaces && ((bool) $v['enabled'])) {
                 $arrayAvailableHours[] = $v['start'];
             }
         }

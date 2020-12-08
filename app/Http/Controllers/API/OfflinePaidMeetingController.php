@@ -125,17 +125,19 @@ class OfflinePaidMeetingController extends Controller
      */
     public function index(OfflinePaidMeetingRequest $request)
     {
-
         try {
-
             $data = $request->all();
-
 
             // Search duration meeting
             $searchconfusecase = new SearchConfigurationUseCase(new SearchConfigDomain());
-            $response_CONFIG_PHONE_OFFICE = $searchconfusecase($this->CONFIG_PHONE_OFFICE);
-            $response_CONFIG_MEETING_PAID_DURATION = $searchconfusecase($this->CONFIG_MEETING_PAID_DURATION);
-            $response_CONFIG_MEETING_PAID_AMOUNT = $searchconfusecase($this->CONFIG_MEETING_PAID_AMOUNT);
+            $response_CONFIG_PHONE_OFFICE = $searchconfusecase->__invoke($this->CONFIG_PHONE_OFFICE);
+            $response_CONFIG_MEETING_PAID_DURATION = $searchconfusecase->__invoke($this->CONFIG_MEETING_PAID_DURATION);
+            $response_CONFIG_MEETING_PAID_AMOUNT = $searchconfusecase->__invoke($this->CONFIG_MEETING_PAID_AMOUNT);
+            $config = $searchconfusecase('CALENDAR_ID_MEETING_PAID');
+            $config_places = $searchconfusecase('NUMBER_PLACES_MEETING_PAID');
+
+            $numberPlaces = (int) $config_places->value;
+            $idCalendar = $config->value;
 
             $PHONE_OFFICE = $response_CONFIG_PHONE_OFFICE->value;
             $MEETING_PAID_DURATION = $response_CONFIG_MEETING_PAID_DURATION->value;
@@ -148,11 +150,12 @@ class OfflinePaidMeetingController extends Controller
                                     new ContactRegisterUseCase(new ContactCreatorDomain()),
                                     new ContactFindUseCase(new ContactSelectDomain()));
 
-            $objectMeeting = $meetingOffile($data, $MEETING_PAID_DURATION, $PHONE_OFFICE, $MEETING_PAID_AMOUNT);
+            $objectMeeting = $meetingOffile($data, $MEETING_PAID_DURATION, $PHONE_OFFICE, $MEETING_PAID_AMOUNT, $numberPlaces, $idCalendar);
             \Log::error(print_r($objectMeeting, 1));
 
             return response()->json(['code' => 201, 'data' => $objectMeeting], 201);
         } catch (\Exception $ex) {
+            \Log::error($ex->getMessage());
             $code = (int) $ex->getCode();
             if (!(($code >= 400 && $code <= 422) || ($code >= 500 && $code <= 503))) {
                 $code = 500;

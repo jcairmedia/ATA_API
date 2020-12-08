@@ -65,7 +65,6 @@ class AppointmentDateController extends Controller
         try {
             $dt = new \DateTime($request->date);
             $searchconfusecase = new SearchConfigurationUseCase(new SearchConfigDomain());
-
             $typeMeeting = $request->type;
             $numberPlaces = 1;
             $idCalendar = '';
@@ -84,6 +83,7 @@ class AppointmentDateController extends Controller
                     $numberPlaces = (int) $config_places->value;
 
                     $idCalendar = $config->value;
+
                 break;
                 case 'PAID':
                     $config = $searchconfusecase('CALENDAR_ID_MEETING_PAID');
