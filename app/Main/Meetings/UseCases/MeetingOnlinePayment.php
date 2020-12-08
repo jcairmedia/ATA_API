@@ -133,7 +133,7 @@ class MeetingOnlinePayment
         } catch (\Exception $ex) {
             \Log::error('Error add Event in DB: '.$ex->getMessage());
         }
-        // 8. Send email: type payment email or a sms
+        // 8. Send sms
         $dateUtil = new DateUtil();
         $date = $data['date'];
         $day = $dateUtil->getDayByDate($date);
@@ -144,7 +144,6 @@ class MeetingOnlinePayment
         }
 
         // 9. Generate de url de zoom
-
         $zoomresponse = (new DoURLZoomMeetingPaidUtils())(
             $meetingObj->id,
             $data['date'].' '.$data['time'],
@@ -153,7 +152,6 @@ class MeetingOnlinePayment
         );
 
         // 10. Send EMail
-        //TODO: Falta el formateo de correos, estoy en espera
         $textEmail = (new TextForEmailMeetingPaidUtils())(
             $data['type_meeting'],
             $day,
@@ -164,7 +162,7 @@ class MeetingOnlinePayment
         (new SendEmail())(
             ['email' => 'noreply@usercenter.mx'],
             [$data['email']],
-            'ATA | Cita',
+            'Tu asesoria legal ha sido confirmada ',
             '',
             $textEmail
         );

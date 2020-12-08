@@ -16,7 +16,7 @@ use App\Utils\SMSUtil;
 use App\Utils\StorePaymentOpenPay;
 use Carbon\Carbon;
 use Spatie\GoogleCalendar\Event;
-
+use App\Utils\SendEmail;
 class MeetingOffilePayment
 {
     public function __construct(
@@ -31,6 +31,7 @@ class MeetingOffilePayment
         $this->registeropenpaychargeusecase = $registeropenpaychargeusecase;
         $this->contactregisterusecase = $contactRegisterUseCase;
         $this->contactfindusecase = $contactfindusecase;
+        $this->LAYOUT_EMAIL_OFFLINE_MEETING = "layout_email_offline_meeting";
     }
 
     public function __invoke(array $data, $duration, $phone_office, $amount_paid, $numberPlaces, $idCalendar)
@@ -69,7 +70,6 @@ class MeetingOffilePayment
             if (!$isEnableHour) {
                 throw new \Exception('Hora no disponible', 400);
             }
-            \Log::error('Despues enable: ');
 
             // Exist hour in work's scheduler
             $scheduler = new SearchSchedulerDomain();
@@ -166,9 +166,18 @@ class MeetingOffilePayment
             $url_file_charge = $this->getURLFileCharge($array_charge['payment_method']['reference']);
 
             // 9. Enviar correo
-            // TODO: Formateo de correos
-            $textHtml = $this->getTextInHTML($url_file_charge);
-            $this->sendEmail($data['email'], 'ATA | Cita', '', $textHtml);
+            $textHtml = $this->getTextInHTML($url_file_charge, $meetingObj->type_meeting);
+            (new SendEmail())(
+                ['email' => 'noreply@usercenter.mx'],
+                [$data['email']],
+                'Estás a un paso de agendar tu asesoría legal',
+                '',
+                $textHtml
+            );
+
+            // 10. Envio de SMS
+            ;
+            (new SMSUtil())($this->getTextForSMS(), $data['phone']);
 
             // Enviar la url de la reunión
             // $responseUrl_meeting = $this->getUrlZoom($data['date'], $data['type_meeting'], 'ATA | Cita');
@@ -217,51 +226,25 @@ class MeetingOffilePayment
         return $text;
     }
 
-    private function createTxt($day, $month, $time, $type_meeting)
+
+
+
+    /**
+     * Render layout for email
+     */
+    private function getTextInHTML($url_charge, $type_meeting)
     {
-        $textMsg = 'Gracias por confiar en Abogados a Tu Alcance Hemos confirmado la fecha y hora para tu asesoria el día '.$day.' de '.$month.' a las '.$time.' hrs. ';
 
-        switch ($type_meeting) {
-            case 'CALL':
-                $textMsg .= 'Recuerda estar atento al teléfono que nos proporcionaste para tomar tu llamada.';
-            break;
-            case 'VIDEOCALL':
-                $textMsg .= 'Ingresa al correo electrónico que nos proporcionaste y obtén el enlace de tu videollamada';
-                break;
-            case 'PRESENTIAL':
-                $textMsg .= 'Ingresa al correo electrónico que nos proporcionaste y te daremos detalles de tu cita.';
-            break;
-        }
+        return view($this->LAYOUT_EMAIL_OFFLINE_MEETING, ['url' => $url_charge]);
 
-        return $textMsg;
     }
 
-    private function sendEmail($email_customer, $subject, $bodyText, $bodyHtml)
+    private function getTextForSMS()
     {
-        $emailData = new EmailData(
-            (object) ['email' => 'noreply@usercenter.mx'],
-            [$email_customer],
-            $subject,
-            $bodyText,
-            $bodyHtml
-        );
 
-        try {
-            $maillib = new MailLib([
-                'username' => env('MAIL_USERNAME'),
-                'password' => env('MAIL_PASSWORD'),
-                'host' => env('MAIL_HOST'),
-                'port' => env('MAIL_PORT'),
-            ]);
-            $maillib->Send($emailData);
-        } catch (\Exception $ex) {
-            \Log::error($ex->getMessage());
-        }
-    }
-
-    private function getTextInHTML($url_charge)
-    {
-        return '<h1> Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugiat illo dicta veniam vitae minima eius laborum tenetur reprehenderit pariatur nisi voluptates optio rem magnam, iste officiis dignissimos quaerat dolore praesentium!</h1>'.
-        'Este es su <a href="'.$url_charge.'">recibo de pago</a>, favor de pagarlo antes de 24 hrs.';
+        return "Gracias por confirar en ATA.".
+        " Continua con tu asesoria al realizar".
+        " tu pago en las siguientes 24 hrs.".
+        " De lo contrario tu fecha y día agendado se perderá.";
     }
 }
