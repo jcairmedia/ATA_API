@@ -7,7 +7,7 @@ use App\Utils\CustomMailer\MailLib;
 
 class SendEmail
 {
-    public function __invoke(array $from, array $email_customer, string $subject, string $bodyText, string $bodyHtml)
+    public function __invoke(array $from, array $email_customer, string $subject, string $bodyText, string $bodyHtml, $attachments = [])
     {
         try {
             $emailData = new EmailData(
@@ -15,7 +15,8 @@ class SendEmail
                 $email_customer,
                 $subject,
                 $bodyText,
-                $bodyHtml
+                $bodyHtml,
+                $attachments
             );
 
             $maillib = new MailLib([
