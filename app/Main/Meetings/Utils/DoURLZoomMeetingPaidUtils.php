@@ -40,6 +40,7 @@ class DoURLZoomMeetingPaidUtils
                 'timezone' => $response['timezone'], //$response['start_time'],
                 'json' => json_encode($response),
             ];
+            // Save url zoom in DB
             $this->saveZoomRequest($zoomRequestArray);
             // update url meeting
             $meetingUpdate = new MeetingUpdateDomain();

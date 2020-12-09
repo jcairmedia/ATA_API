@@ -40,19 +40,19 @@ class RCasesController extends Controller
             // Search Case
             $obj = (new CaseInnerJoinCustomerDomain())(['cases.id' => $caseId]);
             // Generate Contract
-            $view = (new TemplateContractCasesUse())($obj);
-            $namefile = preg_replace('/[^A-Za-z0-9\-]/', '', uniqid($obj->packages_id.$obj->services_id.$obj->customer_id.date('Ymdhis'))).'.pdf';
+            /*            $view = (new TemplateContractCasesUse())($obj);
+                        $namefile = preg_replace('/[^A-Za-z0-9\-]/', '', uniqid($obj->packages_id.$obj->services_id.$obj->customer_id.date('Ymdhis'))).'.pdf';
 
-            // Create and save PDF
-            (new CreatePDFContractCaseUse())($view['layout'], $namefile, storage_path('contracts/'));
-
+                        // Create and save PDF
+                        (new CreatePDFContractCaseUse())($view['layout'], $namefile, storage_path('contracts/'));
+            */
             // Send Email
-            $this->sendEmail($lawyer, $obj, $namefile);
+            $this->sendEmail($lawyer, $obj);
             // Send SMS
             $this->sendSMS($lawyer, $obj->customer_phone);
 
             // Update
-            Cases::where(['id' => $caseId])->update(['users_id' => $userId, 'url_doc' => storage_path('contracts/').$namefile]);
+            Cases::where(['id' => $caseId])->update(['users_id' => $userId]);
 
             return response()->json([
                 'code' => 200,
@@ -68,14 +68,14 @@ class RCasesController extends Controller
         }
     }
 
-    private function sendEmail($lawyer, $obj, $namefile)
+    private function sendEmail($lawyer, $obj)
     {
         $dataLayout = [
             'lawyer' => $lawyer->name,
             'phone' => $lawyer->phone,
             'email' => $lawyer->email,
         ];
-        $layoutEmail = view('layout_asignacion_lawyer', $dataLayout);
+        $layoutEmail = view('layout_asignacion_lawyer', $dataLayout)->render();
         try {
             (new SendEmail())(
             ['email' => 'noreply@usercenter.mx'],
@@ -83,7 +83,7 @@ class RCasesController extends Controller
             'ATA | Te hemos asignado abogado a tu caso',
             '',
             $layoutEmail,
-            [storage_path('contracts/').$namefile]
+            [storage_path('contracts/').$obj->url_doc]
         );
         } catch (\Exception $ex) {
             \Log::error('Error Email asignación de abogado: '.print_r($ex->getMessage(), 1));

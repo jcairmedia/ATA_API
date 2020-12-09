@@ -9,14 +9,12 @@ use App\Main\Contact\UseCases\ContactRegisterUseCase;
 use App\Main\Date\CaseUses\IsEnabledHourCaseUse;
 use App\Main\OpenPay_payment_references\UseCases\RegisterOpenPayChargeUseCase;
 use App\Main\Scheduler\Domain\SearchSchedulerDomain;
-use App\Utils\CustomMailer\EmailData;
-use App\Utils\CustomMailer\MailLib;
-use App\Utils\DateUtil;
+use App\Utils\SendEmail;
 use App\Utils\SMSUtil;
 use App\Utils\StorePaymentOpenPay;
 use Carbon\Carbon;
 use Spatie\GoogleCalendar\Event;
-use App\Utils\SendEmail;
+
 class MeetingOffilePayment
 {
     public function __construct(
@@ -31,7 +29,7 @@ class MeetingOffilePayment
         $this->registeropenpaychargeusecase = $registeropenpaychargeusecase;
         $this->contactregisterusecase = $contactRegisterUseCase;
         $this->contactfindusecase = $contactfindusecase;
-        $this->LAYOUT_EMAIL_OFFLINE_MEETING = "layout_email_offline_meeting";
+        $this->LAYOUT_EMAIL_OFFLINE_MEETING = 'layout_email_offline_meeting';
     }
 
     public function __invoke(array $data, $duration, $phone_office, $amount_paid, $numberPlaces, $idCalendar)
@@ -176,7 +174,7 @@ class MeetingOffilePayment
             );
 
             // 10. Envio de SMS
-            ;
+
             (new SMSUtil())($this->getTextForSMS(), $data['phone']);
 
             // Enviar la url de la reunión
@@ -226,25 +224,19 @@ class MeetingOffilePayment
         return $text;
     }
 
-
-
-
     /**
-     * Render layout for email
+     * Render layout for email.
      */
     private function getTextInHTML($url_charge, $type_meeting)
     {
-
-        return view($this->LAYOUT_EMAIL_OFFLINE_MEETING, ['url' => $url_charge]);
-
+        return view($this->LAYOUT_EMAIL_OFFLINE_MEETING, ['url' => $url_charge])->render();
     }
 
     private function getTextForSMS()
     {
-
-        return "Gracias por confirar en ATA.".
-        " Continua con tu asesoria al realizar".
-        " tu pago en las siguientes 24 hrs.".
-        " De lo contrario tu fecha y día agendado se perderá.";
+        return 'Gracias por confirar en ATA.'.
+        ' Continua con tu asesoria al realizar'.
+        ' tu pago en las siguientes 24 hrs.'.
+        ' De lo contrario tu fecha y día agendado se perderá.';
     }
 }

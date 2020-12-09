@@ -5,16 +5,26 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Packages\PackagesRequest;
 use App\Main\Cases\CasesUses\CasesCasesUse;
+use App\Main\Cases\CasesUses\CreatePDFContractCaseUse;
+use App\Main\Cases\CasesUses\TemplateContractCasesUse;
+use App\Main\Cases\Domain\CaseInnerJoinCustomerDomain;
 use App\Main\Packages\Domain\PackageDomain;
 use App\Main\Packages\Domain\WherePackageDomain;
 use App\Main\Packages\UseCases\ListPackagesUseCases;
 use App\Main\Subscription\CaseUses\SubscriptionCaseUses;
 use App\Main\Subscription\CaseUses\SubscriptionOpenPayCaseUses;
+use App\Utils\DateUtil;
 use App\Utils\SendEmail;
+use App\Utils\SMSUtil;
 use Exception;
 
 class PackagesController extends Controller
 {
+    public function __construct()
+    {
+        $this->LAYOUT_CONTRACT_PACKAGES = 'layout_contract_package';
+    }
+
     /**
      * @OA\Get(
      *  path="/api/packages",
@@ -110,7 +120,7 @@ class PackagesController extends Controller
     public function contract(PackagesRequest $request)
     {
         $user = $request->user();
-
+        $nowDT = new \DateTime();
         try {
             $data = $request->all();
             $planId = '';
@@ -128,7 +138,7 @@ class PackagesController extends Controller
             }
             $planId = $packageObj->id_plan_openpay;
 
-            // -- PROCESO DE SUSCRIPCIÓN --
+            // -- PROCESO DE SUSCRIPCIÓN OPEN PAY--
             $arrayResponseSubscription = (new SubscriptionOpenPayCaseUses())(
                 $user,
                 $data['tokenId'],
@@ -139,18 +149,32 @@ class PackagesController extends Controller
 
             // return $packageObj->toArray();
             // Generar pdf
-            $urlDoc = 'una url de prueba';
 
-            // Persistir un Caso
+            // Guardar caso en BD
             $objCase = (new CasesCasesUse())(
                 $packageObj,
                 $arrayResponseSubscription['customerId'],
                 $user->id,
                 $data['serviceId'],
-                $urlDoc
+                ''
             );
 
-            // Persistir la subscripción
+            // --- Create CONTRACT ---
+            // Search Case
+            $obj = (new CaseInnerJoinCustomerDomain())(['cases.id' => $objCase->id]);
+            // Generate Contract
+            $view = (new TemplateContractCasesUse())($obj);
+            $namefile = preg_replace('/[^A-Za-z0-9\-]/', '', uniqid($obj->packages_id.$obj->services_id.$obj->customer_id.date('Ymdhis'))).'.pdf';
+
+            // Create and save PDF
+            (new CreatePDFContractCaseUse())($view['layout'], $namefile, storage_path('contracts/'));
+
+            // Update package with URL_DOC
+
+            $objCase->url_doc = $namefile;
+            $objCase->save();
+
+            // Guardar la Subscripción en BD
             $subs = (new SubscriptionCaseUses())(
                 $objCase->id,
                 $arrayResponseSubscription['cardId'],
@@ -159,15 +183,34 @@ class PackagesController extends Controller
             );
 
             // -- ENVIAR DATOS AL USUARIO
-            // enviar SMS
-            // TODO:
+            // Enviar SMS
+            $testSMS = $this->textSMS($packageObj->name);
+            (new SMSUtil())($testSMS, $user->phone);
 
             // Enviar correo
-            $view = view('layout_contract_package');
+            $DT_valid = new \DateTime(date('Y-m-d', strtotime(date('Y-m-d').'+1month')));
+
+            $dateUtil = new DateUtil();
+
+            $month = $dateUtil->getNameMonth($nowDT->format('m'));
+            $day = $nowDT->format('d');
+
+            $month_valid = $dateUtil->getNameMonth($DT_valid->format('m'));
+            $day_valid = $DT_valid->format('d');
+
+            $view = view($this->LAYOUT_CONTRACT_PACKAGES, [
+                'package' => $packageObj->name,
+                'day' => $day,
+                'month' => $month,
+                'day_valid' => $day_valid,
+                'month_valid' => $month_valid,
+            ])->render();
             (new SendEmail())(
                 ['email' => 'noreply@usercenter.mx'],
                 [$user->email],
-                'ATA| Contratación de paquetes', '', $view
+                'Pago exitoso del paquete '.$packageObj->name,
+                '',
+                $view
             );
             // response cliente
             return response()->json(['data' => $subs->toArray()], 201);
@@ -183,5 +226,15 @@ class PackagesController extends Controller
                 'message' => $ex->getMessage(),
             ], $code);
         }
+    }
+
+    public function textSMS($paquete)
+    {
+        return
+        'Hemos recibido con éxito tu pago para nuestro'.
+        ' servicio de asesoría legal en nuestro'.
+        ' Paquete '.$paquete.'.'.
+        ' Para dudas y aclaraciones comunícate al 55-2625-0649
+        ';
     }
 }

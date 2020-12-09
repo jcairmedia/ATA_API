@@ -263,7 +263,7 @@ class FreeMeetingController extends Controller
     private function getViewEmail($array)
     {
         $view = view('layout_meeting_Free',
-                $array);
+                $array)->render();
 
         return $view;
     }

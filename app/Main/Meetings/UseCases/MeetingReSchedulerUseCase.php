@@ -10,8 +10,8 @@ use App\Main\Meetings\Domain\MeetingCreatorDomain;
 use App\Main\Meetings\Domain\MeetingWhereDomain;
 use App\Main\Meetings\Domain\MeetingWithContactDomain;
 use App\Main\Meetings\Utils\DoURLZoomMeetingPaidUtils;
-use App\Main\Meetings\Utils\TextForEmailMeetingPaidUtils;
-use App\Main\Meetings\Utils\TextForSMSMeetingPaidUtils;
+use App\Main\Meetings\Utils\TextForEmailReSchedulerMeetingPaidUtils;
+use App\Main\Meetings\Utils\TextForSMSReSchedulerMeetingPaidUtils;
 use App\Main\Scheduler\Domain\SearchSchedulerDomain;
 use App\Utils\DateUtil;
 use App\Utils\SendEmail;
@@ -63,6 +63,7 @@ class MeetingReSchedulerUseCase
                 \Log::error('Error add Event in DB: '.$ex->getMessage());
             }
         } else {
+            // Buscar el evento y actualizar (google calendar)
             $_idEvent_ = $event->idevent;
             $_idCalendar_ = $event->idcalendar;
             $eventObj = Event::find($_idEvent_, $_idCalendar_);
@@ -72,18 +73,21 @@ class MeetingReSchedulerUseCase
             $eventObj->summary .= ' (re agendada)';
             $eventObj->save();
         }
-
+        // Actuaizar cita en BD
         $meetingObj->dt_start_rescheduler = $data['date'].' '.$rangeHour->start;
         $meetingObj->dt_end_rescheduler = $data['date'].' '.$rangeHour->end;
         $meetingObjUpdate = (new MeetingCreatorDomain())($meetingObj);
 
         $meetingObjWithContact = (new MeetingWithContactDomain())($meetingObj->id);
 
-        // send mail
+        // Send EMAIL
         $dateUtil = new DateUtil();
         $date = $data['date'];
         $day = $dateUtil->getDayByDate($date);
         $month = $dateUtil->getNameMonthByDate($date);
+
+        $day_original = $dateUtil->getDayByDate($meetingObj->dt_start);
+        $month_original = $dateUtil->getNameMonthByDate($meetingObj->dt_start);
 
         $zoomresponse = (new DoURLZoomMeetingPaidUtils())(
             $meetingObj->id,
@@ -91,19 +95,29 @@ class MeetingReSchedulerUseCase
             $meetingObj->type_meeting,
             'ATA | Cita');
 
+        // Send Email
         if (env('APP_ENV') != 'local') {
-            $textSMS = (new TextForSMSMeetingPaidUtils())($meetingObj->type_meeting, $day, $month, $data['time']);
+            $textSMS = (new TextForSMSReSchedulerMeetingPaidUtils())
+            (
+                $day_original,
+                $month_original,
+                $data['time'],
+                $day,
+                $month
+            );
             (new SMSUtil())($textSMS, $meetingObjWithContact->phone);
         }
 
-        $textEmail = (new TextForEmailMeetingPaidUtils())(
+        $textEmail = (new TextForEmailReSchedulerMeetingPaidUtils())(
             $meetingObj->type_meeting,
-            $day,
-            $month,
+            $day_original,
+            $month_original,
             $data['time'],
-            $zoomresponse
+            $zoomresponse,
+            $day,
+            $month
          );
-
+        // \Log::error('ciew: '.print_r($textEmail, 1));
         (new SendEmail())(
             ['email' => 'noreply@usercenter.mx'],
             [$meetingObjWithContact->email],

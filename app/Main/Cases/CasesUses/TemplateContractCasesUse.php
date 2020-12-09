@@ -17,7 +17,7 @@ class TemplateContractCasesUse
             'email' => $caseObj->customer_email,
         ];
         $contract_name = $caseObj->contract_name;
-        $view = view($contract_name, $data);
+        $view = view($contract_name, $data)->render();
 
         return ['layout' => $view];
     }
