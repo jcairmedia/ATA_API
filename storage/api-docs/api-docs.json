@@ -1085,6 +1085,183 @@
                 }
             }
         },
+        "/api/customersatisfaction/test": {
+            "get": {
+                "summary": "Consulta de encuenta",
+                "operationId": "App\\Http\\Controllers\\API\\TestCustomerController::getQuestions",
+                "parameters": [
+                    {
+                        "name": "uuid",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Estructura de la encuesta",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "code": {
+                                            "type": "int",
+                                            "example": "200"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "questionId": {
+                                                        "type": "number",
+                                                        "example": "1"
+                                                    },
+                                                    "questionLabel": {
+                                                        "type": "string"
+                                                    },
+                                                    "answers": {
+                                                        "properties": {
+                                                            "answerId": {
+                                                                "type": "number",
+                                                                "example": "10"
+                                                            },
+                                                            "answerLabel": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            },
+                                            "collectionFormat": "multi"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "uuid incorrecto",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "properties": {
+                                                "uuid": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "El campo uuid seleccionado no existe."
+                                                    },
+                                                    "collectionFormat": "multi"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "summary": "Registrar respuestas del cliente",
+                "operationId": "App\\Http\\Controllers\\API\\TestCustomerController::saveTest",
+                "requestBody": {
+                    "description": "Registrar una cita por pago en tienda",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "uuid",
+                                    "data"
+                                ],
+                                "properties": {
+                                    "uuid": {
+                                        "type": "string",
+                                        "format": "string",
+                                        "example": "khjdkjbsjbauqinpqoq"
+                                    },
+                                    "data": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "question": {
+                                                    "type": "number",
+                                                    "example": "1"
+                                                },
+                                                "answer": {
+                                                    "type": "number",
+                                                    "example": "1"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "collectionFormat": "multi"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "409": {
+                        "description": "Conflict",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "code": {
+                                            "type": "int",
+                                            "example": "409"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Cuestionario ya fue respondido"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "code": {
+                                            "type": "int",
+                                            "example": "201"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Cuestionario guardado"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/users": {
             "post": {
                 "summary": "Registrar usuario",
