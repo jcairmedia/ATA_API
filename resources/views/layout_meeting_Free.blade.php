@@ -10,7 +10,6 @@
 <body style="max-width: 600px">
     <table>
         <tr>
-
             <td colspan="3"><img src="http://apidev.usercenter.mx/images/header.png" alt="" /></td>
         </tr>
         <tr>

@@ -43,7 +43,13 @@
                                 </tr>
                             </table>
                             @if($zoomObj['code'] == 200)
-                                <a href="{{$zoomObj['data']['join_url']}}">Enlace para su cita </a>
+                                <a href="{{$zoomObj['data']['join_url']}}"
+                                    style=" display:inline-block;
+                                    background: #6fb258;
+                                    padding: 15px;
+                                    color: white;
+                                    text-decoration: none;"
+                                >Enlace para su cita </a>
                             @else
                                 <p>{{$zoomObj['message']}}</p>
                             @endif

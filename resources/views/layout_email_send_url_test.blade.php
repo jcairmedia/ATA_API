@@ -31,7 +31,13 @@
                         respondiendo la siguiente encuesta
                     </p>
                     <p style="text-align: center">
-                        <a href="{{$url}}">Link de la encuesta</a>
+                        <a href="{{$url}}"
+                            style=" display:inline-block;
+                                    background: #6fb258;
+                                    padding: 15px;
+                                    color: white;
+                                    text-decoration: none;"
+                        >Link de la encuesta</a>
                     </p>
                 </div>
             </td>
