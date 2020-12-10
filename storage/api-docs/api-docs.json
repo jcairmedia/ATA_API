@@ -363,10 +363,7 @@
                                 "required": [
                                     "grant_type",
                                     "client_id",
-                                    "client_secret",
-                                    "username",
-                                    "password",
-                                    "scope"
+                                    "client_secret"
                                 ],
                                 "properties": {
                                     "grant_type": {
@@ -382,14 +379,22 @@
                                         "example": "Kagy4h0z9QsXJBNRgvL5VXwbeUmwEeTdbAYwt4lA"
                                     },
                                     "username": {
+                                        "description": "Es requerido cuando grant_type=password",
                                         "type": "string",
                                         "example": "erika@airmedia.com.mx"
                                     },
                                     "password": {
+                                        "description": "Es requerido cuando grant_type=password",
                                         "type": "string",
                                         "example": "12345678"
                                     },
                                     "scope": {
+                                        "description": "Es requerido cuando grant_type=password",
+                                        "type": "string",
+                                        "example": "2"
+                                    },
+                                    "token": {
+                                        "description": "Este valor corresponde al access_token que entrega Facebook. Es requerido cuando grant_type=facebook",
                                         "type": "string",
                                         "example": "2"
                                     }

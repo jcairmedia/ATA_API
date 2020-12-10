@@ -13,13 +13,14 @@ class LoginController extends Controller
      *   description="Log In con el método tradicional",
      *    @OA\MediaType(mediaType="application/x-www-form-urlencoded",
      *      @OA\Schema(
-     *          required={"grant_type", "client_id", "client_secret", "username", "password", "scope"},
+     *          required={"grant_type", "client_id", "client_secret"},
      *          @OA\Property(property="grant_type", type="string", example="password"),
      *          @OA\Property(property="client_id", type="string", example="4"),
      *          @OA\Property(property="client_secret", type="string", example="Kagy4h0z9QsXJBNRgvL5VXwbeUmwEeTdbAYwt4lA"),
-     *          @OA\Property(property="username", type="string", example="erika@airmedia.com.mx" ),
-     *          @OA\Property(property="password", type="string", example="12345678"),
-     *          @OA\Property(property="scope", type="string", example="2"),
+     *          @OA\Property(property="username", type="string", example="erika@airmedia.com.mx", description="Es requerido cuando grant_type=password" ),
+     *          @OA\Property(property="password", type="string", example="12345678", description="Es requerido cuando grant_type=password"),
+     *          @OA\Property(property="scope", type="string", example="2", description="Es requerido cuando grant_type=password"),
+     *          @OA\Property(property="token", type="string", example="2", description="Este valor corresponde al access_token que entrega Facebook. Es requerido cuando grant_type=facebook"),
      *
      *     )
      *   )
