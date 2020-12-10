@@ -16,11 +16,11 @@ class CreateQuestionsTable extends Migration
         Schema::create('questions', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->boolean("active")->default(true)->comment("1: active, 0: inactive");
-            $table->unsignedBigInteger('questionnarie_id');
+            $table->boolean('active')->default(true)->comment('1: active, 0: inactive');
+            $table->unsignedBigInteger('questionnaire_id');
             $table->timestamps();
             $table->softDeletes();
-            $table->foreign('questionnarie_id')->references('id')->on('questionnaires');
+            $table->foreign('questionnaire_id')->references('id')->on('questionnaires');
         });
     }
 

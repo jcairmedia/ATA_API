@@ -17,6 +17,7 @@ class CreateQuestionnairesTable extends Migration
             $table->id();
             $table->string('name');
             $table->string('description');
+            $table->enum('category_meeting', ['FREE', 'PAID'])->comment('category of the questionaire');
             $table->boolean('active')->default(true)->comment('1:active, 0 inactive');
             $table->timestamps();
             $table->softDeletes();

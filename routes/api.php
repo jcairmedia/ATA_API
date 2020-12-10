@@ -13,6 +13,7 @@ use App\Http\Controllers\API\PermissionController;
 use App\Http\Controllers\API\RCasesController;
 use App\Http\Controllers\API\RolesController;
 use App\Http\Controllers\API\ServicesController;
+use App\Http\Controllers\API\TestCustomerController;
 use App\Http\Controllers\API\UsersController;
 use App\Http\Controllers\API\WebHookOfflinePaidMeetingController;
 use Illuminate\Http\Request;
@@ -33,7 +34,6 @@ Route::get('/user', [UsersController::class, 'getuser'])->middleware(['auth:api'
 
 Route::group(['prefix' => '/users', 'middleware' => []], function () {
     Route::post('/', [UsersController::class, 'register']);
-    // Route::get('/:id', [UserController::class, 'byId']);
 });
 Route::get('/hours', [AppointmentDateController::class, 'hours']);
 
@@ -52,15 +52,22 @@ Route::post('/meeting/paid', [PaidMeetingController::class, 'register']);
 Route::post('/meeting/paid/offline', [OfflinePaidMeetingController::class, 'index']);
 Route::post('/meeting/paid/online', [OnlinePaidMeetingController::class, 'index']);
 
+Route::post('/meeting/rescheduler', [MeetingReSchedulerController::class, 'index']);
+Route::post('/meeting/state', [CRUDMeetingController::class, 'updateStateMeeting']);
+
+Route::get('/meetings/list', [CRUDMeetingController::class, 'list']);
+
 // valid code for activate user
 Route::get('/register/verify/{code}', [UsersController::class, 'verify']);
 
 // request in open pay
 Route::post('/hook', [WebHookOfflinePaidMeetingController::class, 'index']);
 
-Route::get('/meetings/list', [CRUDMeetingController::class, 'list']);
-
-Route::post('/meeting/state', [CRUDMeetingController::class, 'updateStateMeeting']);
+// Customer  Satisfaction - Questionnaire
+Route::group(['prefix' => '/customersatisfaction'], function () {
+    Route::get('/test', [TestCustomerController::class, 'getQuestions']);
+    Route::post('/test', [TestCustomerController::class, 'saveTest']);
+});
 
 // Route::get('/hook', [WebHookOfflinePaidMeetingController::class, 'index']);
 Route::get('/cases', [RCasesController::class, 'list']);
@@ -70,5 +77,3 @@ Route::post('/permission', [PermissionController::class, 'add']);
 Route::post('/roles/permission', [RolesController::class, 'associate']);
 Route::post('/user/rol', [UsersController::class, 'associate_rol']);
 Route::get('/users/rol', [UsersController::class, 'getUserByRol']);
-
-Route::post('/meeting/rescheduler', [MeetingReSchedulerController::class, 'index']);

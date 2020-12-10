@@ -16,14 +16,14 @@ class CreateCustomerTestsTable extends Migration
         Schema::create('customer_tests', function (Blueprint $table) {
             $table->id();
             $table->string('uuid')->unique();
-            $table->unsignedBigInteger('questionnarie_id');
+            $table->unsignedBigInteger('questionnaire_id');
             $table->unsignedBigInteger('meeting_id');
             $table->boolean('active')->default(true)->comment('1:active, 0 : inactive');
+            $table->boolean('answered')->default(false)->comment('1:anwered, 0 : no answered');
             $table->timestamps();
             $table->softDeletes();
 
-
-            $table->foreign('questionnarie_id')->references('id')->on('questionnaires');
+            $table->foreign('questionnaire_id')->references('id')->on('questionnaires');
             $table->foreign('meeting_id')->references('id')->on('meetings');
         });
     }
