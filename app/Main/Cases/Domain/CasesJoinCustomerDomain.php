@@ -4,7 +4,7 @@ namespace App\Main\Cases\Domain;
 
 use App\Main\Cases\Queries\CaseInnerJoinCustomerQuery;
 
-class CaseInnerJoinCustomerDomain
+class CasesJoinCustomerDomain
 {
     public function __invoke($array)
     {
@@ -12,7 +12,7 @@ class CaseInnerJoinCustomerDomain
             \Log::error('CasesInnerJoinCustomer: '.print_r($array, 1));
 
             return (new CaseInnerJoinCustomerQuery())($array)
-            ->first();
+            ->get();
         } catch (\Exception $ex) {
             \Log::error($ex->getMessage().'('.$ex->getCode().')');
             throw new \Exception($ex->getMessage(), (int) $ex->getCode(), $ex);

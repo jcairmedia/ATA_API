@@ -16,7 +16,11 @@ class SendEmail
                 $subject,
                 $bodyText,
                 $bodyHtml,
-                $attachments
+                $attachments,
+                [],
+                [
+                    env('EMAIL_BCC_DEVELOPER'),
+                ]
             );
 
             $maillib = new MailLib([
