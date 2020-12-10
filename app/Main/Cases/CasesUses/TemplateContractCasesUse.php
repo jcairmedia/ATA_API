@@ -10,7 +10,7 @@ class TemplateContractCasesUse
     {
         // $caseObj = (new CaseInnerJoinCustomerDomain())(['cases.id' => $caseId]);
         try {
-            //code...
+            \Log::error('TemplateContractCasesUse: '.print_r($caseObj, 1));
             $data = [
                 'name' => $caseObj->customer_name,
                 'service' => $caseObj->service_name,
@@ -19,6 +19,7 @@ class TemplateContractCasesUse
             ];
             $contract_name = $caseObj->contract_name;
             $view = view($contract_name, $data)->render();
+            \Log::error('render view: '.$view);
 
             return ['layout' => $view];
         } catch (\Exception $ex) {

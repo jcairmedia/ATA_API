@@ -10,6 +10,7 @@ class CasesDomain
     {
         try {
             $case->saveOrFail();
+            \Log::error('Caso Guardado: CasesDomain');
 
             return $case;
         } catch (\Exception $ex) {

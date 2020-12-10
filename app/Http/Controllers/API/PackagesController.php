@@ -16,7 +16,6 @@ use App\Main\Subscription\CaseUses\SubscriptionOpenPayCaseUses;
 use App\Utils\DateUtil;
 use App\Utils\SendEmail;
 use App\Utils\SMSUtil;
-use Exception;
 
 class PackagesController extends Controller
 {
@@ -130,11 +129,11 @@ class PackagesController extends Controller
             $arrayPackages = (new WherePackageDomain())(['id' => $packageId]);
 
             if (count($arrayPackages) <= 0) {
-                throw new Exception('Paquete no encontrado', 404);
+                throw new \Exception('Paquete no encontrado', 404);
             }
             $packageObj = $arrayPackages[0];
             if ($packageObj->id_plan_openpay == '') {
-                throw new Exception('El paquete no cuenta con un plan de open pay', 401);
+                throw new \Exception('El paquete no cuenta con un plan de open pay', 401);
             }
             $planId = $packageObj->id_plan_openpay;
 
@@ -146,9 +145,6 @@ class PackagesController extends Controller
                 $planId
             );
             \Log::error(print_r($arrayResponseSubscription, 1));
-
-            // return $packageObj->toArray();
-            // Generar pdf
 
             // Guardar caso en BD
             $objCase = (new CasesCasesUse())(
@@ -162,10 +158,11 @@ class PackagesController extends Controller
             // --- Create CONTRACT ---
             // Search Case
             $obj = (new CaseInnerJoinCustomerDomain())(['cases.id' => $objCase->id]);
+            \Log::error('fin de CaseInnerJoinCustomerDomain');
             // Generate Contract
             $view = (new TemplateContractCasesUse())($obj);
             $namefile = preg_replace('/[^A-Za-z0-9\-]/', '', uniqid($obj->packages_id.$obj->services_id.$obj->customer_id.date('Ymdhis'))).'.pdf';
-
+            \Log::error('Nombre archivo: '.$namefile);
             // Create and save PDF
             (new CreatePDFContractCaseUse())($view['layout'], $namefile, storage_path('contracts/'));
 
@@ -214,7 +211,7 @@ class PackagesController extends Controller
             );
             // response cliente
             return response()->json(['data' => $subs->toArray()], 201);
-        } catch (Exception $ex) {
+        } catch (\Exception $ex) {
             \Log::error($ex->getMessage());
             $code = (int) $ex->getCode();
             if (!(($code >= 400 && $code <= 422) || ($code >= 500 && $code <= 503))) {

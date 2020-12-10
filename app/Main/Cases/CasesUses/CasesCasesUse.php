@@ -24,6 +24,7 @@ class CasesCasesUse
             'services_id' => $serviceId,
             'customer_id' => $customerId,
         ];
+            \Log::error('CaseUseCase: '.print_r($data, 1));
             // Register Cases
             $casesDomain = new CasesDomain();
 

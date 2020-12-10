@@ -17,4 +17,5 @@ class Cases extends Model
         'customer_id',
         'id_customer_openpay',
     ];
+    protected $table = 'cases';
 }

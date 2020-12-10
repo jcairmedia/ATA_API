@@ -10,6 +10,8 @@ class CaseInnerJoinCustomerDomain
     public function __invoke($array)
     {
         try {
+            \Log::error('CasesInnerJoinCustomer: '.print_r($array, 1));
+
             return Cases::where($array)
             ->join('users', 'cases.customer_id', '=', 'users.id')
             ->join('packages', 'packages.id', '=', 'cases.packages_id')
