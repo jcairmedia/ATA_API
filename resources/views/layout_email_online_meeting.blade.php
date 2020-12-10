@@ -43,16 +43,24 @@
                                 </tr>
                             </table>
                             @if($zoomObj['code'] == 200)
-                                <a href="{{$zoomObj['data']['join_url']}}"
-                                    style=" display:inline-block;
-                                    background: #6fb258;
-                                    padding: 15px;
-                                    color: white;
-                                    text-decoration: none;"
-                                >Enlace para su cita </a>
+                                <table>
+                                    <tr>
+                                        <td style="width: 50%"></td>
+                                        <td>
+                                        <a href="{{$zoomObj['data']['join_url']}}"
+                                            style=" display:inline-block;
+                                            background: #6fb258;
+                                            padding: 15px;
+                                            color: white;
+                                            text-decoration: none;"
+                                        >Enlace para su cita </a>
+                                        </td>
+                                    </tr>
+                                </table>
                             @else
                                 <p>{{$zoomObj['message']}}</p>
                             @endif
+
                         @break
                         @case("CALL")
                             <p style="text-align: justify">Hemos recibido y confirmado tu pago para tu asesoría legal vía telefónica.</p>
