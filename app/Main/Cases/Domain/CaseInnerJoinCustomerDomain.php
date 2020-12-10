@@ -3,6 +3,7 @@
 namespace App\Main\Cases\Domain;
 
 use App\Cases;
+use Illuminate\Support\Facades\DB;
 
 class CaseInnerJoinCustomerDomain
 {
@@ -16,7 +17,7 @@ class CaseInnerJoinCustomerDomain
             ->leftJoin('contract_templates', 'contract_templates.id', '=', 'services.contract_id')
             ->select([
                 'cases.*',
-                'users.name as customer_name',
+                DB::raw("CONCAT(users.name,' ', users.last_name1) as customer_name"),
                 'users.id as customerId_',
                 'users.email as customer_email',
                 'users.phone as customer_phone',
