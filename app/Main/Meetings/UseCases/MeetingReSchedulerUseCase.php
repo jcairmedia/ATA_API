@@ -119,7 +119,7 @@ class MeetingReSchedulerUseCase
          );
         // \Log::error('ciew: '.print_r($textEmail, 1));
         (new SendEmail())(
-            ['email' => 'noreply@usercenter.mx'],
+            ['email' => env('EMAIL_FROM')],
             [$meetingObjWithContact->email],
             'ATA | Cita',
             '',

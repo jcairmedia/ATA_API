@@ -9,8 +9,6 @@ class CaseInnerJoinCustomerDomain
     public function __invoke($array)
     {
         try {
-            \Log::error('CasesInnerJoinCustomer: '.print_r($array, 1));
-
             return (new CaseInnerJoinCustomerQuery())($array)
             ->first();
         } catch (\Exception $ex) {

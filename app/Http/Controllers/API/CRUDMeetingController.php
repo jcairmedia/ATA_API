@@ -88,7 +88,7 @@ class CRUDMeetingController extends Controller
                 $view = view('layout_email_send_url_test', ['url' => $url])->render();
                 // Send Email
                 (new SendEmail())(
-                    ['email' => 'noreply@usercenter.mx'],
+                    ['email' => env('EMAIL_FROM')],
                     [$_email_contact_],
                     'Encuesta de satisfacción',
                     '',

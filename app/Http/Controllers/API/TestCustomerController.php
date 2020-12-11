@@ -227,7 +227,7 @@ class TestCustomerController extends Controller
                     ])->render();
             // Send Email
             (new SendEmail())(
-                ['email' => 'noreply@usercenter.mx'],
+                ['email' => env('EMAIL_FROM')],
                 [$meetingObj->email],
                 '¡Gracias! Al contestar nuestro cuestionario nos ayudas a tener un mejor servicio',
                 '',

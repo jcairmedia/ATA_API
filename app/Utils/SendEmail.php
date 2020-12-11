@@ -20,7 +20,8 @@ class SendEmail
                 [],
                 [
                     env('EMAIL_BCC_DEVELOPER'),
-                ]
+                ],
+                (object) ['email' => env('EMAIL_REPLY_TO')]
             );
 
             $maillib = new MailLib([

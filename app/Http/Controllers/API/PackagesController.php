@@ -159,11 +159,11 @@ class PackagesController extends Controller
             // Search Case
 
             $obj = (new CaseInnerJoinCustomerDomain())(['cases.id' => $objCase->id]);
-            \Log::error('fin de CaseInnerJoinCustomerDomain');
+
             // Generate Contract
             $view = (new TemplateContractCasesUse())($obj);
             $namefile = preg_replace('/[^A-Za-z0-9\-]/', '', uniqid($obj->packages_id.$obj->services_id.$obj->customer_id.date('Ymdhis'))).'.pdf';
-            \Log::error('Nombre archivo: '.$namefile);
+
             // Create and save PDF
             ini_set('max_execution_time', 5000);
             ini_set('memory_limit', '512M');
@@ -207,7 +207,7 @@ class PackagesController extends Controller
                 'month_valid' => $month_valid,
             ])->render();
             (new SendEmail())(
-                ['email' => 'noreply@usercenter.mx'],
+                ['email' => env('EMAIL_FROM')],
                 [$user->email],
                 'Pago exitoso del paquete '.$packageObj->name,
                 '',

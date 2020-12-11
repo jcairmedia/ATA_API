@@ -160,7 +160,7 @@ class MeetingOnlinePayment
             $zoomresponse
         );
         (new SendEmail())(
-            ['email' => 'noreply@usercenter.mx'],
+            ['email' => env('EMAIL_FROM')],
             [$data['email']],
             'Tu asesoria legal ha sido confirmada ',
             '',

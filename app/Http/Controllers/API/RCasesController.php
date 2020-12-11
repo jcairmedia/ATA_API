@@ -78,7 +78,7 @@ class RCasesController extends Controller
         $layoutEmail = view('layout_asignacion_lawyer', $dataLayout)->render();
         try {
             (new SendEmail())(
-            ['email' => 'noreply@usercenter.mx'],
+            ['email' => env('EMAIL_FROM')],
             [$obj->customer_email],
             'ATA | Te hemos asignado abogado a tu caso',
             '',

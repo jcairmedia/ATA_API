@@ -231,7 +231,7 @@ class FreeMeetingController extends Controller
     private function sendEmail($email_customer, $subject, $bodyText, $bodyHtml)
     {
         $emailData = new EmailData(
-            (object) ['email' => 'noreply@usercenter.mx'],
+            (object) ['email' => env('EMAIL_FROM')],
             [$email_customer],
             $subject,
             $bodyText,

@@ -7,7 +7,7 @@ class CreatePDFContractCaseUse
     public function __invoke($view, $uri, $path)
     {
         try {
-            \Log::error('CreatePDFContractCaseUse: '.$uri.' path: '.$path);
+            \Log::error('CreatePDFContractCaseUse: '.$path.$uri);
             $pdf = \App::make('dompdf.wrapper');
             $pdf->loadHTML($view)->save($path.$uri);
             \Log::error('Fin CreatePDFContractCaseUse: ');

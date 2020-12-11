@@ -166,7 +166,7 @@ class MeetingOffilePayment
             // 9. Enviar correo
             $textHtml = $this->getTextInHTML($url_file_charge, $meetingObj->type_meeting);
             (new SendEmail())(
-                ['email' => 'noreply@usercenter.mx'],
+                ['email' => env('EMAIL_FROM')],
                 [$data['email']],
                 'Estás a un paso de agendar tu asesoría legal',
                 '',
