@@ -155,21 +155,25 @@ class PackagesController extends Controller
                 ''
             );
 
-            // // --- Create CONTRACT ---
-            // // Search Case
-            // $obj = (new CaseInnerJoinCustomerDomain())(['cases.id' => $objCase->id]);
-            // \Log::error('fin de CaseInnerJoinCustomerDomain');
-            // // Generate Contract
-            // $view = (new TemplateContractCasesUse())($obj);
-            // $namefile = preg_replace('/[^A-Za-z0-9\-]/', '', uniqid($obj->packages_id.$obj->services_id.$obj->customer_id.date('Ymdhis'))).'.pdf';
-            // \Log::error('Nombre archivo: '.$namefile);
-            // // Create and save PDF
-            // // (new CreatePDFContractCaseUse())($view['layout'], $namefile, storage_path('contracts/'));
+            // --- Create CONTRACT ---
+            // Search Case
 
-            // // Update package with URL_DOC
+            $obj = (new CaseInnerJoinCustomerDomain())(['cases.id' => $objCase->id]);
+            \Log::error('fin de CaseInnerJoinCustomerDomain');
+            // Generate Contract
+            $view = (new TemplateContractCasesUse())($obj);
+            $namefile = preg_replace('/[^A-Za-z0-9\-]/', '', uniqid($obj->packages_id.$obj->services_id.$obj->customer_id.date('Ymdhis'))).'.pdf';
+            \Log::error('Nombre archivo: '.$namefile);
+            // Create and save PDF
+            ini_set('max_execution_time', 5000);
+            ini_set('memory_limit', '512M');
 
-            // $objCase->url_doc = $namefile;
-            // $objCase->save();
+            (new CreatePDFContractCaseUse())($view['layout'], $namefile, storage_path('contracts/'));
+
+            // Update package with URL_DOC
+
+            $objCase->url_doc = $namefile;
+            $objCase->save();
 
             // Guardar la Subscripción en BD
             $subs = (new SubscriptionCaseUses())(
