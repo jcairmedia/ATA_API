@@ -152,30 +152,81 @@ class UsersController extends Controller
     }
 
     /**
-     * Valid user's account.
+     *
+     * @OA\GET(
+     *  path="/api/register/verify/{code}",
+     *  summary="Verificación de email",
+     *   @OA\Parameter(
+     *    description="Código de verificación para activación de cuenta",
+     *    in="path",
+     *    name="code",
+     *    required=true,
+     *    example="1231213451152662"
+     *  ),
+     *  @OA\Response(
+     *    response=200,
+     *    description="Created",
+     *    @OA\JsonContent(
+     *       @OA\Property(
+     *        property="code",
+     *        type="int",
+     *        example="200"
+     *      ),
+     *      @OA\Property(
+     *        property="message",
+     *        type="string",
+     *        example="Usuario verificado"
+     *      ),
+     *    )
+     *  ),
+     *  @OA\Response(
+     *   response=404,
+     *   description="Not Found",
+     *    @OA\JsonContent(
+     *       @OA\Property(
+     *        property="code",
+     *        type="int",
+     *        example="404"
+     *      ),
+     *      @OA\Property(
+     *        property="message",
+     *        type="string",
+     *        example="Not Found"
+     *      )
+     *    )
+     *  )
+     * )
      */
     public function verify(string $code)
     {
-        $findUser = new FindUserDomain();
-        $user = $findUser($code);
-        \Log::error('code'.$code);
-        \Log::error('User'.print_r($user, 1));
-        if (!$user) {
-            return response()->json([
-                'code' => 404,
-                'message' => 'Not Found',
-            ]);
-        }
-        $user->email_verified_at = (new \DateTime())->format('Y-m-d H:i:s');
-        $user->confirmation_code = '';
-        $creatorUser = new UserCreatorDomain();
-        $creatorUser($user);
+        try{
+            $findUser = new FindUserDomain();
+            $user = $findUser($code);
+            \Log::error('code'.$code);
+            \Log::error('User'.print_r($user, 1));
+            if (!$user) {
+                return response()->json([
+                    'code' => 404,
+                    'message' => 'Not Found',
+                ], 404);
+            }
+            $user->email_verified_at = (new \DateTime())->format('Y-m-d H:i:s');
+            $user->confirmation_code = '';
+            $creatorUser = new UserCreatorDomain();
+            $creatorUser($user);
 
-        return response()->json([
-            'code' => 200,
-            'message' => 'Usuario verificado',
-            'data' => [],
-        ], 200);
+            return response()->json([
+                'code' => 200,
+                'message' => 'Usuario verificado'
+            ], 200);
+        } catch (\Exception $ex) {
+            \Log::error('Asociar rol al usuario: '.$ex->getMessage().$ex->getCode());
+
+            return response()->json([
+                    'code' => (int) $ex->getCode(),
+                    'message' => $ex->getMessage(),
+            ], (int) $ex->getCode());
+        }
     }
 
     /**

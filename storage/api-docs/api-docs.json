@@ -1383,6 +1383,63 @@
                 }
             }
         },
+        "/api/register/verify/{code}": {
+            "get": {
+                "summary": "Verificación de email",
+                "operationId": "App\\Http\\Controllers\\API\\UsersController::verify",
+                "parameters": [
+                    {
+                        "name": "code",
+                        "in": "path",
+                        "description": "Código de verificación para activación de cuenta",
+                        "required": true,
+                        "example": "1231213451152662"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "code": {
+                                            "type": "int",
+                                            "example": "200"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Usuario verificado"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "code": {
+                                            "type": "int",
+                                            "example": "404"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Not Found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/user": {
             "get": {
                 "summary": "Obtener información del usuario usando el JWT",
