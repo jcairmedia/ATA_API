@@ -18,7 +18,8 @@ use App\Http\Controllers\API\UsersController;
 use App\Http\Controllers\API\WebHookOfflinePaidMeetingController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\API\CRUDQuestionController;
+use App\Http\Controllers\API\UserRolesController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -77,3 +78,11 @@ Route::post('/permission', [PermissionController::class, 'add']);
 Route::post('/roles/permission', [RolesController::class, 'associate']);
 Route::post('/user/rol', [UsersController::class, 'associate_rol']);
 Route::get('/users/rol', [UsersController::class, 'getUserByRol']);
+
+
+Route::post('/user/dash', [UsersController::class, 'registerUserDash']);
+
+Route::get('/questions', [CRUDQuestionController::class, 'list']);
+
+Route::get('/users/roles', [UserRolesController::class, 'list']);
+Route::get('/roles', [RolesController::class, 'list']);

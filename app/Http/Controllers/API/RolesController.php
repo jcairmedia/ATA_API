@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
-
+use  App\Main\Roles\Domain\GetRolesDomain;
 class RolesController extends Controller
 {
     public function add(Request $request)
@@ -49,6 +49,26 @@ class RolesController extends Controller
             $rolObj->givePermissionTo($permisoObj);
 
             return response()->json(['code' => 201, 'message' => 'Permiso asociado al rol', 'data' => []]);
+        } catch (\Exception $ex) {
+            $code = (int) $ex->getCode();
+            if (!(($code >= 400 && $code <= 422) || ($code >= 500 && $code <= 503))) {
+                $code = 500;
+            }
+
+            return response()->json([
+                'code' => (int) $ex->getCode(),
+                'message' => $ex->getMessage(),
+            ], $code);
+        }
+    }
+
+    public function list()
+    {
+        try{
+            $roles = (new GetRolesDomain())();
+            return response()->json(
+                ['data' => $roles->toArray()], 200
+            );
         } catch (\Exception $ex) {
             $code = (int) $ex->getCode();
             if (!(($code >= 400 && $code <= 422) || ($code >= 500 && $code <= 503))) {

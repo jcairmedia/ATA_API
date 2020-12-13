@@ -200,7 +200,7 @@ class FreeMeetingController extends Controller
                 'hours' => $time,
             ]);
 
-            $this->sendEmail($data['email'], 'ATA | Cita Gratuita', '', $view);
+            $this->sendEmail($data['email'], 'Cita Gratuita', '', $view);
 
             return response()->json([
                 'code' => 201,

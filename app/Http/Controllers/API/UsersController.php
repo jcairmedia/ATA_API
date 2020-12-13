@@ -93,12 +93,53 @@ class UsersController extends Controller
             $sendEmail = new SendEmail();
             $data = ['customer_name' => $userSaved->name, 'confirmation_code' => $userSaved->confirmation_code];
             $view = view('layout_verify_email', $data)->render();
-            $sendEmail(['email' => env('EMAIL_FROM')], [$user['email']], 'ATA| Confirmación de email', '', $view);
+            $sendEmail(
+                ['email' => env('EMAIL_FROM')],
+                [$user['email']],
+                'ATA| Confirmación de email',
+                '',
+                $view);
 
             return response()->json([
                 'code' => 201,
                 'message' => 'Usuario creado',
                 'data' => [],
+            ], 201);
+        } catch (\Exception $ex) {
+            \Log::error('Error en registro de usuario'.$ex->getMessage().$ex->getCode());
+
+            return response()->json([
+                    'code' => (int) $ex->getCode(),
+                    'message' => $ex->getMessage(),
+            ], (int) $ex->getCode());
+        }
+    }
+
+    public function registerUserDash(UserRequest $req)
+    {
+        try {
+            $user = $req->all();
+
+            $data = [
+                'name' => $user['name'],
+                'last_name1' => $user['last_name1'],
+                'last_name2' => $user['last_name2'],
+                'email' => $user['email'],
+                'password' => $user['password'],
+                'phone' => $user['phone'],
+                'email_verified_at' => (new \DateTime())->format('Y-m-d H:i:s')
+            ];
+
+
+            $dt = date('dmYHis');
+            $r = new RegisterUseCase(new UserCreatorDomain());
+            $userSaved = $r($data);
+
+
+            return response()->json([
+                'code' => 201,
+                'message' => 'Usuario creado',
+                'data' => $userSaved->toArray(),
             ], 201);
         } catch (\Exception $ex) {
             \Log::error('Error en registro de usuario'.$ex->getMessage().$ex->getCode());
@@ -213,11 +254,12 @@ class UsersController extends Controller
     {
         try {
             $id = $request->input('id_user');
+            $rol = $request->input('rol_id');
+
             $user = User::where(['id' => $id])->first();
             if ($user == null) {
-                throw new Exception('Usuario no encontrado', 400);
+                throw new \Exception('Usuario no encontrado', 400);
             }
-            $rol = $request->input('rol_id');
             $rolObj = Role::where(['id' => $rol])->first();
             if ($rolObj == null) {
                 throw new Exception('Rol no existe', 500);
@@ -227,7 +269,7 @@ class UsersController extends Controller
                 throw new \Exception('El usuario ya tiene asociado el rol', 500);
             }
 
-            $user->assignRole($rol);
+            $user->syncRoles([$rol]);
 
             return response()->json([
                 'code' => 201,
