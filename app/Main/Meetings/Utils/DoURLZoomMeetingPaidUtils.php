@@ -15,7 +15,7 @@ class DoURLZoomMeetingPaidUtils
     public function __invoke($meeting_id, $date, $type_meeting, $subject)
     {
         $zoomresponse = [
-            'code' => 500,
+            'code' => 200,
             'message' => '',
             'data' => [],
         ];
@@ -29,11 +29,11 @@ class DoURLZoomMeetingPaidUtils
             $response = $zoomMeeting->build($date.':00', $subject);
             // Save request Zoom
             $dt_meeting_zoom = new \DateTime($response['start_time'], new \DateTimeZone($response['timezone']));
-            \Log::error('Id: '. print_r($response,1));
-            \Log::error('Id: '. $response['id']);
+            \Log::error('Id: '.print_r($response, 1));
+            \Log::error('Id: '.$response['id']);
             $zoomRequestArray = [
                 'meeting_id' => $meeting_id,
-                'idmeetingzoom' => (string)$response['id'],
+                'idmeetingzoom' => (string) $response['id'],
                 'join_url' => $response['join_url'],
                 'password' => $response['password'],
                 'start_time' => $dt_meeting_zoom->format('Y-m-d H:i:s'),
@@ -48,7 +48,7 @@ class DoURLZoomMeetingPaidUtils
         } catch (\Exception $ex) {
             $zoomRequestArray = [
                 'meeting_id' => $meeting_id,
-                'idmeetingzoom' =>'',
+                'idmeetingzoom' => '',
                 'join_url' => '',
                 'password' => '',
                 'start_time' => $date,

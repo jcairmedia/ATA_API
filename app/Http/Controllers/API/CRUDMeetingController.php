@@ -12,8 +12,10 @@ use App\Main\EventsCalendar\Services\EventDelete;
 use App\Main\Meetings\Domain\MeetingUpdateDomain;
 use App\Main\Meetings\Domain\MeetingWhereDomain;
 use App\Main\Meetings\UseCases\MeetingListUseCase;
+use App\Main\Questionnaire\Domain\FindQuestionnaireByMeetingIdDomain;
 use App\Main\Questionnaire\Domain\FindQuestionnaireDomain;
 use App\Main\TestCustomer\Domain\CreateTestDomain;
+use App\Main\TestCustomer\Domain\FindTestDomain;
 use App\Main\ZoomRequest\Domain\ZoomRequestGetDomain;
 use App\Utils\SendEmail;
 use App\Utils\ZoomDelete;
@@ -124,6 +126,33 @@ class CRUDMeetingController extends Controller
                 'message' => 'Cita actualizada',
                 'data' => $meetingNew,
             ], 200);
+        } catch (\Exception $ex) {
+            $code = (int) $ex->getCode();
+            if (!(($code >= 400 && $code <= 422) || ($code >= 500 && $code <= 503))) {
+                $code = 500;
+            }
+
+            return response()->json([
+                'code' => (int) $code,
+                'message' => $ex->getMessage(),
+            ], $code);
+        }
+    }
+
+    public function getQuestionnaireByMeetingId(Request $request)
+    {
+        try {
+            $meetingId = $request->input('meetingId');
+            $test = (new FindTestDomain())(['meeting_id' => $meetingId]);
+            if ($test == null) {
+                throw new \Exception('Encuesta no encontrada', 404);
+            }
+            $questionnaire = (new FindQuestionnaireByMeetingIdDomain())($meetingId);
+
+            return response()->json([
+                'code' => 200,
+                'data' => $questionnaire->toArray(),
+            ]);
         } catch (\Exception $ex) {
             $code = (int) $ex->getCode();
             if (!(($code >= 400 && $code <= 422) || ($code >= 500 && $code <= 503))) {

@@ -56,7 +56,9 @@ Route::post('/meeting/paid/online', [OnlinePaidMeetingController::class, 'index'
 Route::post('/meeting/rescheduler', [MeetingReSchedulerController::class, 'index']);
 Route::post('/meeting/state', [CRUDMeetingController::class, 'updateStateMeeting']);
 
+
 Route::get('/meetings/list', [CRUDMeetingController::class, 'list']);
+Route::get('/meeting/questionnaire', [CRUDMeetingController::class, 'getQuestionnaireByMeetingId']);
 
 // valid code for activate user
 Route::get('/register/verify/{code}', [UsersController::class, 'verify']);
