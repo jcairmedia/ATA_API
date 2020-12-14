@@ -25,28 +25,25 @@
             <td></td>
             <td>
                 <div style="border:1px solid #6fb258;padding: 70px;width: 458px;">
-                    <p style="text-align: center"></p>
-                    <p style="text-align: justify">
-                        Te notificamos que tu asesoría legal programada
-                        para el día {{$day}} de {{$month}} ha sido reprogramada
-                        para el día {{$dayRe}} de {{$monthRe}} a las {{$hours}}hrs.
+                    <p style="text-align: center">
+                        Lamentablemente no hemos recibido el
+                        pago para la realización de tu asesoría
+                        legal en línea programada para el día {{$day}}
+                        de {{$month}} a las {{$time}} hrs, por lo cual queda
+                        cancelada.
                     </p>
-                    @if($type_meeting == "VIDEOCALL")
-                            @if($zoomObj['code'] == 200)
-                            <p style="text-align: center;">
-                                <a
-                                href="{{$zoomObj['data']['join_url']}}"
-                                style="display:inline-block;
-                                    background: #6fb258;
-                                    padding: 15px;
-                                    color: white;
-                                    text-decoration: none;">
-                                    Enlace para su cita </a>
-                            </p>
-                            @else
-                                <p>{{$zoomObj['message']}}</p>
-                            @endif
-                    @endif
+                    <p style="text-align: center">Si deseas volver a agendar en otra fecha sigue el enlace</p>
+                    <p style="text-align: center">
+                        <a
+                            href={{$link}}
+                            style="display:inline-block;
+                                        background: #6fb258;
+                                        padding: 15px;
+                                        color: white;
+                                        text-decoration: none;"
+                            >Agenda tu asesoría
+                        </a>
+                    </p>
                 </div>
             </td>
             <td></td>
@@ -62,7 +59,6 @@
                 </div>
             </td>
             <td></td>
-
         </tr>
     </table>
     </div>

@@ -32,7 +32,7 @@
                     </p>
                     <p style="text-align: center">
                         <a href="{{$url}}"
-                            style=" display:inline-block;
+                            style="display:inline-block;
                                     background: #6fb258;
                                     padding: 15px;
                                     color: white;
