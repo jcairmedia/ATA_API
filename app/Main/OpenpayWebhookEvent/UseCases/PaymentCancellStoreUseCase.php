@@ -21,8 +21,14 @@ class PaymentCancellStoreUseCase
 {
     public function __invoke(string $referenceHook)
     {
+        \Log::error('reference: '.$referenceHook);
         // cancelar
         $referenceObj = (new FindOpenPayReferencesDomain())(['payment_reference' => $referenceHook]);
+        if (!$referenceObj) {
+            \Log::error('Referencia no encontrada: '.$referenceHook);
+
+            return 0;
+        }
         $meetingId = $referenceObj->meeting_id;
         (new MeetingUpdateDomain())($meetingId,
              [
@@ -30,6 +36,11 @@ class PaymentCancellStoreUseCase
                  'msg_cancellation' => 'Fecha de pago expirada',
              ]);
         $meetingObj = (new MeetingWhereDomain())(['id' => $meetingId]);
+        if ($meetingObj->count() <= 0) {
+            \Log::error('Busqueda de reunión');
+
+            return;
+        }
         $meetingObj = $meetingObj[0];
 
         // Eliminacion del evento en calendar
@@ -59,27 +70,29 @@ class PaymentCancellStoreUseCase
         $contactId = $meetingObj->contacts_id;
         $type_meeting = $meetingObj->type_meeting;
         $dateUtil = new DateUtil();
-        $date = is_null($contactObj->dt_start_rescheduler) ?
-                        $contactObj->dt_start :
-                        $contactObj->dt_start_rescheduler;
+        \Log::error('Fecha: '.print_r($meetingObj->toArray(), 1));
+        $date = is_null($meetingObj->dt_start_rescheduler) ?
+                        $meetingObj->dt_start :
+                        $meetingObj->dt_start_rescheduler;
         $day = $dateUtil->getDayByDate($date);
         $month = $dateUtil->getNameMonthByDate($date);
         $time = $dateUtil->getTime($date);
         $textSMS = $this->getTextSMS();
-        if (env('APP_ENV') != 'local') {
-            $textSMS = (new TextForSMSMeetingPaidUtils())(
+        // if (env('APP_ENV') != 'local') {
+        $textSMS = (new TextForSMSMeetingPaidUtils())(
                  $type_meeting,
                  $day,
                  $month,
                  $time
              );
-            (new SMSUtil())($textSMS, $phone_contact);
-        }
+        (new SMSUtil())($textSMS, $phone_contact);
+        // }
 
         // Send EMAIL
         $textEmail = view('layout_email_fail_payment_meeting', [
             'day' => $day,
             'month' => $month,
+            'time' => $time,
             'link' => env('URL_ECOMMERCE'),
         ])->render();
 
@@ -90,5 +103,12 @@ class PaymentCancellStoreUseCase
              '',
              $textEmail
          );
+    }
+
+    public function getTextSMS()
+    {
+        return '¡Hola! Por falta de pago, lamentablemente hemos cancelado
+                tu asesoría legal en línea. Entra al correo electrónico
+                que nos proporcionaste para más detalles. ';
     }
 }

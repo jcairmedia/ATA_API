@@ -18,9 +18,19 @@ class PaymentSuccessStoreUseCase
     public function __invoke(string $referenceHook)
     {
         $referenceObj = (new FindOpenPayReferencesDomain())(['payment_reference' => $referenceHook]);
+        if (!$referenceObj) {
+            \Log::error('Referencia no encontrada: '.$referenceHook);
+
+            return 0;
+        }
         $meetingId = $referenceObj->meeting_id;
         (new MeetingUpdateDomain())($meetingId, ['paid_state' => 1]);
         $meetingObj = (new MeetingWhereDomain())(['id' => $meetingId]);
+        if ($meetingObj->count() <= 0) {
+            \Log::error('Busqueda de reunión');
+
+            return;
+        }
         $meetingObj = $meetingObj[0];
 
         $contactId = $meetingObj->contacts_id;
@@ -32,7 +42,10 @@ class PaymentSuccessStoreUseCase
         // Send SMS
         $type_meeting = $meetingObj->type_meeting;
         $dateUtil = new DateUtil();
-        $date = is_null($contactObj->dt_start_rescheduler) ? $contactObj->dt_start : $contactObj->dt_start_rescheduler;
+        $date = is_null(
+                $meetingObj->dt_start_rescheduler) ?
+                $meetingObj->dt_start :
+                $meetingObj->dt_start_rescheduler;
         $day = $dateUtil->getDayByDate($date);
         $month = $dateUtil->getNameMonthByDate($date);
         $time = $dateUtil->getTime($date);

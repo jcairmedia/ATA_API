@@ -35,13 +35,31 @@ class EventRequestOfflinePaidUseCase
                 default:break;
             }
         } else {
-        }
-    }
+            if ($data['transaction']['method'] == 'card') {
+                if (isset($data['transaction']['subscription_id'])) {
+                    $subscription = $data['transaction']['subscription_id'];
+                    $subscriptionObj = (new FindSubscriptionDomain())(['id_suscription_openpay' => $subscription]);
+                    if (!$subscriptionObj) {
+                        \Log::error('Suscripción no encontrada: ');
 
-    public function getTextSMS()
-    {
-        return '¡Hola! Por falta de pago, lamentablemente hemos cancelado
-                tu asesoría legal en línea. Entra al correo electrónico
-                que nos proporcionaste para más detalles. ';
+                        return 0;
+                    }
+                    $casesId = $subscriptionObj->cases_id;
+                    if ($data['transaction']['status'] == 'completed') {
+                        $data_payment = [
+                            'folio' => $data['transaction']['id'],
+                            'type_paid' => 'ONLINE',
+                            'type_target' => $data['transaction']['card']['brand'],
+                            'bank' => $data['transaction']['card']['bank_name'],
+                            'currency' => $data['transaction']['currency'],
+                            'brand' => $data['transaction']['card']['brand'],
+                            'authorization' => $data['transaction']['authorization'],
+                            'cases_id' => $casesId,
+                        ];
+                        (new CreatePaymentCasesDomain(new Cases_payments($data_payment)))();
+                    }
+                }
+            }
+        }
     }
 }
