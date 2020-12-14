@@ -2,7 +2,11 @@
 
 namespace App\Main\OpenpayWebhookEvent\UseCases;
 
+use App\Cases_payments;
+use App\Main\Cases_payments\Domain\CreatePaymentCasesDomain;
 use App\Main\OpenpayWebhookEvent\Domain\OpenpayHookEventDomain;
+use App\Main\Subscription\Domain\FindSubscriptionDomain;
+use App\Main\Subscription\Domain\SubscriptionDomain;
 use App\OpenpayWebhookEvent;
 use Illuminate\Support\Arr;
 
@@ -44,6 +48,15 @@ class EventRequestOfflinePaidUseCase
 
                         return 0;
                     }
+                    if ($data['transaction']['status'] == 'failed') {
+                        // cancelar subscription
+                        $subscriptionObj->active = 0;
+                        $subscriptionObj->dt_cancelation = ((new \DateTime())->format('Y-m-d Hi:s'));
+                        (new SubscriptionDomain())($subscriptionObj);
+
+                        return;
+                    }
+                    // Cobro exitoso
                     $casesId = $subscriptionObj->cases_id;
                     if ($data['transaction']['status'] == 'completed') {
                         $data_payment = [
