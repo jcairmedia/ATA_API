@@ -6,7 +6,7 @@ use App\Subscription;
 
 class FindSubscriptionDomain
 {
-    public function create($array)
+    public function __invoke(array $array)
     {
         try {
             $subscription = Subscription::where($array)->first();

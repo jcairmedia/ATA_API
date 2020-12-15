@@ -12,7 +12,7 @@ class CreatePaymentCasesDomain
             $payments->saveOrFail();
         } catch (\Exception $ex) {
             \Log::error($ex->getMessage().'('.$ex->getCode().')');
-            throw new \Exception($ex->getMessage(), $ex->getCode(), $ex);
+            throw new \Exception($ex->getMessage(), (int) $ex->getCode(), $ex);
         }
     }
 }

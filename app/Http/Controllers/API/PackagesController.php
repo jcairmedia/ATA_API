@@ -189,7 +189,7 @@ class PackagesController extends Controller
             (new SMSUtil())($testSMS, $user->phone);
 
             // Enviar correo
-            $DT_valid = new \DateTime(date('Y-m-d', strtotime(date('Y-m-d').'+1month')));
+            $DT_valid = new \DateTime(date('Y-m-d', strtotime(date('Y-m-d').'+1month-1day')));
 
             $dateUtil = new DateUtil();
 

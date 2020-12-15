@@ -18,7 +18,7 @@ class StorePaymentOpenPay
      *
      * $chargeData = array(
      *   'method' => 'store',
-     *   'amount' => 50.00,
+     *   'amount' => {monto},
      *   'description' => 'Cargo con expiración',
      *   'due_date' => $due,
      *   'customer'=> $customer

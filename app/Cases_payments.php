@@ -9,11 +9,11 @@ class Cases_payments extends Model
     protected $fillable = [
         'folio',
         'type_paid',
-        'type_target',
+        'card_type',
         'bank',
         'currency',
         'brand',
-        'authorization',
+        'bank_auth_code',
         'cases_id',
         'created_at',
         'updated_at',
