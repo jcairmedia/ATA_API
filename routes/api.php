@@ -2,7 +2,9 @@
 
 use App\Http\Controllers\API\AppointmentDateController;
 use App\Http\Controllers\API\BenefitsController;
+use App\Http\Controllers\API\CasesController;
 use App\Http\Controllers\API\CRUDMeetingController;
+use App\Http\Controllers\API\CRUDQuestionController;
 use App\Http\Controllers\API\FreeMeetingController;
 use App\Http\Controllers\API\MeetingReSchedulerController;
 use App\Http\Controllers\API\OfflinePaidMeetingController;
@@ -14,12 +16,12 @@ use App\Http\Controllers\API\RCasesController;
 use App\Http\Controllers\API\RolesController;
 use App\Http\Controllers\API\ServicesController;
 use App\Http\Controllers\API\TestCustomerController;
+use App\Http\Controllers\API\UserRolesController;
 use App\Http\Controllers\API\UsersController;
 use App\Http\Controllers\API\WebHookOfflinePaidMeetingController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\API\CRUDQuestionController;
-use App\Http\Controllers\API\UserRolesController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -56,7 +58,6 @@ Route::post('/meeting/paid/online', [OnlinePaidMeetingController::class, 'index'
 Route::post('/meeting/rescheduler', [MeetingReSchedulerController::class, 'index']);
 Route::post('/meeting/state', [CRUDMeetingController::class, 'updateStateMeeting']);
 
-
 Route::get('/meetings/list', [CRUDMeetingController::class, 'list']);
 Route::get('/meeting/questionnaire', [CRUDMeetingController::class, 'getQuestionnaireByMeetingId']);
 
@@ -81,10 +82,11 @@ Route::post('/roles/permission', [RolesController::class, 'associate']);
 Route::post('/user/rol', [UsersController::class, 'associate_rol']);
 Route::get('/users/rol', [UsersController::class, 'getUserByRol']);
 
-
 Route::post('/user/dash', [UsersController::class, 'registerUserDash']);
 
 Route::get('/questions', [CRUDQuestionController::class, 'list']);
 
 Route::get('/users/roles', [UserRolesController::class, 'list']);
 Route::get('/roles', [RolesController::class, 'list']);
+
+Route::delete('/cases', [CasesController::class, 'close']);

@@ -15,6 +15,7 @@ class Cases extends Model
         'services_id',
         'users_id',
         'customer_id',
+        'closed_at',
         'id_customer_openpay',
     ];
     protected $table = 'cases';

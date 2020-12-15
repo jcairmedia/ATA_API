@@ -2,6 +2,8 @@
 
 namespace App\Main\Cases\Domain;
 
+use App\Cases;
+
 class CaseFindDomain
 {
     public function __invoke($array)
