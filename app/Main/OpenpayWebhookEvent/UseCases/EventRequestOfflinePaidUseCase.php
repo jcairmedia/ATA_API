@@ -47,12 +47,14 @@ class EventRequestOfflinePaidUseCase
             if ($data['transaction']['method'] == 'card') {
                 if (isset($data['transaction']['subscription_id'])) {
                     $subscription = $data['transaction']['subscription_id'];
+                    // 1. Find Subscription
                     $subscriptionObj = (new FindSubscriptionDomain())(['id_suscription_openpay' => $subscription]);
                     if (!$subscriptionObj) {
                         \Log::error('Suscripción no encontrada: '.$subscription);
 
                         return 0;
                     }
+                    // 2. state HOOK
                     if ($data['transaction']['status'] == 'failed') {
                         \Log::error('failed: '.print_r($data, 1));
                         // cancelar subscription
@@ -95,7 +97,7 @@ class EventRequestOfflinePaidUseCase
                     // Cobro exitoso
                     $casesId = $subscriptionObj->cases_id;
                     $caseObj = (new CaseInnerJoinCustomerDomain())(['cases.id' => $casesId]);
-
+                    \Log::error('Obj casespayments: ', print_r($caseObj, 1));
                     if ($data['transaction']['status'] == 'completed') {
                         \Log::error('Complete '.print_r($data, 1));
                         $data_payment = [

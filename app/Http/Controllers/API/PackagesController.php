@@ -186,7 +186,9 @@ class PackagesController extends Controller
             // -- ENVIAR DATOS AL USUARIO
             // Enviar SMS
             $testSMS = $this->textSMS($packageObj->name);
-            (new SMSUtil())($testSMS, $user->phone);
+            if ($user->phone != null) {
+                (new SMSUtil())($testSMS, $user->phone);
+            }
 
             // Enviar correo
             $DT_valid = new \DateTime(date('Y-m-d', strtotime(date('Y-m-d').'+1month-1day')));
