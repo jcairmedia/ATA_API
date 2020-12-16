@@ -3,6 +3,7 @@
 use App\Http\Controllers\API\AppointmentDateController;
 use App\Http\Controllers\API\BenefitsController;
 use App\Http\Controllers\API\CasesController;
+use App\Http\Controllers\API\CasesPaymentsController;
 use App\Http\Controllers\API\CRUDMeetingController;
 use App\Http\Controllers\API\CRUDQuestionController;
 use App\Http\Controllers\API\FreeMeetingController;
@@ -90,3 +91,4 @@ Route::get('/users/roles', [UserRolesController::class, 'list']);
 Route::get('/roles', [RolesController::class, 'list']);
 
 Route::delete('/cases', [CasesController::class, 'close']);
+Route::get('/cases/payments', [CasesPaymentsController::class, 'paymentsCase']);

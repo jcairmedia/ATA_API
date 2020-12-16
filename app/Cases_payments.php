@@ -13,9 +13,14 @@ class Cases_payments extends Model
         'bank',
         'currency',
         'brand',
+        'amount',
         'bank_auth_code',
         'cases_id',
         'created_at',
         'updated_at',
+    ];
+
+    protected $casts = [
+        'amount' => 'float',
     ];
 }

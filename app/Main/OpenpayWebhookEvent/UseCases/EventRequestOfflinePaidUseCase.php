@@ -107,6 +107,8 @@ class EventRequestOfflinePaidUseCase
                             'brand' => $data['transaction']['card']['brand'],
                             'bank_auth_code' => Arr::get($data['transaction'], 'authorization', null),
                             'cases_id' => $casesId,
+                            'amount' => Arr::get($data['transaction'], 'amount', null),
+                            'subscription_id' => $subscriptionObj->id,
                         ];
                         (new CreatePaymentCasesDomain())->save(new Cases_payments($data_payment));
 
