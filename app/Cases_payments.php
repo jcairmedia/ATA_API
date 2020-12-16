@@ -7,15 +7,16 @@ use Illuminate\Database\Eloquent\Model;
 class Cases_payments extends Model
 {
     protected $fillable = [
+        'cases_id',
+        'subscription_id',
         'folio',
+        'amount',
         'type_paid',
         'card_type',
         'bank',
         'currency',
         'brand',
-        'amount',
         'bank_auth_code',
-        'cases_id',
         'created_at',
         'updated_at',
     ];

@@ -15,14 +15,14 @@ class Meeting extends Model
         'dt_end',
         'price',
         'record_state',
-        'state_paid',
+        'paid_state',
         'dt_cancellation',
-        'dt_close',
+        'msg_cancellation',
         'contacts_id',
         'users_id',
+        'dt_close',
         'dt_start_rescheduler',
         'dt_end_rescheduler',
-
     ];
     protected $casts = [
         'dt_start' => 'datetime:Y-m-d H:i:s',

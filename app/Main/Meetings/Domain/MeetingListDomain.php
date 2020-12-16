@@ -30,7 +30,11 @@ class MeetingListDomain
         }
         $meetingTable->join('contacts', 'meetings.contacts_id', '=', 'contacts.id');
         $contador = $meetingTable->count();
-        $respuesta = $meetingTable->select(['meetings.*', 'contacts.name'])->skip($index)->limit($byPage)->orderByRaw('dt_start DESC')->get();
+        $respuesta = $meetingTable->select(['meetings.*', 'contacts.name'])
+        ->skip($index)
+        ->limit($byPage)
+        ->orderByRaw('created_at DESC')
+        ->get();
 
         $markup['rows'] = $respuesta;
         $markup['total'] = $contador;

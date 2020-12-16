@@ -79,7 +79,7 @@ class MeetingOnlinePayment
             'method' => 'card',
             'source_id' => $data['token_id'],
             'amount' => (float) $amount_paid,
-            'description' => 'ATA| Cargo para cita de pago en línea',
+            'description' => 'ATA | Cargo para cita de pago en línea',
             'device_session_id' => $data['deviceIdHiddenFieldName'],
             'customer' => $customer,
         ];
