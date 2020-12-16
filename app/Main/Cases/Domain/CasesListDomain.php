@@ -32,7 +32,16 @@ class CasesListDomain
         $casesTable->join('packages', 'packages.id', '=', 'cases.packages_id');
         //services_id
         $contador = $casesTable->count();
-        $respuesta = $casesTable->select(['packages.name as package', 'cases.*', 'users.name as customer', 'users.email', 'services.name as service'])->skip($index)->limit($byPage)->orderByRaw('created_at DESC')->get();
+        $respuesta = $casesTable->select(
+            [
+                'packages.name as package',
+                'cases.*',
+                DB::raw(
+                    "CONCAT(users.name,' ', users.last_name1) as customer"),
+                // 'users.name as customer',
+                'users.email',
+                'services.name as service',
+            ])->skip($index)->limit($byPage)->orderByRaw('created_at DESC')->get();
 
         $markup['rows'] = $respuesta;
         $markup['total'] = $contador;

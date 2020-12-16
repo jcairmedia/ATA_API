@@ -26,6 +26,10 @@ class CancelSubscriptionCaseUse
             if (!$subscriptionObj) {
                 throw new \Exception('Suscripción no encontrada', 500);
             }
+            \Log::error('subscription: '.print_r($subscriptionObj->toArray(), true));
+            if ($subscriptionObj->dt_cancelation) {
+                throw new \Exception('Suscripción ya fue cancelada', 409);
+            }
             $id_suscription_openpay = $subscriptionObj->id_suscription_openpay;
             $id_customer_openpay = $subscriptionObj->id_customer_openpay;
             // delete Subscription open pay
