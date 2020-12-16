@@ -19,7 +19,7 @@
             </p>
             <p style="text-align: center">Por favor confirma tu correo electrónico</p>
             <p style="text-align: center">Para ello simplemente debes hacer click en el siguiente enlace</p>
-            <a href="{{url('register/verify', $confirmation_code)}}">Clic para confirmar tu email</a>
+            <a href="{{$url}}/{{ $confirmation_code}}">Clic para confirmar tu email</a>
         </div>
         <p style="text-align: center">
             <a href="" style="color: #6fb258;text-align: center">Aviso de privacidad</a>

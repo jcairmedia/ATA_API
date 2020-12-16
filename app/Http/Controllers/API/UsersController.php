@@ -91,7 +91,11 @@ class UsersController extends Controller
             $userSaved = $r($user);
 
             $sendEmail = new SendEmail();
-            $data = ['customer_name' => $userSaved->name, 'confirmation_code' => $userSaved->confirmation_code];
+            $data = [
+                        'customer_name' => $userSaved->name,
+                        'confirmation_code' => $userSaved->confirmation_code,
+                        'url' => env('URL_EMAIL_VERIFY'),
+                    ];
             $view = view('layout_verify_email', $data)->render();
             $sendEmail(
                 ['email' => env('EMAIL_FROM')],
@@ -127,14 +131,12 @@ class UsersController extends Controller
                 'email' => $user['email'],
                 'password' => $user['password'],
                 'phone' => $user['phone'],
-                'email_verified_at' => (new \DateTime())->format('Y-m-d H:i:s')
+                'email_verified_at' => (new \DateTime())->format('Y-m-d H:i:s'),
             ];
-
 
             $dt = date('dmYHis');
             $r = new RegisterUseCase(new UserCreatorDomain());
             $userSaved = $r($data);
-
 
             return response()->json([
                 'code' => 201,
@@ -152,7 +154,6 @@ class UsersController extends Controller
     }
 
     /**
-     *
      * @OA\GET(
      *  path="/api/register/verify/{code}",
      *  summary="Verificación de email",
@@ -199,7 +200,7 @@ class UsersController extends Controller
      */
     public function verify(string $code)
     {
-        try{
+        try {
             $findUser = new FindUserDomain();
             $user = $findUser($code);
             \Log::error('code'.$code);
@@ -217,7 +218,7 @@ class UsersController extends Controller
 
             return response()->json([
                 'code' => 200,
-                'message' => 'Usuario verificado'
+                'message' => 'Usuario verificado',
             ], 200);
         } catch (\Exception $ex) {
             \Log::error('Asociar rol al usuario: '.$ex->getMessage().$ex->getCode());
