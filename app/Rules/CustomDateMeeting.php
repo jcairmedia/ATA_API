@@ -31,9 +31,9 @@ class CustomDateMeeting implements Rule
         $date = new \DateTime($value);
         $now = new \DateTime();
         $dt_interval = $now->diff($date);
-        if ((int) $dt_interval->invert == 1 && $dt_interval->days >0) {
+        if ((int) $dt_interval->invert == 1 && $dt_interval->days > 0) {
             // $fail('Fecha pasada invalida');
-            $this->message = 'El :attribute no puede ser una fecha anterior a la fecha actual';
+            $this->message = 'El :attribute no puede ser una fecha anterior a la fecha actual: ';
 
             return false;
         }
@@ -45,7 +45,7 @@ class CustomDateMeeting implements Rule
         }
         $dia_week = (int) $date->format('N');
         if ($dia_week >= 6) {
-            $this->message = 'El :attribute no puede estar en fines de semana';
+            $this->message = 'La fecha no puede estar en fines de semana'.print_r($date, 1);
 
             return false;
         }

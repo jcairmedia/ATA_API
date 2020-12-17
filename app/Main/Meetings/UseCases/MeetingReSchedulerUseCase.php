@@ -28,7 +28,6 @@ class MeetingReSchedulerUseCase
     public function __invoke(array $data, string $idCalendar, int $numberPlaces)
     {
         $meetingId = $data['meetingId'];
-
         $meetingArray = (new MeetingWhereDomain())(['id' => $data['meetingId']]);
 
         if (count($meetingArray) <= 0) {
@@ -40,38 +39,29 @@ class MeetingReSchedulerUseCase
 
         $this->validateDate($data, $meetingObj->dt_start);
 
-        // Obtener el id del calendario para actualizar fecha en calendar
+        // Get Calendar's Id for update date in Calendar
         $event = (new GetEventDomain())($meetingObj->id);
-        if ($event == null) {
-            $meetingObjWithContact = (new MeetingWithContactDomain())($meetingObj->id);
-            $event = new Event();
-            $eventResult = $event->create(
-                [
-                    'name' => 'Llamar a '.$meetingObjWithContact->contact,
-                    'description' => $this->setTextSubjectEventInCalendar($meetingObj->type_meeting),
-                    'startDateTime' => new Carbon($data['date'].' '.$rangeHour->start),
-                    'endDateTime' => new Carbon($data['date'].' '.$rangeHour->end), ],
-                    $idCalendar
-            );
-            try {
-                $calendar = new AddEventDomain();
-                $calendar(new CalendarEventMeeting([
-                    'meetings_id' => $meetingObjWithContact->id,
-                    'idevent' => $eventResult->id,
-                    'idcalendar' => $idCalendar, ]));
-            } catch (\Exception $ex) {
-                \Log::error('Error add Event in DB: '.$ex->getMessage());
-            }
+        if (is_null($event)) {
+            $event = $this->addEvent($meetingObj, $rangeHour, $data, $idCalendar, $event);
         } else {
-            // Buscar el evento y actualizar (google calendar)
+            // Search event and update (google calendar)
             $_idEvent_ = $event->idevent;
             $_idCalendar_ = $event->idcalendar;
-            $eventObj = Event::find($_idEvent_, $_idCalendar_);
-
+            try {
+                $eventObj = Event::find($_idEvent_, $_idCalendar_);
+                \Log::error('evento: '.print_r($eventObj, 1));
+            } catch (\Exception $ex) {
+                \Log::error('Error 2 ex'.$ex->getMessage());
+                // Create Event in calendar and add in database
+                $event = $this->addEvent($meetingObj, $rangeHour, $data, $idCalendar, $event);
+                // Search event in google Calendar
+                $eventObj = Event::find($event->idevent, $event->idcalendar);
+            }
             $eventObj->startDateTime = new Carbon($data['date'].' '.$rangeHour->start);
             $eventObj->endDateTime = new Carbon($data['date'].' '.$rangeHour->end);
             $eventObj->summary .= ' (re agendada)';
             $eventObj->save();
+            \Log::alert('despúes de actualizar evento: '.print_r($eventObj, 1));
         }
         // Actuaizar cita en BD
         $meetingObj->dt_start_rescheduler = $data['date'].' '.$rangeHour->start;
@@ -210,5 +200,42 @@ class MeetingReSchedulerUseCase
         }
 
         return $text;
+    }
+
+    private function addEvent(
+        $meetingObj,
+        $rangeHour,
+        $data,
+        $idCalendar,
+        $eventObj)
+    {
+        $meetingObjWithContact = (new MeetingWithContactDomain())($meetingObj->id);
+        $event = new Event();
+        $eventResult = $event->create(
+                [
+                    'name' => 'Llamar a '.$meetingObjWithContact->contact,
+                    'description' => $this->setTextSubjectEventInCalendar($meetingObj->type_meeting),
+                    'startDateTime' => new Carbon($data['date'].' '.$rangeHour->start),
+                    'endDateTime' => new Carbon($data['date'].' '.$rangeHour->end), ],
+                    $idCalendar
+            );
+        try {
+            $calendar = new AddEventDomain();
+            if (is_null($eventObj)) {
+                $calendar(new CalendarEventMeeting([
+                        'meetings_id' => $meetingObjWithContact->id,
+                        'idevent' => $eventResult->id,
+                        'idcalendar' => $idCalendar, ]));
+            } else {
+                $eventObj->idevent = $eventResult->id;
+                $eventObj->idcalendar = $idCalendar;
+                $calendar($eventObj);
+            }
+        } catch (\Exception $ex) {
+            \Log::error('Error add Event in DB: '.$ex->getMessage());
+        }
+        $event = (new GetEventDomain())($meetingObj->id);
+
+        return $event;
     }
 }

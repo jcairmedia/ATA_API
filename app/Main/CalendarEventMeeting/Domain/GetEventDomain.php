@@ -9,7 +9,9 @@ class GetEventDomain
     public function __invoke(int $MeetingId)
     {
         try {
-            $event = CalendarEventMeeting::where(['meetings_id' => $MeetingId])->first();
+            $event = CalendarEventMeeting::where(['meetings_id' => $MeetingId])
+            ->orderBy('created_at', 'DESC')
+            ->first();
 
             return $event;
         } catch (\Exception $ex) {

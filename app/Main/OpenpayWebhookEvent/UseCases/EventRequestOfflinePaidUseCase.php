@@ -28,6 +28,9 @@ class EventRequestOfflinePaidUseCase
             'order_id' => Arr::get($data, 'transaction.order_id', null),
             'json' => json_encode($data),
         ]));
+        // FIXME: Change to a cron task
+        sleep(2);
+        \Log::error('open pay data: '.print_r($data, 1));
         // Heuristic payment method store
         if ($data['transaction']['method'] == 'store') {
             $statusTansaction = $data['transaction']['status'];
@@ -49,7 +52,7 @@ class EventRequestOfflinePaidUseCase
                     $subscription = $data['transaction']['subscription_id'];
                     // 1. Find Subscription
                     $subscriptionObj = (new FindSubscriptionDomain())(['id_suscription_openpay' => $subscription]);
-                    if (!$subscriptionObj) {
+                    if (is_null($subscriptionObj)) {
                         \Log::error('Suscripción no encontrada: '.$subscription);
 
                         return 0;
@@ -77,8 +80,10 @@ class EventRequestOfflinePaidUseCase
                             $email = $caseObj->customer_email;
                             $namePackage = $caseObj->package_name;
                             if (env('APP_ENV') != 'local') {
-                                $textSMS = $this->getTextSMSSubscriptionCancelled();
-                                (new SMSUtil())($textSMS, $phone);
+                                if (!is_null($phone)) {
+                                    $textSMS = $this->getTextSMSSubscriptionCancelled();
+                                    (new SMSUtil())($textSMS, $phone);
+                                }
                             }
                             // Send EMAIL
                             $textEmail = view('layout_email_cancell_subscription')->render();
@@ -97,9 +102,14 @@ class EventRequestOfflinePaidUseCase
                     // Cobro exitoso
                     $casesId = $subscriptionObj->cases_id;
                     $caseObj = (new CaseInnerJoinCustomerDomain())(['cases.id' => $casesId]);
-                    \Log::error('Obj casespayments: ', print_r($caseObj, 1));
+                    if (is_null($caseObj)) {
+                        \Log::error('no encontro join del caSO: '.$case_id);
+
+                        return;
+                        // throw new Exception('Error Processing Request', 1);
+                    }
+                    \Log::error('Obj casespayments: '.print_r($caseObj->toArray(), 1));
                     if ($data['transaction']['status'] == 'completed') {
-                        \Log::error('Complete '.print_r($data, 1));
                         $data_payment = [
                             'folio' => Arr::get($data['transaction'], 'id', null),
                             'type_paid' => 'ONLINE',
@@ -114,14 +124,16 @@ class EventRequestOfflinePaidUseCase
                         ];
                         (new CreatePaymentCasesDomain())->save(new Cases_payments($data_payment));
 
-                        $testSMS = $this->textSMS($caseObj->package_name);
-                        (new SMSUtil())($testSMS, $caseObj->customer_phone);
+                        if (!is_null($caseObj->customer_phone)) {
+                            $testSMS = $this->textSMS($caseObj->package_name);
+                            (new SMSUtil())($testSMS, $caseObj->customer_phone);
+                        }
 
                         // Enviar correo
                         $subscription_Id = $subscriptionObj->id_suscription_openpay;
                         $customer_Id = $subscriptionObj->id_customer_openpay;
                         $stringResponseService = (new GetStatusSubscriptionServices())($customer_Id, $subscription_Id);
-                        \Log::error('Consulta estado suscripción: '.$stringResponseService);
+                        \Log::error('Consulta estado suscripción: '.print_r($stringResponseService, 1));
                         $jsonOPENPAY_SUSCRIPTION = json_decode($stringResponseService, true);
                         $period_end_date = Arr::get($jsonOPENPAY_SUSCRIPTION, 'period_end_date', null);
                         $dt_i = date('Y-m-d', strtotime($period_end_date.'-1month+1day'));

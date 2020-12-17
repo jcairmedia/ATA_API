@@ -109,6 +109,7 @@ class AppointmentDateController extends Controller
 
             return response()->json($hours);
         } catch (\Exception $ex) {
+            \Log::error('ex: '.print_r($ex->getMessage(), 1));
             $code = (int) $ex->getCode();
             if (!(($code >= 400 && $code <= 422) || ($code >= 500 && $code <= 503))) {
                 $code = 500;

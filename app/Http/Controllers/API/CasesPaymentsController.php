@@ -18,6 +18,7 @@ class CasesPaymentsController extends Controller
                 throw new \Exception('El caso no tiene asociado una suscripción', 404);
             }
             $subscriptionId = $subscriptionObj->id;
+            \Log::error('subscription ID: '.$subscriptionId);
             $payments = (new ListPaymentCasesBySubscriptionUseCase())($subscriptionId);
 
             return response()->json([
