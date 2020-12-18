@@ -23,24 +23,18 @@ class CancelSubscriptionCaseUse
             }
             // Find Subscription
             $subscriptionObj = (new FindSubscriptionDomain())(['cases_id' => $caseObj->id]);
-            if (!$subscriptionObj) {
+            if (is_null($subscriptionObj)) {
                 throw new \Exception('Suscripción no encontrada', 500);
             }
             \Log::error('subscription: '.print_r($subscriptionObj->toArray(), true));
-            if ($subscriptionObj->dt_cancelation) {
+            if (!is_null($subscriptionObj->dt_cancelation)) {
                 throw new \Exception('Suscripción ya fue cancelada', 409);
             }
             $id_suscription_openpay = $subscriptionObj->id_suscription_openpay;
             $id_customer_openpay = $subscriptionObj->id_customer_openpay;
             // delete Subscription open pay
             \Log::error('subscripcion: '.$id_suscription_openpay.' customer: '.$id_customer_openpay);
-            $stringResponse = (new DeleteSubscriptionService())($id_customer_openpay, $id_suscription_openpay);
-            if (!empty($stringResponse)) {
-                $jsonResponse = json_decode($stringResponse, true);
-                \Log::error('respuesta de cancelación de suscripción open pay: '.print_r($stringResponse, 1));
-                throw new \Exception('Respuesta Open pay: '.$jsonResponse['description'], $jsonResponse['http_code']);
-            }
-
+            $this->cancellSubscription($id_customer_openpay, $id_suscription_openpay);
             // Desactivación of subscription
             $subscriptionObj->active = 0;
             $subscriptionObj->dt_cancelation = (new \DateTime())->format('Y-m-d H:i:s');
@@ -70,6 +64,24 @@ class CancelSubscriptionCaseUse
         } catch (\Exception $ex) {
             \Log::error($ex->getMessage().'('.$ex->getCode().')');
             throw new \Exception($ex->getMessage(), $ex->getCode(), $ex);
+        }
+    }
+
+    public function cancellSubscription($id_customer_openpay, $id_suscription_openpay)
+    {
+        try {
+            $stringResponse = (new DeleteSubscriptionService())($id_customer_openpay, $id_suscription_openpay);
+
+            if (!empty($stringResponse)) {
+                $jsonResponse = json_decode($stringResponse, true);
+                \Log::error('respuesta de cancelación de suscripción open pay: '.print_r($stringResponse, 1));
+                throw new \Exception('Respuesta Open pay: '.$jsonResponse['description'], $jsonResponse['http_code']);
+            }
+        } catch (\Exception $ex) {
+            if ((int) $ex->getCode() != 404) {
+                \Log::error('exc open pay cancellSubscription: '.$ex->getMessage());
+                throw new \Exception('Respuesta Open pay: '.$ex->getMessage(), $ex->getCode());
+            }
         }
     }
 

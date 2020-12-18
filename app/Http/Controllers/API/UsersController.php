@@ -297,9 +297,13 @@ class UsersController extends Controller
      */
     public function getuser(Request $request)
     {
+        $user = $request->user();
+        $user->getRoleNames();
+
         return response()->json(
             ['code' => 200,
-            'data' => [$request->user()], ]);
+            'data' => [$user],
+            ]);
     }
 
     public function associate_rol(Request $request)

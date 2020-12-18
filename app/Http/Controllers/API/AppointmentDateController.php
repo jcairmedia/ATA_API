@@ -117,7 +117,8 @@ class AppointmentDateController extends Controller
 
             return response()->json([
                 'code' => (int) $code,
-                'message' => $ex->getMessage(),
+                'message' => 'Configuración del calendario incorrecta',
+                'data' => $ex->getMessage(),
             ], $code);
         }
     }
