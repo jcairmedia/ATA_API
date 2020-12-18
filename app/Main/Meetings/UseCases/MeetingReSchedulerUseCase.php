@@ -39,12 +39,12 @@ class MeetingReSchedulerUseCase
 
         $this->validateDate($data, $meetingObj->dt_start);
 
-        // Get Calendar's Id for update date in Calendar
+        // Obtener el id del calendario para actualizar fecha en calendar
         $event = (new GetEventDomain())($meetingObj->id);
         if (is_null($event)) {
             $event = $this->addEvent($meetingObj, $rangeHour, $data, $idCalendar, $event);
         } else {
-            // Search event and update (google calendar)
+            // Buscar el evento y actualizar (google calendar)
             $_idEvent_ = $event->idevent;
             $_idCalendar_ = $event->idcalendar;
             try {
@@ -52,9 +52,7 @@ class MeetingReSchedulerUseCase
                 \Log::error('evento: '.print_r($eventObj, 1));
             } catch (\Exception $ex) {
                 \Log::error('Error 2 ex'.$ex->getMessage());
-                // Create Event in calendar and add in database
                 $event = $this->addEvent($meetingObj, $rangeHour, $data, $idCalendar, $event);
-                // Search event in google Calendar
                 $eventObj = Event::find($event->idevent, $event->idcalendar);
             }
             $eventObj->startDateTime = new Carbon($data['date'].' '.$rangeHour->start);

@@ -56,12 +56,6 @@ Route::post('/meeting/paid', [PaidMeetingController::class, 'register']);
 Route::post('/meeting/paid/offline', [OfflinePaidMeetingController::class, 'index']);
 Route::post('/meeting/paid/online', [OnlinePaidMeetingController::class, 'index']);
 
-Route::post('/meeting/rescheduler', [MeetingReSchedulerController::class, 'index']);
-Route::post('/meeting/state', [CRUDMeetingController::class, 'updateStateMeeting']);
-
-Route::get('/meetings/list', [CRUDMeetingController::class, 'list']);
-Route::get('/meeting/questionnaire', [CRUDMeetingController::class, 'getQuestionnaireByMeetingId']);
-
 // valid code for activate user
 Route::get('/register/verify/{code}', [UsersController::class, 'verify']);
 
@@ -74,21 +68,25 @@ Route::group(['prefix' => '/customersatisfaction'], function () {
     Route::post('/test', [TestCustomerController::class, 'saveTest']);
 });
 
-// Route::get('/hook', [WebHookOfflinePaidMeetingController::class, 'index']);
-Route::get('/cases', [RCasesController::class, 'list']);
-Route::post('/case/lawyer', [RCasesController::class, 'setLawyer']);
 Route::post('/roles/add', [RolesController::class, 'add']);
 Route::post('/permission', [PermissionController::class, 'add']);
 Route::post('/roles/permission', [RolesController::class, 'associate']);
-Route::post('/user/rol', [UsersController::class, 'associate_rol']);
-Route::get('/users/rol', [UsersController::class, 'getUserByRol']);
-
-Route::post('/user/dash', [UsersController::class, 'registerUserDash']);
 
 Route::get('/questions', [CRUDQuestionController::class, 'list']);
 
-Route::get('/users/roles', [UserRolesController::class, 'list']);
-Route::get('/roles', [RolesController::class, 'list']);
+Route::group(['middleware' => ['auth:api']], function () {
+    Route::get('/users/rol', [UsersController::class, 'getUserByRol']);
+    Route::post('/user/dash', [UsersController::class, 'registerUserDash']);
+    Route::get('/roles', [RolesController::class, 'list']);
+    Route::get('/users/roles', [UserRolesController::class, 'list']);
+    Route::get('/meetings/list', [CRUDMeetingController::class, 'list']);
+    Route::get('/meeting/questionnaire', [CRUDMeetingController::class, 'getQuestionnaireByMeetingId']);
+    Route::post('/meeting/state', [CRUDMeetingController::class, 'updateStateMeeting']);
+    Route::post('/meeting/rescheduler', [MeetingReSchedulerController::class, 'index']);
 
-Route::delete('/cases', [CasesController::class, 'close']);
-Route::get('/cases/payments', [CasesPaymentsController::class, 'paymentsCase']);
+    Route::post('/user/rol', [UsersController::class, 'associate_rol']);
+    Route::get('/cases', [RCasesController::class, 'list']);
+    Route::post('/case/lawyer', [RCasesController::class, 'setLawyer']);
+    Route::delete('/cases', [CasesController::class, 'close']);
+    Route::get('/cases/payments', [CasesPaymentsController::class, 'paymentsCase']);
+});
