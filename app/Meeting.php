@@ -23,6 +23,7 @@ class Meeting extends Model
         'dt_close',
         'dt_start_rescheduler',
         'dt_end_rescheduler',
+        'notes',
     ];
     protected $casts = [
         'dt_start' => 'datetime:Y-m-d H:i:s',

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\CustomerTest;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Meetings\UpdateNoteRequest;
 use App\Main\CalendarEventMeeting\Domain\GetEventDomain;
 use App\Main\Config_System\Domain\SearchConfigDomain;
 use App\Main\Config_System\UseCases\SearchConfigurationUseCase;
@@ -12,6 +13,7 @@ use App\Main\EventsCalendar\Services\EventDelete;
 use App\Main\Meetings\Domain\MeetingUpdateDomain;
 use App\Main\Meetings\Domain\MeetingWhereDomain;
 use App\Main\Meetings\UseCases\MeetingListUseCase;
+use App\Main\Meetings\UseCases\NotesMeetingUseCase;
 use App\Main\Questionnaire\Domain\FindQuestionnaireByMeetingIdDomain;
 use App\Main\Questionnaire\Domain\FindQuestionnaireDomain;
 use App\Main\TestCustomer\Domain\CreateTestDomain;
@@ -143,16 +145,40 @@ class CRUDMeetingController extends Controller
     {
         try {
             $meetingId = $request->input('meetingId');
+
             $test = (new FindTestDomain())(['meeting_id' => $meetingId]);
             if ($test == null) {
                 throw new \Exception('Encuesta no encontrada', 404);
             }
+
             $questionnaire = (new FindQuestionnaireByMeetingIdDomain())($meetingId);
 
             return response()->json([
                 'code' => 200,
                 'data' => $questionnaire->toArray(),
             ]);
+        } catch (\Exception $ex) {
+            $code = (int) $ex->getCode();
+            if (!(($code >= 400 && $code <= 422) || ($code >= 500 && $code <= 503))) {
+                $code = 500;
+            }
+
+            return response()->json([
+                'code' => (int) $code,
+                'message' => $ex->getMessage(),
+            ], $code);
+        }
+    }
+
+    public function setNote(UpdateNoteRequest $request)
+    {
+        try {
+            (new NotesMeetingUseCase())($request->all());
+
+            return response()->json([
+                'code' => 200,
+                'message' => 'Nota actualizada exitosamente',
+            ], 200);
         } catch (\Exception $ex) {
             $code = (int) $ex->getCode();
             if (!(($code >= 400 && $code <= 422) || ($code >= 500 && $code <= 503))) {

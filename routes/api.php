@@ -89,4 +89,5 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::post('/case/lawyer', [RCasesController::class, 'setLawyer']);
     Route::delete('/cases', [CasesController::class, 'close']);
     Route::get('/cases/payments', [CasesPaymentsController::class, 'paymentsCase']);
+    Route::post('/meeting/note', [CRUDMeetingController::class, 'setNote']);
 });
