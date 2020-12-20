@@ -22,7 +22,10 @@ class CasesListDomain
         $casesTable = DB::table('cases');
         $respuesta = null;
         if ($filter != '') {
-            $casesTable = $casesTable->where('name', 'like', '%'.$filter.'%');
+            $casesTable->whereRaw("CONCAT(users.name,' ', users.last_name1) like '%{$filter}%'");
+            $casesTable->orWhere('users.email', 'like', '%'.$filter.'%');
+            $casesTable->orWhere('services.name', 'like', '%'.$filter.'%');
+            $casesTable->orWhere('packages.name', 'like', '%'.$filter.'%');
         }
         if (count($config) > 0) {
             $casesTable = $casesTable->where($config);
@@ -32,7 +35,7 @@ class CasesListDomain
         $casesTable->join('packages', 'packages.id', '=', 'cases.packages_id');
         //services_id
         $contador = $casesTable->count();
-        $respuesta = $casesTable->select(
+        $casesTable->select(
             [
                 'packages.name as package',
                 'cases.*',
@@ -41,7 +44,11 @@ class CasesListDomain
                 // 'users.name as customer',
                 'users.email',
                 'services.name as service',
-            ])->skip($index)->limit($byPage)->orderByRaw('created_at DESC')->get();
+            ])->skip($index)->limit($byPage)->orderByRaw('created_at DESC');
+
+        \Log::error('query: '.$casesTable->toSql());
+        \Log::error('query: '.print_r($casesTable->getBindings(), 1));
+        $respuesta = $casesTable->get();
 
         $markup['rows'] = $respuesta;
         $markup['total'] = $contador;

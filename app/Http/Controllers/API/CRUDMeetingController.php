@@ -29,14 +29,14 @@ class CRUDMeetingController extends Controller
     {
         $index = $request->input('index') ?? 0;
         $filter = $request->input('filter') ?? '';
-        $byPage = $request->input('byPage') ?? 10;
-        $category = $request->input('category') ?? '';
+        $byPage = $request->input('byPage') ?? 100;
+        $category = $request->input('category');
+        $dateStart = $request->input('dateStart');
+        $dateEnd = $request->input('dateEnd');
 
         $meetings = new MeetingListUseCase();
-        $array = [];
-        if ($category != '') {
-            $array = ['category' => $category];
-        }
+
+        $array = ['category' => $category, 'dateStart' => $dateStart, 'dateEnd' => $dateEnd];
 
         return response()->json($meetings($filter, $index, $byPage, $array));
     }

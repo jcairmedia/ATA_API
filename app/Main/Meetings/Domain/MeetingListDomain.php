@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\DB;
 class MeetingListDomain
 {
     public function __invoke(string $filter, int $index, int $byPage, array $config = [])
-    // public function __invoke()
     {
         $filter = trim($filter);
 
@@ -20,14 +19,28 @@ class MeetingListDomain
             'index' => $index,
             'rows' => [],
         ];
+
         $meetingTable = DB::table('meetings');
-        $respuesta = null;
+
         if ($filter != '') {
-            $meetingTable = $meetingTable->where('type_meeting', 'like', '%'.$filter.'%');
+            $meetingTable->where('type_meeting', 'like', '%'.$filter.'%');
+            $meetingTable->orWhere('name', 'like', '%'.$filter.'%');
         }
-        if (count($config) > 0) {
-            $meetingTable = $meetingTable->where($config);
-        }
+
+        $dateEnd = isset($config['dateEnd']) ? $config['dateEnd'] : null;
+        $dateStart = isset($config['dateStart']) ? $config['dateStart'] : null;
+        $category = isset($config['category']) ? $config['category'] : null;
+
+        $meetingTable->when((!is_null($dateStart) && !is_null($dateEnd)), function ($query) use ($dateStart, $dateEnd) {
+            return $query
+            ->whereBetween('dt_start', [$dateStart, $dateEnd])
+            ->orWhereBetween('dt_start_rescheduler', [$dateStart, $dateEnd]);
+        });
+
+        $meetingTable->when(!is_null($category), function ($query, $category) {
+            return $query->where('category', $category);
+        });
+
         $meetingTable->join('contacts', 'meetings.contacts_id', '=', 'contacts.id');
         $contador = $meetingTable->count();
         $respuesta = $meetingTable->select(['meetings.*', 'contacts.name'])
