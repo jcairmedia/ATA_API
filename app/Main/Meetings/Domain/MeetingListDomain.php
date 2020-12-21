@@ -31,23 +31,30 @@ class MeetingListDomain
         $dateStart = isset($config['dateStart']) ? $config['dateStart'] : null;
         $category = isset($config['category']) ? $config['category'] : null;
 
-        $meetingTable->when((!is_null($dateStart) && !is_null($dateEnd)), function ($query) use ($dateStart, $dateEnd) {
-            return $query
-            ->whereBetween('dt_start', [$dateStart, $dateEnd])
-            ->orWhereBetween('dt_start_rescheduler', [$dateStart, $dateEnd]);
+        $meetingTable->when(!is_null($category), function ($query) use ($category) {
+            \Log::error('catgory: '.$category);
+
+            return $query->whereRaw('category = ?', [$category]);
         });
 
-        $meetingTable->when(!is_null($category), function ($query, $category) {
-            return $query->where('category', $category);
+        $meetingTable->when((!is_null($dateStart) && !is_null($dateEnd)), function ($query) use ($dateStart, $dateEnd) {
+            return $query->where(function ($query1) use ($dateStart, $dateEnd) {
+                $query1->whereRaw('date(dt_start) BETWEEN ? AND ?', [$dateStart, $dateEnd])
+                ->orWhereRaw('date(dt_start_rescheduler) BETWEEN ? AND ?', [$dateStart, $dateEnd]);
+            });
         });
 
         $meetingTable->join('contacts', 'meetings.contacts_id', '=', 'contacts.id');
         $contador = $meetingTable->count();
-        $respuesta = $meetingTable->select(['meetings.*', 'contacts.name'])
+        $meetingTable->select(['meetings.*', 'contacts.name'])
         ->skip($index)
         ->limit($byPage)
-        ->orderByRaw('created_at DESC')
-        ->get();
+        ->orderByRaw('created_at DESC');
+
+        \Log::error('query: '.$meetingTable->toSql());
+        \Log::error('query: '.print_r($meetingTable->getBindings(), 1));
+
+        $respuesta = $meetingTable->get();
 
         $markup['rows'] = $respuesta;
         $markup['total'] = $contador;

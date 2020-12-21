@@ -29,7 +29,7 @@
                     <p style="text-align: justify">
                         Te notificamos que hemos recibido confirmación de tu pago para nuestro servicio
                         de asesoría legal en nuestro <strong>"Paquete {{$package}}"</strong>
-                        mismo que estará vigente del día
+                        , este pago cubre nuestro servicio en el periodo del
                         <strong>{{$day}}</strong> de <strong>{{ $month}}</strong>
                         hasta el
                         <strong>{{$day_valid}}</strong> de <strong>{{$month_valid}}</strong>.
