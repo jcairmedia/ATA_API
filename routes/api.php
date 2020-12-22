@@ -6,6 +6,7 @@ use App\Http\Controllers\API\CasesController;
 use App\Http\Controllers\API\CasesPaymentsController;
 use App\Http\Controllers\API\CRUDMeetingController;
 use App\Http\Controllers\API\CRUDQuestionController;
+use App\Http\Controllers\API\CRUDQuestionnaireController;
 use App\Http\Controllers\API\FreeMeetingController;
 use App\Http\Controllers\API\MeetingReSchedulerController;
 use App\Http\Controllers\API\OfflinePaidMeetingController;
@@ -72,9 +73,11 @@ Route::post('/roles/add', [RolesController::class, 'add']);
 Route::post('/permission', [PermissionController::class, 'add']);
 Route::post('/roles/permission', [RolesController::class, 'associate']);
 
-Route::get('/questions', [CRUDQuestionController::class, 'list']);
-
 Route::group(['middleware' => ['auth:api']], function () {
+    Route::get('/questions', [CRUDQuestionController::class, 'list']);
+    Route::get('/questionnaire/questions', [CRUDQuestionController::class, 'getQuestionsByQuestionnaireId']);
+    Route::post('/question', [CRUDQuestionController::class, 'updateQuestion']);
+    Route::get('/questionnaires', [CRUDQuestionnaireController::class, 'list']);
     Route::get('/users/rol', [UsersController::class, 'getUserByRol']);
     Route::post('/user/dash', [UsersController::class, 'registerUserDash']);
     Route::get('/roles', [RolesController::class, 'list']);
