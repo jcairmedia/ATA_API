@@ -298,7 +298,14 @@ class UsersController extends Controller
     public function getuser(Request $request)
     {
         $user = $request->user();
-        $user->getRoleNames();
+
+        $r = $user->roles->pluck('name')->toArray();
+
+        $p = $user->getAllPermissions()->pluck('name')->toArray();
+
+        $user = $user->toArray();
+        $user['roles'] = $r;
+        $user['permisos'] = $p;
 
         return response()->json(
             ['code' => 200,

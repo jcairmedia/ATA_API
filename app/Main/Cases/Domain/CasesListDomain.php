@@ -33,11 +33,14 @@ class CasesListDomain
         $casesTable->join('users', 'cases.customer_id', '=', 'users.id');
         $casesTable->join('services', 'cases.services_id', '=', 'services.id');
         $casesTable->join('packages', 'packages.id', '=', 'cases.packages_id');
+        $casesTable->leftJoin('users as abogados', 'abogados.id', '=', 'cases.users_id');
         //services_id
         $contador = $casesTable->count();
         $casesTable->select(
             [
                 'packages.name as package',
+                DB::raw(
+                    "CONCAT(abogados.name,' ', abogados.last_name1) as abogado"),
                 'cases.*',
                 DB::raw(
                     "CONCAT(users.name,' ', users.last_name1) as customer"),
