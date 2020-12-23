@@ -22,10 +22,12 @@ class MeetingListDomain
 
         $meetingTable = DB::table('meetings');
 
-        if ($filter != '') {
-            $meetingTable->where('type_meeting', 'like', '%'.$filter.'%');
-            $meetingTable->orWhere('name', 'like', '%'.$filter.'%');
-        }
+        $meetingTable->when($filter != '', function ($query) use ($filter) {
+            return $query->where(function ($query2) use ($filter) {
+                $query2->where('type_meeting', 'like', '%'.$filter.'%');
+                $query2->orWhere('name', 'like', '%'.$filter.'%');
+            });
+        });
 
         $dateEnd = isset($config['dateEnd']) ? $config['dateEnd'] : null;
         $dateStart = isset($config['dateStart']) ? $config['dateStart'] : null;
