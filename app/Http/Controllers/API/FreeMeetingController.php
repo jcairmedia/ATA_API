@@ -150,11 +150,13 @@ class FreeMeetingController extends Controller
             );
 
             // Search duration meeting
-            $val_search_config = '';
             $CONFIG_PHONE_OFFICE = 'PHONE_OFFICE';
             $val_search_config = 'MEETING_FREE';
+
             $searchconfusecase = new SearchConfigurationUseCase(new SearchConfigDomain());
             $config = $searchconfusecase($val_search_config);
+            $config_phone = $searchconfusecase($CONFIG_PHONE_OFFICE);
+
             // Contact
             try {
                 $contactUseCase = new ContactRegisterUseCase(new ContactCreatorDomain());
@@ -194,7 +196,7 @@ class FreeMeetingController extends Controller
 
             // Send Email
             $view = $this->getViewEmail([
-                'phone_office' => $config->value,
+                'phone_office' => $config_phone->value,
                 'day' => $day,
                 'month' => $month,
                 'hours' => $time,
