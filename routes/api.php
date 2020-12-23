@@ -7,6 +7,7 @@ use App\Http\Controllers\API\CasesPaymentsController;
 use App\Http\Controllers\API\CRUDMeetingController;
 use App\Http\Controllers\API\CRUDQuestionController;
 use App\Http\Controllers\API\CRUDQuestionnaireController;
+use App\Http\Controllers\API\CRUDUserController;
 use App\Http\Controllers\API\FreeMeetingController;
 use App\Http\Controllers\API\MeetingReSchedulerController;
 use App\Http\Controllers\API\OfflinePaidMeetingController;
@@ -73,6 +74,8 @@ Route::post('/roles/add', [RolesController::class, 'add']);
 Route::post('/permission', [PermissionController::class, 'add']);
 Route::post('/roles/permission', [RolesController::class, 'associate']);
 
+Route::post('/user/recover', [CRUDUserController::class, 'recoverPassword']);
+
 Route::group(['middleware' => ['auth:api']], function () {
     Route::get('/questions', [CRUDQuestionController::class, 'list']);
     Route::get('/questionnaire/questions', [CRUDQuestionController::class, 'getQuestionsByQuestionnaireId']);
@@ -86,6 +89,9 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::get('/meeting/questionnaire', [CRUDMeetingController::class, 'getQuestionnaireByMeetingId']);
     Route::post('/meeting/state', [CRUDMeetingController::class, 'updateStateMeeting']);
     Route::post('/meeting/rescheduler', [MeetingReSchedulerController::class, 'index']);
+
+    Route::post('/user/update', [CRUDUserController::class, 'index']);
+    Route::post('/user/pass', [CRUDUserController::class, 'resetPassword']);
 
     Route::post('/user/rol', [UsersController::class, 'associate_rol']);
     Route::get('/cases', [RCasesController::class, 'list']);
