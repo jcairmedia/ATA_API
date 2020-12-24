@@ -20,6 +20,7 @@ class SendEmail
                 [],
                 [
                     env('EMAIL_BCC_DEVELOPER'),
+                    env('EMAIL_BCC_DEVELOPER_2'),
                 ],
                 (object) ['email' => env('EMAIL_REPLY_TO')]
             );

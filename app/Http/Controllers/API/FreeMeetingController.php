@@ -15,9 +15,8 @@ use App\Main\Contact\UseCases\ContactRegisterUseCase;
 use App\Main\Date\CaseUses\IsEnabledHourCaseUse;
 use App\Main\Meetings\UseCases\MeetingRegisterUseCase;
 use App\Main\Scheduler\Domain\SearchSchedulerDomain;
-use App\Utils\CustomMailer\EmailData;
-use App\Utils\CustomMailer\MailLib;
 use App\Utils\DateUtil;
+use App\Utils\SendEmail;
 use Carbon\Carbon;
 use Spatie\GoogleCalendar\Event;
 
@@ -108,7 +107,6 @@ class FreeMeetingController extends Controller
             $data['category'] = 'FREE';
             $data['type_meeting'] = 'CALL';
 
-            // TODO: Verific datetime  handle
             $searchconfusecase = new SearchConfigurationUseCase(new SearchConfigDomain());
 
             $config = $searchconfusecase('CALENDAR_ID_MEETING_FREE');
@@ -232,24 +230,13 @@ class FreeMeetingController extends Controller
 
     private function sendEmail($email_customer, $subject, $bodyText, $bodyHtml)
     {
-        $emailData = new EmailData(
-            (object) ['email' => env('EMAIL_FROM')],
+        (new SendEmail())(
+            ['email' => env('EMAIL_FROM')],
             [$email_customer],
             $subject,
             $bodyText,
             $bodyHtml
         );
-
-        try {
-            $maillib = new MailLib([
-                'username' => env('MAIL_USERNAME'),
-                'password' => env('MAIL_PASSWORD'),
-                'host' => env('MAIL_HOST'),
-                'port' => env('MAIL_PORT'), ]);
-            $maillib->Send($emailData);
-        } catch (\Exception $ex) {
-            \Log::error($ex->getMessage());
-        }
     }
 
     private function createTextMsg($day, $month, $time, $phone_office)

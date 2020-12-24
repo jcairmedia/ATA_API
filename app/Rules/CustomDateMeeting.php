@@ -45,7 +45,7 @@ class CustomDateMeeting implements Rule
         }
         $dia_week = (int) $date->format('N');
         if ($dia_week >= 6) {
-            $this->message = 'La fecha no puede estar en fines de semana'.print_r($date, 1);
+            $this->message = 'La fecha no puede estar en fines de semana';
 
             return false;
         }
