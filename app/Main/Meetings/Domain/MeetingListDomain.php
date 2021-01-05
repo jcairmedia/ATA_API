@@ -6,6 +6,17 @@ use Illuminate\Support\Facades\DB;
 
 class MeetingListDomain
 {
+    private function typeMeeting(string $filter)
+    {
+        $_filter = str_replace(' ', '', strtoupper($filter));
+        switch (strtoupper($_filter)) {
+            case 'VIDEOLLAMADA': return 'VIDEOCALL';
+            case 'LLAMADA': return 'CALL';
+            case 'PRESENCIAL': return 'PRESENTIAL';
+            default: return $filter;
+        }
+    }
+
     public function __invoke(string $filter, int $index, int $byPage, array $config = [])
     {
         $filter = trim($filter);
@@ -22,9 +33,10 @@ class MeetingListDomain
 
         $meetingTable = DB::table('meetings');
 
+        $filter = $this->typeMeeting($filter);
         $meetingTable->when($filter != '', function ($query) use ($filter) {
             return $query->where(function ($query2) use ($filter) {
-                $query2->where('type_meeting', 'like', '%'.$filter.'%');
+                $query2->where('type_meeting', 'like', $filter.'%');
                 $query2->orWhere('name', 'like', '%'.$filter.'%');
             });
         });
