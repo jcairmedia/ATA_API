@@ -46,6 +46,97 @@ class CRUDUserController extends Controller
         }
     }
 
+    /**
+     * @OA\Post(
+     *  path="/api/user/pass",
+     *  summary="Cambiar contraseña (nueva)",
+     *  security={{"bearer_token":{}}},
+     *  @OA\RequestBody(
+     *   required=true ,
+     *   description="Recuperar cuenta",
+     *   @OA\JsonContent(
+     *    required={"id", "passwordOld", "passwordNew"},
+     *    @OA\Property(property="id", type="number", format="number", example="1"),
+     *    @OA\Property(property="passwordOld", type="string", format="email", example="1234567"),
+     *    @OA\Property(property="passwordNew", type="string", format="email", example="Nueva_123"),
+     *   )
+     *  ),
+     *  @OA\Response(
+     *      response=422,
+     *      description="Unprocessable Entity",
+     *      @OA\JsonContent(
+     *          @OA\Property(
+     *              property="message",
+     *              type="string",
+     *              example="The given data was invalid."
+     *          ),
+     *          @OA\Property(
+     *            property="errors",
+     *            type="object",
+     *            @OA\Property(
+     *                property="id",
+     *                type="array",
+     *                collectionFormat="multi",
+     *                @OA\Items(type="string", example="El campo id seleccionado no existe."),
+     *            ),
+     *            @OA\Property(
+     *                property="passwordOld",
+     *                type="array",
+     *                collectionFormat="multi",
+     *                @OA\Items(type="string", example="El campo password old debe ser una cadena de caracteres."),
+     *            ),
+     *          @OA\Property(
+     *                property="passwordNew",
+     *                type="array",
+     *                collectionFormat="multi",
+     *                @OA\Items(type="string", example="El campo password new es obligatorio.")
+     *            )
+     *          )
+     *      )
+     *  ),
+     *  @OA\Response(
+     *      response=404,
+     *      description="No Found",
+     *      @OA\JsonContent(
+     *          @OA\Property(
+     *              property="code",
+     *              type="number",
+     *              example="404"
+     *          ),
+     *          @OA\Property(
+     *            property="message",
+     *            type="string",
+     *            example="Datos incorrectos"
+     *          )
+     *      )
+     *  ),
+     *   @OA\Response(
+     *    response=200,
+     *    description="OK",
+     *    @OA\JsonContent(
+     *      @OA\Property(
+     *        property="code",
+     *        type="number",
+     *        example="200"
+     *      ),
+     *      @OA\Property(
+     *        property="messages",
+     *        type="string",
+     *        example="Contraseña actualizada, inicie sesión"
+     *      )
+     *    )),
+     * *   @OA\Response(
+     *    response=401,
+     *    description="Unauthorized",
+     *    @OA\JsonContent(
+     *      @OA\Property(
+     *          property="messages",
+     *          type="string",
+     *          example="Unauthenticated"
+     *        )
+     *    )),
+     * )
+     */
     public function resetPassword(ResetPassRequest $request)
     {
         try {
@@ -83,6 +174,56 @@ class CRUDUserController extends Controller
         }
     }
 
+    /**
+     * @OA\Post(
+     *  path="/api/user/recover",
+     *  summary="Recuperar cuenta (nuevo)",
+     *  @OA\RequestBody(
+     *   required=true ,
+     *   description="Recuperar cuenta",
+     *   @OA\JsonContent(
+     *    required={"email"},
+     *    @OA\Property(property="email", type="email", format="email", example="user1@mail.com"),
+     *   )
+     *  ),
+     *  @OA\Response(
+     *      response=422,
+     *      description="Unprocessable Entity",
+     *      @OA\JsonContent(
+     *          @OA\Property(
+     *              property="message",
+     *              type="string",
+     *              example="The given data was invalid."
+     *          ),
+     *          @OA\Property(
+     *            property="errors",
+     *            type="object",
+     *            @OA\Property(
+     *                property="error",
+     *                type="array",
+     *                collectionFormat="multi",
+     *                @OA\Items(type="string", example="El campo email seleccionado no existe.")
+     *            )
+     *          )
+     *      )
+     *  ),
+     *   @OA\Response(
+     *    response=200,
+     *    description="OK",
+     *    @OA\JsonContent(
+     *      @OA\Property(
+     *        property="code",
+     *        type="number",
+     *        example="200"
+     *      ),
+     *      @OA\Property(
+     *        property="messages",
+     *        type="string",
+     *        example="Se ha enviado por correo electrónico su nueva contraseña para iniciar sesión"
+     *      )
+     *    )),
+     * )
+     */
     public function recoverPassword(RecoverPasswordRequest $request)
     {
         try {
