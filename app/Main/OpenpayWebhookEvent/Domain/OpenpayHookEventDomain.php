@@ -1,6 +1,9 @@
 <?php
+
 namespace App\Main\OpenpayWebhookEvent\Domain;
+
 use App\OpenpayWebhookEvent;
+
 class OpenpayHookEventDomain
 {
     public function save(OpenpayWebhookEvent $hook)
@@ -12,5 +15,4 @@ class OpenpayHookEventDomain
             throw new \Exception($ex->getMessage(), $ex->getCode(), $ex);
         }
     }
-
 }

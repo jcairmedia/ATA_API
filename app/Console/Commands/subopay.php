@@ -58,22 +58,23 @@ class subopay extends Command
          * Crear cliente y asociar tarjeta
          */
         $customerData = [
-            'name' => 'Mi cliente dos',
+            'name' => 'Erika',
             'email' => 'erika@airmedia.com.mx',
           ];
 
         $customer = $openpay->customers->add($customerData);
         \Log::info('creacion de cliente: '.print_r($customer, 1));
-        //    $cardData = [
-    //     'token_id' => "kosyllhwpfn6uwvfn75i",
-    //     'device_session_id' => "1JmL04I4GKFQGwwB0tutnoQhIhx6V0ZO"
-    //    ];
-    //    $card = $customer->cards->add($cardData);
-    //    \Log::info("creacion de tarjeta del cliente: ". print_r($card, 1));
+        $cardData = [
+            'token_id' => 'kmys0lpf7vgpnbpze2ru',
+            'device_session_id' => '6ocgrgUhBI5TygXhIxkReRsvSUyHSjtc',
+        ];
+        $card = $customer->cards->add($cardData);
+        \Log::info('creacion de tarjeta del cliente: '.print_r($card, 1));
+        \Log::info('creacion de tarjeta del cliente: '.print_r($card->toArray(), 1));
 
-    /*
-     * Crear subscripción
-     */
+        /*
+         * Crear subscripción
+         */
     /*$subscriptionDataRequest = array(
         // "trial_end_date" => "2020-11-11",
         'plan_id' => 'p2fw0e8f3sihemvh0mi8',

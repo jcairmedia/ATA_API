@@ -4,6 +4,7 @@ use App\Http\Controllers\API\AppointmentDateController;
 use App\Http\Controllers\API\BenefitsController;
 use App\Http\Controllers\API\CasesController;
 use App\Http\Controllers\API\CasesPaymentsController;
+use App\Http\Controllers\API\CRUDCardsController;
 use App\Http\Controllers\API\CRUDMeetingController;
 use App\Http\Controllers\API\CRUDQuestionController;
 use App\Http\Controllers\API\CRUDQuestionnaireController;
@@ -99,4 +100,7 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::delete('/cases', [CasesController::class, 'close']);
     Route::get('/cases/payments', [CasesPaymentsController::class, 'paymentsCase']);
     Route::post('/meeting/note', [CRUDMeetingController::class, 'setNote']);
+
+    Route::post('/card', [CRUDCardsController::class, 'index']);
+    Route::get('/cards', [CRUDCardsController::class, 'cards']);
 });
