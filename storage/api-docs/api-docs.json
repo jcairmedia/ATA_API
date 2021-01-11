@@ -6,7 +6,7 @@
     },
     "servers": [
         {
-            "url": "https://apidev.usercenter.mx/"
+            "url": "https://apiqa.usercenter.mx/"
         },
         {
             "url": "http://localhost:8000/"
@@ -191,9 +191,41 @@
         },
         "/api/card": {
             "post": {
+                "tags": [
+                    "App móvil"
+                ],
                 "summary": "Registro de tarjeta (Nuevo)",
-                "description": "",
+                "description": "Para más información consultar la siguiente página https://www.openpay.mx/docs/api/#crear-una-tarjeta-con-token",
                 "operationId": "App\\Http\\Controllers\\API\\CRUDCardsController::index",
+                "requestBody": {
+                    "description": "Registrar una tarjeta",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "tokenId",
+                                    "deviceSessionId"
+                                ],
+                                "properties": {
+                                    "tokenId": {
+                                        "description": "Identificador del token generado en el navegador o dispositivo del cliente",
+                                        "type": "string",
+                                        "format": "string",
+                                        "example": "ksjjwsgdn9mhl3koynw0"
+                                    },
+                                    "deviceSessionId": {
+                                        "description": "La propiedad device_session_id deberá ser generada desde el API JavaScript",
+                                        "type": "string",
+                                        "format": "string",
+                                        "example": "PC3NlVo180uxQvOzugX1L9r7FiZ5uR6O"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "200": {
                         "description": "Created",
@@ -253,8 +285,11 @@
             }
         },
         "/api/cards": {
-            "post": {
-                "summary": "Obtener todas las tarjetas del cliente",
+            "get": {
+                "tags": [
+                    "App móvil"
+                ],
+                "summary": "Obtener todas las tarjetas del cliente (Nuevo)",
                 "description": "Consulta de todas las tarjetas del cliente.",
                 "operationId": "App\\Http\\Controllers\\API\\CRUDCardsController::cards",
                 "responses": {
@@ -541,6 +576,185 @@
                         }
                     }
                 }
+            }
+        },
+        "/api/meeting/paid/online/customer": {
+            "post": {
+                "tags": [
+                    "App móvil"
+                ],
+                "summary": "Registro de citas online con tarjeta seleccionada (Nuevo)",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\API\\CustomerMeetingsOnlinePaymentController::index",
+                "requestBody": {
+                    "description": "Registrar una cita gratuita",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "idCard",
+                                    "cvv2",
+                                    "date",
+                                    "time",
+                                    "type_meeting",
+                                    "type_payment",
+                                    "deviceIdHiddenFieldName"
+                                ],
+                                "properties": {
+                                    "idCard": {
+                                        "description": "Identificador único interno de la tarjeta registrada por el cliente",
+                                        "type": "string",
+                                        "format": "string",
+                                        "example": "1"
+                                    },
+                                    "cvv2": {
+                                        "description": "cvv de la tarjeta",
+                                        "type": "string",
+                                        "format": "string",
+                                        "example": "121"
+                                    },
+                                    "date": {
+                                        "description": "fecha de la cita",
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2021-01-26"
+                                    },
+                                    "time": {
+                                        "description": "hora de la cita",
+                                        "type": "string",
+                                        "example": "10:00"
+                                    },
+                                    "type_meeting": {
+                                        "type": "string",
+                                        "pattern": "/^(CALL|VIDEOCALL|PRESENTIAL)$/",
+                                        "example": "CALL"
+                                    },
+                                    "type_payment": {
+                                        "type": "string",
+                                        "pattern": "/^(ONLINE)$/",
+                                        "example": "ONLINE"
+                                    },
+                                    "deviceIdHiddenFieldName": {
+                                        "description": "Deberá ser generada desde el API JavaScript",
+                                        "type": "string",
+                                        "format": "string",
+                                        "example": "236454545454848484"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "code": {
+                                            "type": "int",
+                                            "example": "201"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "meeting": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "number",
+                                                            "example": "1"
+                                                        },
+                                                        "folio": {
+                                                            "type": "string",
+                                                            "example": "261020201320595f97219b21381"
+                                                        },
+                                                        "category": {
+                                                            "type": "string",
+                                                            "example": "PAID"
+                                                        },
+                                                        "type_meeting": {
+                                                            "type": "number",
+                                                            "example": "CALL"
+                                                        },
+                                                        "url_meeting": {
+                                                            "type": "number",
+                                                            "example": ""
+                                                        },
+                                                        "dt_start": {
+                                                            "type": "string",
+                                                            "format": "date-time",
+                                                            "example": "2020-10-26 18:40:00"
+                                                        },
+                                                        "dt_end": {
+                                                            "type": "string",
+                                                            "format": "date-time",
+                                                            "example": "2020-10-26 19:20:00"
+                                                        },
+                                                        "price": {
+                                                            "type": "number",
+                                                            "example": "300.00"
+                                                        },
+                                                        "contacts_id": {
+                                                            "type": "number",
+                                                            "example": "23"
+                                                        },
+                                                        "updated_at": {
+                                                            "type": "number",
+                                                            "example": "1"
+                                                        },
+                                                        "created_at": {
+                                                            "type": "number",
+                                                            "example": "1"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "properties": {
+                                                "date": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "El date no puede ser una fecha anterior a la fecha actual."
+                                                    },
+                                                    "collectionFormat": "multi"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
             }
         },
         "/api/meeting/free": {

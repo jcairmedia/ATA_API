@@ -19,6 +19,7 @@ class Meeting extends Model
         'dt_cancellation',
         'msg_cancellation',
         'contacts_id',
+        'customer_id',
         'users_id',
         'dt_close',
         'dt_start_rescheduler',

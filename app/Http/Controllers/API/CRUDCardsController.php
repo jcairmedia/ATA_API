@@ -14,10 +14,20 @@ class CRUDCardsController extends Controller
 {
     /**
      * @OA\POST(
+     *  tags={"App móvil"},
      *  path="/api/card",
      *  summary="Registro de tarjeta (Nuevo)",
-     *  description="",
+     *  description="Para más información consultar la siguiente página https://www.openpay.mx/docs/api/#crear-una-tarjeta-con-token",
      *  security={{"bearer_token":{}}},
+     *  @OA\RequestBody(
+     *      required=true ,
+     *      description="Registrar una tarjeta",
+     *      @OA\JsonContent(
+     *       required={"tokenId", "deviceSessionId"},
+     *       @OA\Property(property="tokenId", type="string", format="string", example="ksjjwsgdn9mhl3koynw0", description="Identificador del token generado en el navegador o dispositivo del cliente"),
+     *       @OA\Property(property="deviceSessionId", type="string", format="string", example="PC3NlVo180uxQvOzugX1L9r7FiZ5uR6O", description="La propiedad device_session_id deberá ser generada desde el API JavaScript"),
+     *      )
+     *  ),
      *  @OA\Response(
      *    response=200,
      *    description="Created",
@@ -107,9 +117,10 @@ class CRUDCardsController extends Controller
     }
 
     /**
-     * @OA\POST(
+     * @OA\GET(
+     *  tags={"App móvil"},
      *  path="/api/cards",
-     *  summary="Obtener todas las tarjetas del cliente",
+     *  summary="Obtener todas las tarjetas del cliente (Nuevo)",
      *  description="Consulta de todas las tarjetas del cliente.",
      *  security={{"bearer_token":{}}},
      *  @OA\Response(

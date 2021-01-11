@@ -9,6 +9,7 @@ use App\Http\Controllers\API\CRUDMeetingController;
 use App\Http\Controllers\API\CRUDQuestionController;
 use App\Http\Controllers\API\CRUDQuestionnaireController;
 use App\Http\Controllers\API\CRUDUserController;
+use App\Http\Controllers\API\CustomerMeetingsOnlinePaymentController;
 use App\Http\Controllers\API\FreeMeetingController;
 use App\Http\Controllers\API\MeetingReSchedulerController;
 use App\Http\Controllers\API\OfflinePaidMeetingController;
@@ -101,6 +102,7 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::get('/cases/payments', [CasesPaymentsController::class, 'paymentsCase']);
     Route::post('/meeting/note', [CRUDMeetingController::class, 'setNote']);
 
+    Route::post('/meeting/paid/online/customer', [CustomerMeetingsOnlinePaymentController::class, 'index']);
     Route::post('/card', [CRUDCardsController::class, 'index']);
     Route::get('/cards', [CRUDCardsController::class, 'cards']);
 });

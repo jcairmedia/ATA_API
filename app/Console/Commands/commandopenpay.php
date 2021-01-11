@@ -108,6 +108,49 @@ class commandopenpay extends Command
         }
     }
 
+    public function cargo()
+    {
+        $json =
+        [
+            'method' => 'card',
+            'source_id' => 'ksjjwsgdn9mhl3koynw0',
+            'amount' => 300,
+            'cvv2' => 121,
+            'description' => 'ATA | Cargo para cita de pago en línea',
+            'device_session_id' => 'PC3NlVo180uxQvOzugX1L9r7FiZ5uR6O', ];
+        $client = new Client(['http_errors' => false]);
+        try {
+            $response = $client->request(
+                'POST',
+                env('OPEN_PAY_ENVIROMENT').env('OPENPAY_ID').
+                    '/customers'.'/'.'ahoqtdrapdhb5lsnl6oh'.'/charges',
+                    [
+                        'headers' => [
+                            'Content-Type' => 'application/json',
+                            'Accept' => 'application/json',
+                        ],
+                        'curl' => [CURLOPT_USERPWD => env('OPENPAY_KEY_PRIVATE').':'],
+                        'json' => $json,
+                    ]
+                );
+
+            $statusCode = (int) $response->getStatusCode();
+            \Log::error('StatusCode: '.$statusCode);
+            $jsonResponse = (string) $response->getBody();
+            if ($statusCode != 201 && $statusCode != 200) {
+                \Log::error('response services cancell : '.$response->getReasonPhrase());
+
+                throw new \Exception($response->getReasonPhrase().' '.(json_decode($jsonResponse, true)['description']), $statusCode);
+            }
+            \Log::error('data: '.print_r($jsonResponse, 1));
+
+            return $jsonResponse;
+        } catch (\RequestException  $e) {
+            \Log::error('SERVICE: '.$e->getMessage(), $e->getCode());
+            throw new \Exception($e->getMessage());
+        }
+    }
+
     /**
      * Execute the console command.
      *
@@ -115,6 +158,6 @@ class commandopenpay extends Command
      */
     public function handle()
     {
-        $this->tarjeta();
+        $this->cargo();
     }
 }

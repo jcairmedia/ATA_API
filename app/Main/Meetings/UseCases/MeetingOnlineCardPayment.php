@@ -6,37 +6,50 @@ use App\CalendarEventMeeting;
 use App\Main\CalendarEventMeeting\Domain\AddEventDomain;
 use App\Main\Config_System\Domain\SearchConfigDomain;
 use App\Main\Config_System\UseCases\SearchConfigurationUseCase;
-use App\Main\Contact\UseCases\ContactFindUseCase;
-use App\Main\Contact\UseCases\ContactRegisterUseCase;
 use App\Main\Date\CaseUses\IsEnabledHourCaseUse;
 use App\Main\Meetings\Utils\DoURLZoomMeetingPaidUtils;
 use App\Main\Meetings\Utils\TextForEmailMeetingPaidUtils;
 use App\Main\Meetings\Utils\TextForSMSMeetingPaidUtils;
 use App\Main\Meetings_payments\UseCases\RegisterPaymentUseCases;
+use App\Main\OpenPayCustomerCards\Domain\FindCustomerCardOpenPayDomain;
 use App\Main\Scheduler\Domain\SearchSchedulerDomain;
+use App\Utils\ChargeByCardCustomerOpenPay;
 use App\Utils\DateUtil;
 use App\Utils\SendEmail;
 use App\Utils\SMSUtil;
-use App\Utils\StorePaymentOpenPay;
 use Carbon\Carbon;
 use Spatie\GoogleCalendar\Event;
 
-class MeetingOnlinePayment
+class MeetingOnlineCardPayment
 {
     public function __construct(
-        StorePaymentOpenPay $storepayment,
+        ChargeByCardCustomerOpenPay $storepayment,
         RegisterPaymentUseCases $registerPayment,
-        MeetingRegisterUseCase $meetingUseCase,
-        ContactRegisterUseCase $contactRegisterUseCase,
-        ContactFindUseCase $contactfindusecase
+        MeetingRegisterUseCase $meetingUseCase
     ) {
         $this->storepaymentopenpay = $storepayment;
         $this->meetingUseCase = $meetingUseCase;
-        $this->contactregisterusecase = $contactRegisterUseCase;
-        $this->contactfindusecase = $contactfindusecase;
         $this->registerPayment = $registerPayment;
     }
 
+    /**
+     * Undocumented function.
+     *
+     * array = [
+     * idCard,
+     * cvv2,
+     * date,
+     * time,
+     * type_meeting,
+     * deviceIdHiddenFieldName,
+     * customerId, name, phone ]
+     *
+     * @param [type] $amount_paid
+     * @param [type] $durationMeeting
+     * @param [type] $phone_office
+     *
+     * @return void
+     */
     public function __invoke(array $data, $amount_paid, $durationMeeting, $phone_office)
     {
         // 1. Verificar en el motor de calendar que la fecha este disponible
@@ -69,23 +82,30 @@ class MeetingOnlinePayment
         $dtStart = ($data['date'].' '.$rangeHour->start);
         $dtEnd = ($data['date'].' '.$rangeHour->end);
 
-        // 2. Create charge OPEN PAY
-        $customer = [
-            'name' => $data['name'],
-            'phone_number' => $data['phone'],
-            'email' => $data['email'],
-        ];
+        //--------------------------------------------------------------------------------
+
+        // Buscar la card
+        $responseCard = (new FindCustomerCardOpenPayDomain() )(['openpay_customer_cards.id' => $data['idCard']]);
+        if (is_null($responseCard)) {
+            throw new \Exception('Tarjeta inválida', 404);
+        }
+        $idcustomerOpenpay = $responseCard['idcustomeropenpay'];
+        $uuidCard = $responseCard['id_card_open_pay'];
+
         $chargeData = [
             'method' => 'card',
-            'source_id' => $data['token_id'],
+            'source_id' => $uuidCard,
             'amount' => (float) $amount_paid,
             'description' => 'ATA | Cargo para cita de pago en línea',
             'device_session_id' => $data['deviceIdHiddenFieldName'],
-            'customer' => $customer,
         ];
-        $response_OPEN_PAY_JSON_charge = $this->storepaymentopenpay->__invoke($chargeData);
+        \Log::error('array:'.print_r($chargeData, 1));
+        $chargeData['cvv2'] = $data['cvv2'];
+
+        $response_OPEN_PAY_JSON_charge = $this->storepaymentopenpay->__invoke($chargeData, $idcustomerOpenpay);
         $array_charge = json_decode($response_OPEN_PAY_JSON_charge, true);
         \Log::error(__FILE__.' PAGO online: '.PHP_EOL.$response_OPEN_PAY_JSON_charge);
+        //-----------------------------------------------------------------------------------
 
         // $array_charge = $this->mockupPaymentOpenpay();
         // 3. Add event in google Calendar
@@ -98,16 +118,14 @@ class MeetingOnlinePayment
                 'endDateTime' => new Carbon($dtEnd), ],
                 $idCalendar
         );
-        // 4. Add contact
-        $contact_id = $this->registerContact($data);
 
-        // 5. Add meeting in BD
+        // 4. Add meeting in BD
         $data['amount'] = $amount_paid;
         $data['category'] = 'PAID';
         $data['paid'] = 1;
-        $meetingObj = $this->meetingUseCase->__invoke($data, $contact_id, $durationMeeting);
+        $meetingObj = $this->meetingUseCase->__invoke($data, 0, $durationMeeting, $data['customerId']);
 
-        // 6. Add payment in DB
+        // 5. Add payment in DB
         $payment = [
             'price' => $amount_paid,
             'folio' => $array_charge['id'],
@@ -122,7 +140,7 @@ class MeetingOnlinePayment
         ];
         $this->registerPayment->__invoke($payment);
 
-        // 7. Add Event and meeting in DB
+        // 6. Add Event and meeting in DB
         try {
             $calendar = new AddEventDomain();
             $calendar(new CalendarEventMeeting([
@@ -132,7 +150,7 @@ class MeetingOnlinePayment
         } catch (\Exception $ex) {
             \Log::error('Error add Event in DB: '.$ex->getMessage());
         }
-        // 8. Send sms
+        // 7. Send sms
         $dateUtil = new DateUtil();
         $date = $data['date'];
         $day = $dateUtil->getDayByDate($date);
@@ -142,7 +160,7 @@ class MeetingOnlinePayment
             (new SMSUtil())($textSMS, $data['phone']);
         }
 
-        // 9. Generate de url de zoom
+        // 8. Generate de url de zoom
         $zoomresponse = (new DoURLZoomMeetingPaidUtils())(
             $meetingObj->id,
             $data['date'].' '.$data['time'],
@@ -150,7 +168,7 @@ class MeetingOnlinePayment
             'ATA | Cita'
         );
 
-        // 10. Send EMail
+        // 9. Send EMail
         $textEmail = (new TextForEmailMeetingPaidUtils())(
             $data['type_meeting'],
             $day,
@@ -224,25 +242,5 @@ class MeetingOnlinePayment
                 'description' => 'Cargo inicial a mi cuenta',
                 'error_message' => null,
                 'order_id' => 'oid-00051', ];
-    }
-
-    private function registerContact($data)
-    {
-        $contact_id = 0;
-        try {
-            // Register contact
-            $contact = $this->contactregisterusecase->__invoke([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'phone' => $data['phone'],
-            ]);
-            $contact_id = $contact->id;
-        } catch (\Exception $ex) {
-            \Log::error(__FILE__.PHP_EOL.$ex->getMessage());
-            $contact = $this->contactfindusecase->__invoke($data['email']);
-            $contact_id = $contact->id;
-        }
-
-        return $contact_id;
     }
 }

@@ -11,15 +11,13 @@ class MeetingRegisterUseCase
     {
     }
 
-    public function __invoke(array $data, int $contact_id, string $durationMeeting)
+    public function __invoke(array $data, int $contact_id, string $durationMeeting, int $customer_id)
     {
         //2. Prepare Meeting
         $meetingD = new MeetingCreatorDomain();
         // $amount_meeting = $data['category'] == 'FREE' ? 0 : '';
         // $paid = $data['category'] == 'FREE' ? 1 : 0;
-
-        // 3. Register
-        return $meetingD(new Meeting([
+        $array = [
             'folio' => $this->generateFolio(),
             'category' => $data['category'],
             'type_meeting' => $data['type_meeting'],
@@ -29,8 +27,14 @@ class MeetingRegisterUseCase
             'price' => $data['amount'],
             'record_state' => 1, // 1: open, 0:close
             'paid_state' => $data['paid'], // 1: paid, 0: no paid
-            'contacts_id' => $contact_id,
-            ]));
+        ];
+        if ($contact_id != 0) {
+            $array['contacts_id'] = $contact_id;
+        } else {
+            $array['customer_id'] = $customer_id;
+        }
+        // 3. Register
+        return $meetingD(new Meeting($array));
     }
 
     private function generateFolio()
