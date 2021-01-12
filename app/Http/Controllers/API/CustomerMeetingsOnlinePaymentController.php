@@ -24,13 +24,13 @@ class CustomerMeetingsOnlinePaymentController extends Controller
     /**
      * @OA\POST(
      *  tags={"App móvil"},
-     *  path="/api/meeting/paid/online/customer",
-     *  summary="Registro de citas online con tarjeta seleccionada (Nuevo)",
+     *  path="/api/v2/meeting/paid/online",
+     *  summary="Registro de citas online, pagada con tarjeta seleccionada (Nuevo)",
      *  description="",
      *  security={{"bearer_token":{}}},
      *  @OA\RequestBody(
      *   required=true ,
-     *   description="Registrar una cita gratuita",
+     *   description="Registro de citas online, pagada con tarjeta seleccionada",
      *   @OA\JsonContent(
      *    required={"idCard","cvv2","date","time","type_meeting", "type_payment", "deviceIdHiddenFieldName"},
      *    @OA\Property(property="idCard", type="string", format="string", example="1", description="Identificador único interno de la tarjeta registrada por el cliente"),

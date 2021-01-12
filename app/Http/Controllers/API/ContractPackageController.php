@@ -36,7 +36,7 @@ class ContractPackageController extends Controller
      * ),
      *  @OA\RequestBody(
      *   required=true ,
-     *   description="Registrar una cita gratuita",
+     *   description="Contración de paquetes: El tipo de autenticacion es bearer",
      *   @OA\JsonContent(
      *    required={"tokenId", "deviceSessionId", "packageId", "serviceId"},
      *    @OA\Property(property="tokenId", type="string", example="kl8gm1x69epllqw1sqdj"),

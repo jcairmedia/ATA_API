@@ -583,7 +583,7 @@
                 "summary": "Contración de paquetes: El tipo de autenticacion es bearer",
                 "operationId": "App\\Http\\Controllers\\API\\ContractPackageController::index",
                 "requestBody": {
-                    "description": "Registrar una cita gratuita",
+                    "description": "Contración de paquetes: El tipo de autenticacion es bearer",
                     "required": true,
                     "content": {
                         "application/json": {
@@ -797,16 +797,16 @@
                 }
             }
         },
-        "/api/meeting/paid/online/customer": {
+        "/api/v2/meeting/paid/online": {
             "post": {
                 "tags": [
                     "App móvil"
                 ],
-                "summary": "Registro de citas online con tarjeta seleccionada (Nuevo)",
+                "summary": "Registro de citas online, pagada con tarjeta seleccionada (Nuevo)",
                 "description": "",
                 "operationId": "App\\Http\\Controllers\\API\\CustomerMeetingsOnlinePaymentController::index",
                 "requestBody": {
-                    "description": "Registrar una cita gratuita",
+                    "description": "Registro de citas online, pagada con tarjeta seleccionada",
                     "required": true,
                     "content": {
                         "application/json": {
