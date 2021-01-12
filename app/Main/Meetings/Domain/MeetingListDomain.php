@@ -58,9 +58,15 @@ class MeetingListDomain
             });
         });
 
-        $meetingTable->join('contacts', 'meetings.contacts_id', '=', 'contacts.id');
+        $meetingTable->leftJoin('contacts', 'meetings.contacts_id', '=', 'contacts.id');
+        $meetingTable->leftJoin('users', 'users.id', '=', 'meetings.customer_id');
         $contador = $meetingTable->count();
-        $meetingTable->select(['meetings.*', 'contacts.name'])
+        $meetingTable->select([
+            'meetings.*',
+            'contacts.name',
+            DB::raw(
+                "CONCAT(users.name,' ', users.last_name1, ' ',users.last_name2) as cliente"),
+            ])
         ->skip($index)
         ->limit($byPage)
         ->orderByRaw('created_at DESC');

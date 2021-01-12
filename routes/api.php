@@ -95,6 +95,7 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::post('/user/dash', [UsersController::class, 'registerUserDash']);
     Route::get('/roles', [RolesController::class, 'list']);
     Route::get('/users/roles', [UserRolesController::class, 'list']);
+
     Route::get('/meetings/list', [CRUDMeetingController::class, 'list']);
     Route::get('/meeting/questionnaire', [CRUDMeetingController::class, 'getQuestionnaireByMeetingId']);
     Route::post('/meeting/state', [CRUDMeetingController::class, 'updateStateMeeting']);
