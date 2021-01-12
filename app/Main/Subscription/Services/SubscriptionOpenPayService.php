@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Main\Subscription\CaseUses;
+namespace App\Main\Subscription\Services;
 
 use App\User;
 
-class SubscriptionOpenPayCaseUses
+class SubscriptionOpenPayService
 {
     public function __invoke(User $user, string $tokenId, string $deviceSessionId, string $planId)
     {
