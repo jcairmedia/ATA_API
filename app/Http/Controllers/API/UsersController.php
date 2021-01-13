@@ -7,6 +7,7 @@ use App\Http\Requests\User\UserRequest;
 use App\Main\Users\Domain\FindUserDomain;
 use App\Main\Users\Domain\UserCreatorDomain;
 use App\Main\Users\UseCases\RegisterUseCase;
+use App\Notifications\NewLineNotification;
 use App\User;
 use App\Utils\SendEmail;
 use Illuminate\Http\Request;
@@ -373,6 +374,17 @@ class UsersController extends Controller
                     'code' => (int) $ex->getCode(),
                     'message' => $ex->getMessage(),
             ], (int) $ex->getCode());
+        }
+    }
+
+    public function like(Request $request)
+    {
+        $user = $request->user();
+        try {
+            $response = $user->notify(new NewLineNotification($user->name, 'un titulo'));
+            \Log::error(print_r($response, 1));
+        } catch (\Exception $th) {
+            \Log::error(print_r($th, 1));
         }
     }
 }
