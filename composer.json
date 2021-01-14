@@ -22,6 +22,7 @@
         "laravel/passport": "^9.3",
         "laravel/tinker": "^2.0",
         "laraveles/spanish": "^1.5",
+        "maatwebsite/excel": "^3.1",
         "mpdf/mpdf": "7.0.3",
         "nesbot/carbon": "^2.41",
         "openpay/sdk": "^2.1",

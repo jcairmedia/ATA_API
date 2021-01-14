@@ -13,7 +13,11 @@ use App\Http\Controllers\API\CRUDUserController;
 use App\Http\Controllers\API\CustomerContractPackageController;
 use App\Http\Controllers\API\CustomerMeetingsOnlinePaymentController;
 use App\Http\Controllers\API\FreeMeetingController;
+use App\Http\Controllers\API\GroupController;
 use App\Http\Controllers\API\MeetingReSchedulerController;
+use App\Http\Controllers\API\NotificationsByGroupController;
+use App\Http\Controllers\API\NotificationsByUsersController;
+use App\Http\Controllers\API\NotificationsForAllUserController;
 use App\Http\Controllers\API\OfflinePaidMeetingController;
 use App\Http\Controllers\API\OnlinePaidMeetingController;
 use App\Http\Controllers\API\PackagesController;
@@ -110,6 +114,10 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::delete('/cases', [CasesController::class, 'close']);
     Route::get('/cases/payments', [CasesPaymentsController::class, 'paymentsCase']);
     Route::post('/meeting/note', [CRUDMeetingController::class, 'setNote']);
+    Route::post('group', [GroupController::class, 'index']);
+    Route::post('notifications/all', [NotificationsForAllUserController::class, 'index']);
+    Route::post('notifications/user', [NotificationsByUsersController::class, 'index']);
+    Route::post('notifications/group', [NotificationsByGroupController::class, 'index']);
 });
 
 Route::group(['prefix' => 'v2', 'middleware' => 'auth:api'], function () {
