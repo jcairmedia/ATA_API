@@ -4,7 +4,9 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\NotificationsByUsersRequest;
+use App\Main\NotificationByUser\Domain\PaginateNotificationByUserDomain;
 use App\NotificationByUser;
+use Illuminate\Http\Request;
 
 class NotificationsByUsersController extends Controller
 {
@@ -33,5 +35,16 @@ class NotificationsByUsersController extends Controller
                 'message' => $ex->getMessage(),
             ], $code);
         }
+    }
+
+    public function paginate(Request $request)
+    {
+        $index = (int) $request->input('index') ?? 0;
+        $filter = $request->input('filter') ?? '';
+        $byPage = $request->input('byPage') ?? 100;
+        $array = [];
+        $r = (new PaginateNotificationByUserDomain())($filter, $index, $byPage, $array);
+
+        return response()->json($r);
     }
 }

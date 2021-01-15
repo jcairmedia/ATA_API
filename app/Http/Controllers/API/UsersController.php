@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\UserRequest;
 use App\Main\Users\Domain\FindUserDomain;
+use App\Main\Users\Domain\GetUserPaginateDomain;
 use App\Main\Users\Domain\UserCreatorDomain;
 use App\Main\Users\UseCases\RegisterUseCase;
 use App\Notifications\NewLineNotification;
@@ -386,5 +387,17 @@ class UsersController extends Controller
         } catch (\Exception $th) {
             \Log::error(print_r($th, 1));
         }
+    }
+
+    public function paginateUsers(Request $request)
+    {
+        $index = $request->input('index') ?? 0;
+        $filter = $request->input('filter') ?? '';
+        $byPage = $request->input('byPage') ?? 100;
+
+        $array = [];
+        $r = (new GetUserPaginateDomain())($filter, $index, $byPage, $array);
+
+        return response()->json($r);
     }
 }

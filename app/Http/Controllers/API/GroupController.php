@@ -7,8 +7,11 @@ use App\Http\Requests\GroupRequest;
 use App\Main\Groups\Domain\CreateGroupByArrayDomain;
 // use Illuminate\Http\Request;
 use App\Main\Groups\Domain\CreateGroupUserBatchDomain;
+use App\Main\Groups\Domain\PaginateGroupsDomain;
+use App\Main\Groups\Domain\PaginateUsersByGroupDomain;
 use App\Main\Users\Domain\SearchUsersByArrayEmailsDomain;
-use  App\Utils\LoadCSV;
+use App\Utils\LoadCSV;
+use Illuminate\Http\Request;
 
 class GroupController extends Controller
 {
@@ -67,5 +70,31 @@ class GroupController extends Controller
                 'message' => $ex->getMessage(),
             ], $code);
         }
+    }
+
+    public function paginateGroups(Request $request)
+    {
+        $index = $request->input('index') ?? 0;
+        $filter = $request->input('filter') ?? '';
+        $byPage = $request->input('byPage') ?? 100;
+        $dateStart = $request->input('dateStart');
+        $dateEnd = $request->input('dateEnd');
+
+        $array = ['dateStart' => $dateStart, 'dateEnd' => $dateEnd];
+        $r = (new PaginateGroupsDomain())($filter, $index, $byPage, $array);
+
+        return response()->json($r);
+    }
+
+    public function paginateGetUserByGroup(Request $request)
+    {
+        $index = $request->input('index') ?? 0;
+        $groupId = (int) $request->input('groupId') ?? 0;
+        $byPage = $request->input('byPage') ?? 100;
+
+        $array = [];
+        $r = (new PaginateUsersByGroupDomain())($groupId, $index, $byPage, $array);
+
+        return response()->json($r);
     }
 }

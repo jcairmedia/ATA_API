@@ -118,6 +118,10 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::post('notifications/all', [NotificationsForAllUserController::class, 'index']);
     Route::post('notifications/user', [NotificationsByUsersController::class, 'index']);
     Route::post('notifications/group', [NotificationsByGroupController::class, 'index']);
+    Route::get('groups', [GroupController::class, 'paginateGroups']);
+    Route::get('group/users', [GroupController::class, 'paginateGetUserByGroup']);
+    Route::get('users', [UsersController::class, 'paginateUsers']);
+    Route::get('notifications/users', [NotificationsByUsersController::class, 'paginate']);
 });
 
 Route::group(['prefix' => 'v2', 'middleware' => 'auth:api'], function () {
