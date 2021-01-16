@@ -4,7 +4,9 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\NotificationsByGroupRequest;
+use App\Main\NotificationByGroup\Domain\PaginateNotificationByGrupoDomain;
 use App\NotificationByGroup;
+use Illuminate\Http\Request;
 
 class NotificationsByGroupController extends Controller
 {
@@ -32,5 +34,16 @@ class NotificationsByGroupController extends Controller
                 'message' => $ex->getMessage(),
             ], $code);
         }
+    }
+
+    public function paginate(Request $request)
+    {
+        $index = (int) $request->input('index') ?? 0;
+        $filter = $request->input('filter') ?? '';
+        $byPage = $request->input('byPage') ?? 100;
+        $array = [];
+        $r = (new PaginateNotificationByGrupoDomain())($filter, $index, $byPage, $array);
+
+        return response()->json($r);
     }
 }

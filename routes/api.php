@@ -115,13 +115,15 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::get('/cases/payments', [CasesPaymentsController::class, 'paymentsCase']);
     Route::post('/meeting/note', [CRUDMeetingController::class, 'setNote']);
     Route::post('group', [GroupController::class, 'index']);
-    Route::post('notifications/all', [NotificationsForAllUserController::class, 'index']);
+    Route::post('notifications/general', [NotificationsForAllUserController::class, 'index']);
     Route::post('notifications/user', [NotificationsByUsersController::class, 'index']);
     Route::post('notifications/group', [NotificationsByGroupController::class, 'index']);
     Route::get('groups', [GroupController::class, 'paginateGroups']);
     Route::get('group/users', [GroupController::class, 'paginateGetUserByGroup']);
     Route::get('users', [UsersController::class, 'paginateUsers']);
     Route::get('notifications/users', [NotificationsByUsersController::class, 'paginate']);
+    Route::get('notifications/groups', [NotificationsByGroupController::class, 'paginate']);
+    Route::get('notifications/general', [NotificationsForAllUserController::class, 'paginate']);
 });
 
 Route::group(['prefix' => 'v2', 'middleware' => 'auth:api'], function () {

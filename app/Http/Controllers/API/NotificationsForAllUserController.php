@@ -5,8 +5,10 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\NotificationsForAllUsersRequest;
 use App\Main\NotificationForAllUsers\Domain\CreateNotificationForAllUsersDomain;
+use App\Main\NotificationForAllUsers\Domain\PaginateNotificationGeneralsDomain;
 use App\NotificationsForAllUser;
 use App\User;
+use Illuminate\Http\Request;
 
 class NotificationsForAllUserController extends Controller
 {
@@ -38,5 +40,16 @@ class NotificationsForAllUserController extends Controller
                 'message' => $ex->getMessage(),
             ], $code);
         }
+    }
+
+    public function paginate(Request $request)
+    {
+        $index = (int) $request->input('index') ?? 0;
+        $filter = $request->input('filter') ?? '';
+        $byPage = $request->input('byPage') ?? 100;
+        $array = [];
+        $r = (new PaginateNotificationGeneralsDomain())($filter, $index, $byPage, $array);
+
+        return response()->json($r);
     }
 }
