@@ -14,8 +14,8 @@ class CRUDCardsController extends Controller
 {
     /**
      * @OA\POST(
-     *  tags={"App móvil"},
      *  path="/api/card",
+     *  tags={"App móvil"},
      *  summary="Registro de tarjeta (Nuevo)",
      *  description="Para más información consultar la siguiente página https://www.openpay.mx/docs/api/#crear-una-tarjeta-con-token",
      *  security={{"bearer_token":{}}},

@@ -29,14 +29,7 @@ class CustomerContractPackageController extends Controller
      *  tags={"App móvil"},
      *  path="/api/v2/contracts",
      *  summary="Contratación de paquete pagado con tarjeta previamente registrada (Nuevo)",
-     *  @OA\SecurityScheme(
-     *      securityScheme="bearerAuth",
-     *      in="header",
-     *      name="bearerAuth",
-     *      type="http",
-     *      scheme="bearer",
-     *      bearerFormat="JWT",
-     * ),
+     *  security={{"bearer_token":{}}},
      *  @OA\RequestBody(
      *   required=true ,
      *   description="Contratación de paquete pagado con tarjeta previamente registrada",

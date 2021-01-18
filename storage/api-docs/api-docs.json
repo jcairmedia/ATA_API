@@ -794,7 +794,12 @@
                             }
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
             }
         },
         "/api/v2/meeting/paid/online": {
@@ -961,6 +966,171 @@
                                                 }
                                             },
                                             "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "api/exponent/devices/subscribe": {
+            "post": {
+                "tags": [
+                    "App móvil"
+                ],
+                "summary": "Subscripción de token (EXPO)",
+                "operationId": "App\\Http\\Controllers\\API\\ExpoController::index",
+                "requestBody": {
+                    "description": "Subscripción de token (EXPO)",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "expo_token"
+                                ],
+                                "properties": {
+                                    "expo_token": {
+                                        "type": "string",
+                                        "format": "string",
+                                        "example": "1212545bhgghfg.hfbhjg"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "int",
+                                            "example": "failed"
+                                        },
+                                        "error": {
+                                            "properties": {
+                                                "message": {
+                                                    "type": "string",
+                                                    "example": "The token provided is not a valid expo push notification token."
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "succeeded"
+                                        },
+                                        "error": {
+                                            "properties": {
+                                                "expo_token": {
+                                                    "type": "string",
+                                                    "example": "1212545bhgghfg.hfbhjg"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "api/exponent/devices/unsubscribe": {
+            "post": {
+                "tags": [
+                    "App móvil"
+                ],
+                "summary": "Eliminar la subcripción del token (EXPO)",
+                "operationId": "App\\Http\\Controllers\\API\\ExpoController::FunctionName",
+                "requestBody": {
+                    "description": "Eliminar la subcripción del token (EXPO)",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "expo_token"
+                                ],
+                                "properties": {
+                                    "expo_token": {
+                                        "type": "string",
+                                        "format": "string",
+                                        "example": "1212545bhgghfg.hfbhjg"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "int",
+                                            "example": "failed"
+                                        },
+                                        "error": {
+                                            "properties": {
+                                                "message": {
+                                                    "type": "string",
+                                                    "example": "The token provided is not a valid expo push notification token."
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "deleted": {
+                                            "type": "boolean",
+                                            "example": "true"
                                         }
                                     },
                                     "type": "object"
