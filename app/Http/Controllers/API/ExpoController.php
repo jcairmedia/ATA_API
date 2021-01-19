@@ -8,7 +8,7 @@ class ExpoController extends Controller
 {
     /**
      * @OA\POST(
-     *  path="api/exponent/devices/subscribe",
+     *  path="/api/exponent/devices/subscribe",
      *  tags={"App móvil"},
      *  summary="Subscripción de token (EXPO)",
      *  security={{"bearer_token":{}}},
@@ -69,7 +69,7 @@ class ExpoController extends Controller
 
     /**
      * @OA\POST(
-     *  path="api/exponent/devices/unsubscribe",
+     *  path="/api/exponent/devices/unsubscribe",
      *  tags={"App móvil"},
      *  summary="Eliminar la subcripción del token (EXPO)",
      *  security={{"bearer_token":{}}},
