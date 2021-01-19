@@ -24,14 +24,13 @@ class NotificationsByUsersController extends Controller
             // Save notification by user in BD.
             (new NotificationByUser(['title' => $title, 'body' => $body, 'user_id' => $userId, 'user_session_id' => $user->id]))->save();
 
-            $channel = 'Api.User.'.$userId;
-
+            $channel = 'App.User.'.$userId;
             $expo = new Expo(new ExpoRegistrar(new ExpoDatabaseDriver()));
-            $notification = ['body' => $body];
+            $notification = ['body' => $body, 'title' => $title];
             $expo->notify([$channel], $notification, false);
 
             return response()->json([
-                'message' => 'Notificacion dirigida creada exitosamente',
+                'message' => 'Notificacion enviada exitosamente',
             ], 200);
         } catch (\Exception $ex) {
             $code = (int) $ex->getCode();

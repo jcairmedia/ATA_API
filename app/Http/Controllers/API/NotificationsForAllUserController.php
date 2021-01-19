@@ -31,12 +31,11 @@ class NotificationsForAllUserController extends Controller
             $arrayTokens = $listModelPushNotification->pluck('key')->toArray();
 
             $expo = new \ExponentPhpSDK\Expo(new \ExponentPhpSDK\ExpoRegistrar(new \NotificationChannels\ExpoPushNotifications\Repositories\ExpoDatabaseDriver()));
-            $notification = ['body' => $body];
+            $notification = ['body' => $body, 'title' => $title];
             $expo->notify($arrayTokens, $notification, false);
 
             return response()->json([
                 'message' => 'Notificacion enviada',
-                'data' => $list,
             ], 200);
         } catch (\Exception $ex) {
             $code = (int) $ex->getCode();

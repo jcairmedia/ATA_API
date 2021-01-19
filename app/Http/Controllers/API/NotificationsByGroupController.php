@@ -40,7 +40,7 @@ class NotificationsByGroupController extends Controller
             $arrayTokens = $listModelPushNotifications->pluck('key')->toArray();
             // Send Notification
             $expo = new Expo(new ExpoRegistrar(new ExpoDatabaseDriver()));
-            $notification = ['body' => $body];
+            $notification = ['body' => $body, 'title' => $title];
             $expo->notify($arrayTokens, $notification, false);
 
             return response()->json([
