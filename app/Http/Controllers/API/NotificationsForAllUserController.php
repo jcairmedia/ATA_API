@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\NotificationsForAllUsersRequest;
 use App\Main\NotificationForAllUsers\Domain\CreateNotificationForAllUsersDomain;
+use App\Main\NotificationForAllusers\Domain\GetTokenExpoUsersDomain;
 use App\Main\NotificationForAllUsers\Domain\PaginateNotificationGeneralsDomain;
 use App\NotificationsForAllUser;
 use App\User;
@@ -20,14 +21,22 @@ class NotificationsForAllUserController extends Controller
             $title = $request->input('title');
             $body = $request->input('body');
             // Guardar
-            (new CreateNotificationForAllUsersDomain())(new NotificationsForAllUser(['title' => $title, 'body' => $body, 'user_session_id' => $user->id]));
+            // (new CreateNotificationForAllUsersDomain())(new NotificationsForAllUser(['title' => $title, 'body' => $body, 'user_session_id' => $user->id]));
             // Get all user clientes y customer
             // TODO:Enviar Notification
-            $User = User::all();
+            $listModelPushNotification = (new GetTokenExpoUsersDomain())();
+            if ($listModelPushNotification->count() <= 0) {
+                throw new \Exception('No hay usuario para enviar notificaciones');
+            }
+            $arrayTokens = $listModelPushNotification->pluck('key')->toArray();
+
+            $expo = new \ExponentPhpSDK\Expo(new \ExponentPhpSDK\ExpoRegistrar(new \NotificationChannels\ExpoPushNotifications\Repositories\ExpoDatabaseDriver()));
+            $notification = ['body' => $body];
+            $expo->notify($arrayTokens, $notification, false);
 
             return response()->json([
                 'message' => 'Notificacion enviada',
-                // 'data' => $User,
+                'data' => $list,
             ], 200);
         } catch (\Exception $ex) {
             $code = (int) $ex->getCode();

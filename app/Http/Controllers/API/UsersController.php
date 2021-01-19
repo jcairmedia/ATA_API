@@ -380,13 +380,15 @@ class UsersController extends Controller
 
     public function like(Request $request)
     {
-        $user = $request->user();
-        try {
-            $response = $user->notify(new NewLineNotification($user->name, 'un titulo'));
-            \Log::error(print_r($response, 1));
-        } catch (\Exception $th) {
-            \Log::error(print_r($th, 1));
-        }
+        print_r($request->user()->toArray());
+
+        // $user = $request->user();
+        // try {
+        //     $response = $user->notify(new NewLineNotification($user->name, 'un titulo'));
+        //     \Log::error(print_r($response, 1));
+        // } catch (\Exception $th) {
+        //     \Log::error(print_r($th, 1));
+        // }
     }
 
     public function paginateUsers(Request $request)

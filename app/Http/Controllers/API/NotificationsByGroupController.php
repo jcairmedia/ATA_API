@@ -31,17 +31,21 @@ class NotificationsByGroupController extends Controller
 
             $notificationModel->save();
             // Get user´s Tokens
-            $idGrupo = $notificationModel->id;
+            $idGrupo = $groupId;
             $listModelPushNotifications = (new GetTokenAndChannelByGroupUseCase())($idGrupo);
             if (($listModelPushNotifications->count()) <= 0) {
                 \Log::error('Notificación por Grupo: No se encontro usuarios asignados al grupo o no cuentas con token: '.$idGrupo);
-                throw new Exception('Notificación por Grupo: No se encontro usuarios asignados al grupo o no cuentas con token: '.$idGrupo, 1);
+                throw new \Exception('Notificación por Grupo: No se encontro usuarios asignados al grupo o no cuentas con token: '.$idGrupo, 1);
             }
             $arrayTokens = $listModelPushNotifications->pluck('key')->toArray();
             // Send Notification
             $expo = new Expo(new ExpoRegistrar(new ExpoDatabaseDriver()));
             $notification = ['body' => $body];
             $expo->notify($arrayTokens, $notification, false);
+
+            return response()->json([
+                'message' => 'Notificacion creada exitosamente',
+            ], 200);
         } catch (\ExponentPhpSDK\Exceptions\ExpoException $ex) {
             $code = (int) $ex->getCode();
             if (!(($code >= 400 && $code <= 422) || ($code >= 500 && $code <= 503))) {

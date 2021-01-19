@@ -6,7 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\NotificationsByUsersRequest;
 use App\Main\NotificationByUser\Domain\PaginateNotificationByUserDomain;
 use App\NotificationByUser;
+use ExponentPhpSDK\Expo;
+use ExponentPhpSDK\ExpoRegistrar;
 use Illuminate\Http\Request;
+use NotificationChannels\ExpoPushNotifications\Repositories\ExpoDatabaseDriver;
 
 class NotificationsByUsersController extends Controller
 {
@@ -20,6 +23,12 @@ class NotificationsByUsersController extends Controller
             $userId = $request->input('userId');
             // Save notification by user in BD.
             (new NotificationByUser(['title' => $title, 'body' => $body, 'user_id' => $userId, 'user_session_id' => $user->id]))->save();
+
+            $channel = 'Api.User.'.$userId;
+
+            $expo = new Expo(new ExpoRegistrar(new ExpoDatabaseDriver()));
+            $notification = ['body' => $body];
+            $expo->notify([$channel], $notification, false);
 
             return response()->json([
                 'message' => 'Notificacion dirigida creada exitosamente',
