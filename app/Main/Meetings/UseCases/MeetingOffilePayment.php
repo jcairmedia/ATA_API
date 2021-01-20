@@ -143,7 +143,7 @@ class MeetingOffilePayment
             $data['amount'] = $amount_paid;
             $data['category'] = 'PAID';
             $data['paid'] = 0;
-            $meetingObj = $this->meetingUseCase->__invoke($data, $contact_id, $duration);
+            $meetingObj = $this->meetingUseCase->__invoke($data, $contact_id, $duration, 0);
 
             // 5.1 Add event in DB
             try {
