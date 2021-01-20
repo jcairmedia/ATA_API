@@ -21,7 +21,7 @@ class NotificationsForAllUserController extends Controller
             $title = $request->input('title');
             $body = $request->input('body');
             // Guardar
-            // (new CreateNotificationForAllUsersDomain())(new NotificationsForAllUser(['title' => $title, 'body' => $body, 'user_session_id' => $user->id]));
+            (new CreateNotificationForAllUsersDomain())(new NotificationsForAllUser(['title' => $title, 'body' => $body, 'user_session_id' => $user->id]));
             // Get all user clientes y customer
             // TODO:Enviar Notification
             $listModelPushNotification = (new GetTokenExpoUsersDomain())();
@@ -32,6 +32,7 @@ class NotificationsForAllUserController extends Controller
 
             $expo = new \ExponentPhpSDK\Expo(new \ExponentPhpSDK\ExpoRegistrar(new \NotificationChannels\ExpoPushNotifications\Repositories\ExpoDatabaseDriver()));
             $notification = ['body' => $body, 'title' => $title];
+            \Log::error('notificaciones generales: '.print_r($arrayTokens, 1));
             $expo->notify($arrayTokens, $notification, false);
 
             return response()->json([
