@@ -981,7 +981,7 @@
                 ]
             }
         },
-        "api/exponent/devices/subscribe": {
+        "/api/exponent/devices/subscribe": {
             "post": {
                 "tags": [
                     "App móvil"
@@ -1068,7 +1068,7 @@
                 ]
             }
         },
-        "api/exponent/devices/unsubscribe": {
+        "/api/exponent/devices/unsubscribe": {
             "post": {
                 "tags": [
                     "App móvil"
