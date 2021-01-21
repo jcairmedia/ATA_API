@@ -4,6 +4,7 @@ use App\Http\Controllers\API\AppointmentDateController;
 use App\Http\Controllers\API\BenefitsController;
 use App\Http\Controllers\API\CasesController;
 use App\Http\Controllers\API\CasesPaymentsController;
+use App\Http\Controllers\API\ConfigSystemController;
 use App\Http\Controllers\API\ContractPackageController;
 use App\Http\Controllers\API\CRUDCardsController;
 use App\Http\Controllers\API\CRUDContractsController;
@@ -92,6 +93,7 @@ Route::post('/roles/permission', [RolesController::class, 'associate']);
 Route::post('/user/recover', [CRUDUserController::class, 'recoverPassword']);
 
 Route::group(['middleware' => ['auth:api']], function () {
+    Route::post('/prices/meeting/paid', [ConfigSystemController::class, 'priceMeetingPaid']);
     Route::get('/questions', [CRUDQuestionController::class, 'list']);
     Route::get('/questionnaire/questions', [CRUDQuestionController::class, 'getQuestionsByQuestionnaireId']);
     Route::post('/question', [CRUDQuestionController::class, 'updateQuestion']);
