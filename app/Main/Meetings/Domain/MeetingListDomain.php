@@ -46,7 +46,7 @@ class MeetingListDomain
         $category = isset($config['category']) ? $config['category'] : null;
 
         $meetingTable->when(!is_null($category), function ($query) use ($category) {
-            \Log::error('catgory: '.$category);
+            \Log::error('category: '.$category);
 
             return $query->whereRaw('category = ?', [$category]);
         });

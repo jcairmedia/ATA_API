@@ -11,7 +11,11 @@ class MeetingRegisterUseCase
     {
     }
 
-    public function __invoke(array $data, int $contact_id, string $durationMeeting, int $customer_id)
+    public function __invoke(
+        array $data,
+        int $contact_id,
+        string $durationMeeting,
+        int $customer_id)
     {
         //2. Prepare Meeting
         $meetingD = new MeetingCreatorDomain();
