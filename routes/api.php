@@ -134,7 +134,7 @@ Route::group(['prefix' => 'v2', 'middleware' => 'auth:api'], function () {
     Route::post('meeting/paid/online', [CustomerMeetingsOnlinePaymentController::class, 'index']);
     Route::post('contracts', [CustomerContractPackageController::class, 'index']);
     Route::get('contracts', [CRUDContractsController::class, 'paginate']);
-    // Route::get('/benefits/{idPackage}', [BenefitsController::class, 'byPackage'])->where('idPackage', '[0-9]+');
 
-    Route::get('contracts/files/{id}', [CRUDContractsController::class, 'seeContracts']);
+    Route::get('contracts/files/{id}', [CRUDContractsController::class, 'seeContracts'])->where('id', '[0-9]+');
+    Route::get('contracts/customer', [CRUDContractsController::class, 'getContractPaginateByCustomer']);
 });

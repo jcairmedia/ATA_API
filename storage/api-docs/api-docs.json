@@ -353,6 +353,222 @@
                 ]
             }
         },
+        "/api/v2/contracts/customer": {
+            "post": {
+                "tags": [
+                    "App móvil"
+                ],
+                "summary": "Contratos del cliente",
+                "operationId": "App\\Http\\Controllers\\API\\CRUDContractsController::getContractPaginateByCustomer",
+                "requestBody": {
+                    "description": "Contratos del cliente en session paginados",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "index",
+                                    "byPage"
+                                ],
+                                "properties": {
+                                    "index": {
+                                        "description": "Número de página",
+                                        "type": "string",
+                                        "example": "1"
+                                    },
+                                    "byPage": {
+                                        "description": "Número de contratos por página",
+                                        "type": "string",
+                                        "example": "100"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "complete": {
+                                            "type": "boolean",
+                                            "example": "true"
+                                        },
+                                        "total": {
+                                            "type": "number",
+                                            "example": "4"
+                                        },
+                                        "rows": {
+                                            "description": "Array de contratos por página",
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "description": "Id interno del contrato",
+                                                        "type": "number",
+                                                        "example": "1"
+                                                    },
+                                                    "packages_id": {
+                                                        "description": "Id interno del paquete",
+                                                        "type": "string",
+                                                        "example": "2"
+                                                    },
+                                                    "url_doc": {
+                                                        "description": "nombre del documento",
+                                                        "type": "string",
+                                                        "example": "313202101201234056008779d99b50.pdf"
+                                                    },
+                                                    "price": {
+                                                        "description": "Precio del paquete",
+                                                        "type": "string",
+                                                        "example": "4000.00"
+                                                    },
+                                                    "id_customer_openpay": {
+                                                        "description": "Id del cliente registrado en openpay",
+                                                        "type": "string",
+                                                        "example": "acgebk9tdxre09zitih2"
+                                                    },
+                                                    "created_at": {
+                                                        "description": "Fecha de contratación del paquete",
+                                                        "type": "string",
+                                                        "example": "2021-01-20 12:34:05"
+                                                    },
+                                                    "updated_at": {
+                                                        "description": "Fecha de actualización del paquete",
+                                                        "type": "string",
+                                                        "example": "2021-01-20 12:34:05"
+                                                    },
+                                                    "services_id": {
+                                                        "description": "Id interno del servicio",
+                                                        "type": "string",
+                                                        "example": "1"
+                                                    },
+                                                    "users_id": {
+                                                        "description": "Id interno del abogado encargado",
+                                                        "type": "string",
+                                                        "example": "1"
+                                                    },
+                                                    "customer_id": {
+                                                        "description": "Id interno del cliente",
+                                                        "type": "string",
+                                                        "example": "2"
+                                                    },
+                                                    "closed_at": {
+                                                        "description": "Fecha del cierre del caso",
+                                                        "type": "string",
+                                                        "example": "null"
+                                                    },
+                                                    "paquete": {
+                                                        "description": "Nombre del paquete",
+                                                        "type": "string",
+                                                        "example": "Básico"
+                                                    },
+                                                    "servicio": {
+                                                        "description": "Nombre del servicio",
+                                                        "type": "string",
+                                                        "example": "Procedimiento y/o juicio de divorcio incausado"
+                                                    },
+                                                    "cliente": {
+                                                        "description": "Nombre completo del cliente",
+                                                        "type": "string",
+                                                        "example": "Lourdes Perez Lopez"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            },
+                                            "collectionFormat": "multi"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/api/v2/contracts/files/{id}": {
+            "post": {
+                "tags": [
+                    "App móvil"
+                ],
+                "summary": "Consulta de contrato",
+                "operationId": "App\\Http\\Controllers\\API\\CRUDContractsController::seeContracts",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id del contrato",
+                        "required": true,
+                        "example": "1"
+                    }
+                ],
+                "responses": {
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "_base64_": {
+                                            "type": "string",
+                                            "example": "JVBERi0xLjcKMSAwIG9iago8PCAvVHlwZSAvQ2F0YWxvZwovT3V0bGluZXMgMiAwIFIKL1BhZ2VzIDMgMCBSID4+CmVuZG9iagoyIDAgb2JqCjw8IC9UeXBlIC9PdXRsaW5lcyAvQ291bnQgMCA+PgplbmRvYmoKMyAwIG9i"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
         "/api/user/pass": {
             "post": {
                 "summary": "Cambiar contraseña (nueva)",
