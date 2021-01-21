@@ -176,7 +176,7 @@ class FreeMeetingController extends Controller
             $meetingUseCase = new MeetingRegisterUseCase();
             $data['amount'] = 0;
             $data['paid'] = 1;
-            $meetingObj = $meetingUseCase($data, $contact_id, $config->value);
+            $meetingObj = $meetingUseCase($data, $contact_id, $config->value, 0);
 
             $time = $data['time'];
 

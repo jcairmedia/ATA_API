@@ -105,7 +105,7 @@ class MeetingOnlinePayment
         $data['amount'] = $amount_paid;
         $data['category'] = 'PAID';
         $data['paid'] = 1;
-        $meetingObj = $this->meetingUseCase->__invoke($data, $contact_id, $durationMeeting);
+        $meetingObj = $this->meetingUseCase->__invoke($data, $contact_id, $durationMeeting, 0);
 
         // 6. Add payment in DB
         $payment = [
