@@ -31,26 +31,15 @@
                     <p style="text-align: center">
                         Te notificamos que hemos dado por terminado tu caso,
                         si aún tienes dudas por resolver, no olvides contactar
-                        a tu abogado, contestar este correo o comunicarte al
+                        a tu abogado, contestar este correo o comunicarte a los números de atención al cliente.
                         55-2625-0649
                     </p>
                 </div>
             </td>
             <td></td>
         </tr>
-        <tr>
-            <td></td>
-            <td>
-                <div style="margin-top:50px;width: 580px;">
-                    <p style="text-align:center; padding:0;margin:0;color:#6fb258">ATENCIÓN AL CLIENTE:</p>
-                    <p style="text-align:center; padding:0;margin:0;">WhatsApp: 55-7974-9028</p>
-                    <p style="text-align:center; padding:0;margin:0;">Vía telefónica: 55-2625-0649</p>
-                    <p style="text-align:center;"><a style="color:#6fb258">Aviso de Privacidad</a></p>
-                </div>
-            </td>
-            <td></td>
+        @include('footeremail')
 
-        </tr>
     </table>
     </div>
 </body>

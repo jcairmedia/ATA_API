@@ -229,7 +229,9 @@ class MeetingOffilePayment
      */
     private function getTextInHTML($url_charge, $type_meeting)
     {
-        return view($this->LAYOUT_EMAIL_OFFLINE_MEETING, ['url' => $url_charge])->render();
+        return view($this->LAYOUT_EMAIL_OFFLINE_MEETING, [
+            'url' => $url_charge,
+        ])->render();
     }
 
     private function getTextForSMS()

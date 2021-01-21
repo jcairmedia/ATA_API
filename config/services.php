@@ -33,4 +33,9 @@ return [
         'client_secret' => env('FACEBOOK_CLIENT_SECRET'),
         'redirect' => '',
     ],
+    'footerEmailData' => [
+        'urlprivacity' => env('URL_PRIVACITY'),
+        'imgWhatsapp' => env('URL_IMAGES').'icono_whatsapp.png',
+        'urlWhatsapp' => env('URL_WHATSAPP'),
+    ],
 ];

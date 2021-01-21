@@ -89,7 +89,9 @@ class CRUDMeetingController extends Controller
                 $_email_contact_ = $contactObj->email;
                 $url = env('URL_TEST').'/'.$uuid;
                 // render view
-                $view = view('layout_email_send_url_test', ['url' => $url])->render();
+                $view = view('layout_email_send_url_test', [
+                    'url' => $url,
+                ])->render();
                 // Send Email
                 (new SendEmail())(
                     ['email' => env('EMAIL_FROM')],

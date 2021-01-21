@@ -22,7 +22,7 @@
             <a href="{{$url}}/{{ $confirmation_code}}">Clic para confirmar tu email</a>
         </div>
         <p style="text-align: center">
-            <a href="" style="color: #6fb258;text-align: center">Aviso de privacidad</a>
+            <a href="" style="color: #6fb258;text-align: center"  href="{{config('services.footerEmailData.urlprivacity')}}">Aviso de privacidad</a>
         </p>
     </div>
 
