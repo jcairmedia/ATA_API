@@ -94,6 +94,8 @@ Route::post('/user/recover', [CRUDUserController::class, 'recoverPassword']);
 
 Route::group(['middleware' => ['auth:api']], function () {
     Route::post('/prices/meeting/paid', [ConfigSystemController::class, 'priceMeetingPaid']);
+    Route::get('/prices/meeting/paid', [ConfigSystemController::class, 'getPriceMeetingPaid']);
+
     Route::get('/questions', [CRUDQuestionController::class, 'list']);
     Route::get('/questionnaire/questions', [CRUDQuestionController::class, 'getQuestionsByQuestionnaireId']);
     Route::post('/question', [CRUDQuestionController::class, 'updateQuestion']);
