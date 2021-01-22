@@ -16,7 +16,8 @@ class TextForEmailMeetingPaidUtils
             'zoomObj' => $objZoom,
             'hours' => $time,
             'month' => $month,
-            'day' => $day, ];
+            'day' => $day,
+        ];
 
         return view($this->LAYOUT_EMAIL_ONLINE_MEETING, $data)->render();
     }

@@ -34,7 +34,6 @@
                         hasta el
                         <strong>{{$day_valid}}</strong> de <strong>{{$month_valid}}</strong>.
                     </p>
-                    <p>Si tienes dudas, por favor responde a este correo o comunícate al 55-2625-0649</p>
                 </div>
             </td>
             <td></td>
@@ -46,19 +45,8 @@
             <td></td>
 
         </tr>
-        <tr>
-            <td></td>
-            <td>
-                <div style="margin-top:50px;width: 580px;">
-                    <p style="text-align:center; padding:0;margin:0;color:#6fb258">ATENCIÓN AL CLIENTE:</p>
-                    <p style="text-align:center; padding:0;margin:0;">WhatsApp: 55-7974-9028</p>
-                    <p style="text-align:center; padding:0;margin:0;">Vía telefónica: 55-2625-0649</p>
-                    <p style="text-align:center;"><a style="color:#6fb258">Aviso de Privacidad</a></p>
-                </div>
-            </td>
-            <td></td>
+        @include('footeremail')
 
-        </tr>
     </table>
     </div>
 </body>

@@ -29,28 +29,14 @@
                     <p style="text-align: justify">Para continuar con tu asesoría en línea te pedimos realizar el pago de este
                         <a href={{$url}}>recibo</a> en las 24 hrs. </p>
                     <p style="text-align:justify">De lo contrario tu fecha y día agendada se perderán.</p>
-                    <p style="text-align:justify">Si tienes dudas, por favor responder a este correo o comunicarte al </p>
-                    <p style="text-align:center">55-2656-0649</p>
-
                 </div>
             </td>
             <td></td>
 
         </tr>
 
-        <tr>
-            <td></td>
-            <td>
-                <div style="margin-top:50px;width: 580px;">
-                    <p style="text-align:center; padding:0;margin:0;color:#6fb258">ATENCIÓN AL CLIENTE:</p>
-                    <p style="text-align:center; padding:0;margin:0;">WhatsApp: 55-7974-9028</p>
-                    <p style="text-align:center; padding:0;margin:0;">Vía telefónica: 55-2625-0649</p>
-                    <p style="text-align:center;"><a style="color:#6fb258">Aviso de Privacidad</a></p>
-                </div>
-            </td>
-            <td></td>
+        @include('footeremail')
 
-        </tr>
     </table>
     </div>
 </body>
