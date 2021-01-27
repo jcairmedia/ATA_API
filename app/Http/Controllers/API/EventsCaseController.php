@@ -87,12 +87,13 @@ class EventsCaseController extends Controller
             ];
             $caseModel = new CaseEvent($data);
 
-            // $caseModel->save();
+            $caseModel->save();
+
             $caseModel = (new CaseInnerJoinCustomerDomain())(['cases.id' => $caseId]);
             if (is_null($caseModel)) {
                 throw new \Exception('Caso no encontrado', 404);
             }
-            $channel = 'App.User.'.$caseModel->customerId_; // TODO: Buscar el id del cliente
+            $channel = 'App.User.'.$caseModel->customerId_;
             $expo = new Expo(new ExpoRegistrar(new ExpoDatabaseDriver()));
             $notification = ['body' => $description, 'title' => $subject];
             $expo->notify([$channel], $notification, false);
@@ -100,7 +101,6 @@ class EventsCaseController extends Controller
             return response()->json([
                 'code' => 200,
                 'message' => 'Evento notificado',
-                'data' => [$customerId],
             ], 200);
         } catch (\Exception $ex) {
             \Log::error($ex->getMessage());
