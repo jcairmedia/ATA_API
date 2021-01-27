@@ -794,6 +794,126 @@
                 }
             }
         },
+        "/api/cases/payments": {
+            "get": {
+                "summary": "Consulta de pagos del caso",
+                "operationId": "App\\Http\\Controllers\\API\\CasesPaymentsController::paymentsCase",
+                "responses": {
+                    "201": {
+                        "description": "Consulta de los pagos del caso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "code": {
+                                            "type": "int",
+                                            "example": "200"
+                                        },
+                                        "data": {
+                                            "description": "Lista de pagos ordenados descendente",
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "amount": {
+                                                        "type": "number",
+                                                        "example": "2800"
+                                                    },
+                                                    "bank": {
+                                                        "type": "string",
+                                                        "example": "Banamex"
+                                                    },
+                                                    "bank_auth_code": {
+                                                        "type": "string",
+                                                        "example": "801585"
+                                                    },
+                                                    "brand": {
+                                                        "type": "string",
+                                                        "example": "visa"
+                                                    },
+                                                    "card_type": {
+                                                        "type": "string",
+                                                        "example": "visa"
+                                                    },
+                                                    "cases_id": {
+                                                        "type": "number",
+                                                        "example": "1"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "example": "2021-01-20T21:52:02.000000Z"
+                                                    },
+                                                    "currency": {
+                                                        "type": "string",
+                                                        "example": "MXN"
+                                                    },
+                                                    "folio": {
+                                                        "type": "string",
+                                                        "example": "tr6upcmdama4dmyjee3a"
+                                                    },
+                                                    "id": {
+                                                        "type": "number",
+                                                        "example": "1"
+                                                    },
+                                                    "subscription_id": {
+                                                        "type": "number",
+                                                        "example": "1"
+                                                    },
+                                                    "type_paid": {
+                                                        "type": "string",
+                                                        "example": "ONLINE"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "example": "2021-02-20T21:52:02.000000Z"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            },
+                                            "collectionFormat": "multi"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "properties": {
+                                                "caseId": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "El campo case id es obligatorio"
+                                                    },
+                                                    "collectionFormat": "multi"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
         "/api/contracts": {
             "post": {
                 "summary": "Contración de paquetes: El tipo de autenticacion es bearer",
@@ -2159,7 +2279,7 @@
         },
         "/api/customersatisfaction/test": {
             "get": {
-                "summary": "Consulta de encuenta",
+                "summary": "Consulta de encuesta",
                 "operationId": "App\\Http\\Controllers\\API\\TestCustomerController::getQuestions",
                 "parameters": [
                     {

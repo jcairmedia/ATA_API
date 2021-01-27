@@ -9,6 +9,11 @@ use Illuminate\Support\Facades\File;
 
 class CRUDContractsController extends Controller
 {
+    /**
+     * Search all contracts.
+     *
+     * @return void
+     */
     public function paginate(Request $request)
     {
         $index = (int) $request->input('index') ?? 0;

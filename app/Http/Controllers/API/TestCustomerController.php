@@ -22,7 +22,7 @@ class TestCustomerController extends Controller
     /**
      * @OA\Get(
      *      path="/api/customersatisfaction/test",
-     *      summary="Consulta de encuenta",
+     *      summary="Consulta de encuesta",
      *      @OA\Parameter(in="query",
      *           required=true,
      *           name="uuid", required=true,
