@@ -130,8 +130,6 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::get('notifications/users', [NotificationsByUsersController::class, 'paginate']);
     Route::get('notifications/groups', [NotificationsByGroupController::class, 'paginate']);
     Route::get('notifications/general', [NotificationsForAllUserController::class, 'paginate']);
-
-    Route::get('events/cases', [EventsCaseController::class, 'eventsByCase']);
 });
 
 Route::group(['prefix' => 'v2', 'middleware' => 'auth:api'], function () {
@@ -145,6 +143,7 @@ Route::group(['prefix' => 'v2', 'middleware' => 'auth:api'], function () {
     Route::get('contracts/files/{id}', [CRUDContractsController::class, 'seeContracts'])->where('id', '[0-9]+');
     Route::get('contracts/customer', [CRUDContractsController::class, 'getContractPaginateByCustomer']);
 
-    Route::post('event/case', [EventsCaseController::class, 'addEvent']);
+    Route::get('events/case', [EventsCaseController::class, 'eventsByCase']);
+    Route::post('case/event', [EventsCaseController::class, 'addEvent']);
+    Route::get('events', [EventsCaseController::class, 'index']);
 });
-Route::get('events', [EventsCaseController::class, 'index']);

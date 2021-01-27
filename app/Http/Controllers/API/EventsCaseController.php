@@ -7,6 +7,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\EventsCases\AddEventCaseRequest;
 use App\Main\CaseEvents\Domain\PaginateEventsCasesDomain;
 use App\Main\Cases\Domain\CaseInnerJoinCustomerDomain;
+use App\Main\Config_System\Domain\SearchConfigDomain;
+use App\Main\Config_System\UseCases\SearchConfigurationUseCase;
+use App\Utils\ZoomMeetings;
 use ExponentPhpSDK\Expo;
 use ExponentPhpSDK\ExpoRegistrar;
 use Illuminate\Http\Request;
@@ -73,28 +76,45 @@ class EventsCaseController extends Controller
     public function addEvent(AddEventCaseRequest $request)
     {
         try {
-            $zoom = $request->input('zoom') ?? 0;
+            $zoom = $request->input('zoom');
             $caseId = $request->input('caseId');
             $subject = $request->input('subject');
             $description = $request->input('description');
             $date = $request->input('date');
+
+            // URL de zoom
+            $url_zoom = '';
+            if ($zoom == '1') {
+                //Crear url de zoom
+                try {
+                    $search = new SearchConfigurationUseCase(new SearchConfigDomain());
+                    $config = $search->__invoke('ZOOM_ACCESS_TOKEN');
+                    $responseZoom = (new ZoomMeetings(env('ZOOM_USER_ID'), $config->value))->build($date.':00', $subject);
+                    $url_zoom = $responseZoom['join_url'];
+                } catch (\Exception $ex) {
+                    \Log::error('zoom-citas_casos: '.$ex->getMessage());
+                }
+            }
+            // Save Case Event
             $data = [
                 'case_id' => $caseId,
                 'subject' => $subject,
                 'description' => $description,
-                'url_zoom' => '',
+                'url_zoom' => $url_zoom,
                 'date_start' => $date,
             ];
             $caseModel = new CaseEvent($data);
-
             $caseModel->save();
 
+            // Search data case
             $caseModel = (new CaseInnerJoinCustomerDomain())(['cases.id' => $caseId]);
             if (is_null($caseModel)) {
                 throw new \Exception('Caso no encontrado', 404);
             }
+            // Send Notification
             $channel = 'App.User.'.$caseModel->customerId_;
             $expo = new Expo(new ExpoRegistrar(new ExpoDatabaseDriver()));
+
             $notification = ['body' => $description, 'title' => $subject];
             $expo->notify([$channel], $notification, false);
 
