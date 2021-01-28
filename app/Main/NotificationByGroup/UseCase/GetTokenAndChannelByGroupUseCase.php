@@ -16,9 +16,9 @@ class GetTokenAndChannelByGroupUseCase
         }
         // Create all usuarios
         $newList = $listUsers->map(function ($item, $key) {
-            return ['App.User.'.$item->id];
+            return ['App.User.'.$item->user_id];
         });
-
+        \Log::error('list: '.print_r($listUsers->toArray(), 1));
         // Search the tokens
         $push_notifications = (new WhereInPushNotificationDomain())($newList->pluck(0)->toArray());
 

@@ -29,7 +29,6 @@ class NotificationsByGroupController extends Controller
                 'user_session_id' => $user->id, ]
                 );
 
-            $notificationModel->save();
             // Get user´s Tokens
             $idGrupo = $groupId;
             $listModelPushNotifications = (new GetTokenAndChannelByGroupUseCase())($idGrupo);
@@ -38,6 +37,9 @@ class NotificationsByGroupController extends Controller
                 throw new \Exception('Notificación por Grupo: No se encontro usuarios asignados al grupo o no cuentas con token: '.$idGrupo, 1);
             }
             $arrayTokens = $listModelPushNotifications->pluck('key')->toArray();
+
+            $notificationModel->save();
+
             // Send Notification
             $expo = new Expo(new ExpoRegistrar(new ExpoDatabaseDriver()));
             $notification = ['body' => $body, 'title' => $title];

@@ -27,6 +27,7 @@ class PaginateEventsCasesDomain
         $groupTable->when($filter != '', function ($query) use ($filter) {
             return $query->where(function ($query2) use ($filter) {
                 $query2->orWhere('e.subject', 'like', '%'.$filter.'%');
+                $query2->orWhere('e.description', 'like', '%'.$filter.'%');
                 $query2->orWhere('p.name', 'like', '%'.$filter.'%');
                 $query2->orWhere('s.name', 'like', '%'.$filter.'%');
                 $query2->orWhere('u.email', 'like', '%'.$filter.'%');
