@@ -14,6 +14,14 @@ class CasesPaymentsController extends Controller
      *      path="/api/cases/payments",
      *      summary="Consulta de pagos del caso",
      *      security={{"bearer_token":{}}},
+     *      @OA\RequestBody(
+     *         required=true ,
+     *         description="Consulta de pagos del caso",
+     *         @OA\JsonContent(
+     *          required={"caseId"},
+     *          @OA\Property(property="caseId", example="1", type="number",description="Identificador interno del caso"),
+     *         )
+     *     ),
      *      @OA\Response(
      *        response=201,
      *        description="Consulta de los pagos del caso",

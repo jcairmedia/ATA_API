@@ -798,6 +798,27 @@
             "get": {
                 "summary": "Consulta de pagos del caso",
                 "operationId": "App\\Http\\Controllers\\API\\CasesPaymentsController::paymentsCase",
+                "requestBody": {
+                    "description": "Consulta de pagos del caso",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "caseId"
+                                ],
+                                "properties": {
+                                    "caseId": {
+                                        "description": "Identificador interno del caso",
+                                        "type": "number",
+                                        "example": "1"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "201": {
                         "description": "Consulta de los pagos del caso",
