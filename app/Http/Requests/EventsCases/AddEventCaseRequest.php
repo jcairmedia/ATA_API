@@ -28,6 +28,8 @@ class AddEventCaseRequest extends FormRequest
             'description' => 'required',
             'date' => ['date'],
             'caseId' => 'required|exists:cases,id',
+            'guests' => 'array',
+            'guests.*' => 'required|email',
         ];
     }
 }

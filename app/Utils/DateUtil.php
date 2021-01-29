@@ -55,4 +55,11 @@ class DateUtil
 
         return $dt->format('H:i:s');
     }
+
+    public function getTimeWithMeridian(string $date)
+    {
+        $dt = new \DateTime($date);
+
+        return $dt->format('h:i:s a');
+    }
 }

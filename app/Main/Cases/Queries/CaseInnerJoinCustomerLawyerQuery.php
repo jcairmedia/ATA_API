@@ -5,7 +5,7 @@ namespace App\Main\Cases\Queries;
 use App\Cases;
 use Illuminate\Support\Facades\DB;
 
-class CaseInnerJoinCustomerQuery
+class CaseInnerJoinCustomerLawyerQuery
 {
     public function __invoke($array)
     {
@@ -15,10 +15,13 @@ class CaseInnerJoinCustomerQuery
             ->join('packages', 'packages.id', '=', 'cases.packages_id')
             ->join('services', 'services.id', '=', 'cases.services_id')
             ->leftJoin('contract_templates', 'contract_templates.id', '=', 'services.contract_id')
-
+            ->leftJoin('users as l', 'l.id', '=', 'cases.users_id')
             ->select([
                 'cases.*',
                 DB::raw("CONCAT(users.name,' ', users.last_name1) as customer_name"),
+                DB::raw("CONCAT(l.name,' ', l.last_name1) as lawyer_name"),
+                'l.email as lawyer_email',
+                'l.id as lawyerId',
                 'users.id as customerId_',
                 'users.email as customer_email',
                 'users.phone as customer_phone',

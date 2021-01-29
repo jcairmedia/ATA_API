@@ -12,5 +12,11 @@ class CaseEvent extends Model
         'description',
         'url_zoom',
         'date_start',
+        'guests',
+        'zoom_id',
+        'zoom_pass',
+    ];
+    protected $casts = [
+        'guests' => 'array',
     ];
 }
