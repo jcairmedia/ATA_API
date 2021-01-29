@@ -89,6 +89,9 @@ class TestCustomerController extends Controller
             $uuidTest = $request->input('uuid');
             $testObj = (new FindTestDomain())(['uuid' => $uuidTest]);
             $_questionnaireId_ = $testObj->questionnaire_id;
+            if ($testObj->answered == 1) {
+                throw new \Exception('Cuestionario ya fue respondido', 409);
+            }
             $struct = (new FindStructQuestionnaireDomain())($_questionnaireId_);
             $testArray = [];
 
