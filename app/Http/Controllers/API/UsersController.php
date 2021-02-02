@@ -99,12 +99,12 @@ class UsersController extends Controller
                         'url' => env('URL_EMAIL_VERIFY'),
                     ];
             $view = view('layout_verify_email', $data)->render();
-            $sendEmail(
-                ['email' => env('EMAIL_FROM')],
-                [$user['email']],
-                'ATA| Confirmación de email',
-                '',
-                $view);
+            // $sendEmail(
+            //     ['email' => env('EMAIL_FROM')],
+            //     [$user['email']],
+            //     'ATA| Confirmación de email',
+            //     '',
+            //     $view);
 
             return response()->json([
                 'code' => 201,
