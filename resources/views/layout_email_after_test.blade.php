@@ -11,7 +11,7 @@
     <table>
         <tr>
 
-            <td colspan="3"><img src="http://apidev.usercenter.mx/images/header.png" alt="" /></td>
+            <td colspan="3"><img src="{{config('services.imgsEmails.imgs')}}header.png" alt="" /></td>
         </tr>
         <tr>
             <td style="width: 180px;">&nbsp;</td>

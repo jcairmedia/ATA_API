@@ -38,4 +38,7 @@ return [
         'imgWhatsapp' => env('URL_IMAGES').'icono_whatsapp.png',
         'urlWhatsapp' => env('URL_WHATSAPP'),
     ],
+    'imgsEmails' => [
+        'imgs' => env('URL_IMAGES'),
+    ],
 ];
