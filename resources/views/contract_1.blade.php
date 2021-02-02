@@ -37,7 +37,8 @@
             text-align: center !important;
         }
         span.variable-content {
-            background-color: yellow;
+            /* background-color: yellow; */
+
         }
 
         table.firma{
