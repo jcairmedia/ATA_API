@@ -11,11 +11,11 @@
     <table>
         <tr>
 
-            <td colspan="3"><img src="http://apidev.usercenter.mx/images/header.png" alt="" /></td>
+            <td colspan="3"><img src="{{config('services.imgsEmails.imgs')}}header.png" alt="" /></td>
         </tr>
         <tr>
             <td style="width: 180px;"></td>
-            <td><img src="http://apidev.usercenter.mx/images/hola.png" alt="banner_correo" style="
+            <td><img src="{{config('services.imgsEmails.imgs').'hola.png'}}" alt="banner_correo" style="
                 text-align: center;
                 margin-bottom: 20px;
                 margin-top: 10px;" /></td>

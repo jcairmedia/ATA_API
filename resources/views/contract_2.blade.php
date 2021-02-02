@@ -231,31 +231,34 @@ Mientras las partes no notifiquen por escrito el cambio de los correos electrón
 <br/>
 <table class="firma">
     <tr>
-        <td style="width:50%;border-bottom: 0" class="item">EL DESPACHO</td>
-        <td style="width:50%;border-bottom: 0" class="item">EL CLIENTE</td>
+        <td style="width:50%;border-bottom: 0;border-bottom-color: white;" class="item">EL DESPACHO</td>
+        <td style="width:50%;border-bottom: 0; " class="item">EL CLIENTE</td>
     </tr>
     <tr>
-        <td  class="item" style="border-bottom: 0; border-top:0; padding:10px;    vertical-align: bottom;">
+        <td  class="item" style="padding:10px;border-top:0;border-bottom: 0px;vertical-align: bottom;">
             <table style="border: 0;">
                 <tr>
-                    <td style="border: 0; border-bottom:2px solid black; height:10px;"></td>
+                    <td style="border: 0;  height:10px; border-color: white; border-bottom:2px solid black;"></td>
                 </tr>
             </table>
         </td>
-        <td  class="item" style=" padding:10px;  border-top:0; border-bottom:0px;  vertical-align: bottom;">
+        <td  class="item" style=" padding:10px;border-top:0; border-bottom:0px;vertical-align: bottom;">
             <table style="border: 0;">
                 <tr>
-                    <td style="border: 0; border-bottom:2px solid black; height:10px;"></td>
+                    <td style="border: 0;  height:10px; border-color: white;border-bottom:2px solid black;"></td>
                 </tr>
             </table>
         </td>
     </tr>
     <tr>
-        <td class="item" rowspan="2" style="border-top: 0;">ABOGADOS A TU ALCANCE S.A.P.I. DE C.V.</td>
-        <td style="text-align:center;border-top: 0; border-bottom: 0;"><span class="variable-content" style="text-transform: uppercase;">{{$name}}</span></td>
+        <td class="item" rowspan="2" style="padding-bottom: 0px;border-top: 0; border-top-color: white !important">
+            <span style="font-size: 0.8em;">ABOGADOS A TU ALCANCE S.A.P.I. DE C.V.</span>
+        </td>
+        <td class="item" style="padding-bottom: 0px!important;padding-top: 0px!important; border-top: 0px; border-bottom: 0; border-top-color: white;border-bottom-color: white">
+            <span class="variable-content" style="font-size: 0.8em;text-transform: uppercase;display: block;text-align:center">{{$name}}</span></td>
     </tr>
     <tr>
-        <td  class="item" style="border-top: 0;"><span class="variable-content">{{$email}}</span></td>
+        <td  class="item" style="border-top: 0;padding-bottom: 0px"><span class="variable-content" style="font-size: 0.8em;">{{$email}}</span></td>
     </tr>
 </table>
 </body>
