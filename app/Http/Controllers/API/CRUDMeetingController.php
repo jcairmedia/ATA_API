@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\CustomerTest;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Meetings\StateMeetingRequest;
 use App\Http\Requests\Meetings\UpdateNoteRequest;
 use App\Main\CalendarEventMeeting\Domain\GetEventDomain;
 use App\Main\Config_System\Domain\SearchConfigDomain;
@@ -44,7 +45,7 @@ class CRUDMeetingController extends Controller
     /**
      * Cancell or finish meeting.
      */
-    public function updateStateMeeting(Request $request)
+    public function updateStateMeeting(StateMeetingRequest $request)
     {
         try {
             $id = $request->input('id'); // meeting Id
@@ -66,6 +67,7 @@ class CRUDMeetingController extends Controller
                     'msg_cancellation' => $reason,
                     'record_state' => $stateNewMeeting,
                     'dt_close' => (new \DateTime())->format('Y-m-d H:i:s'),
+                    'lawyer' => $reason,
                 ]);
                 $questionnaireObj = null;
                 if ($meetingObj->category == 'FREE') {
