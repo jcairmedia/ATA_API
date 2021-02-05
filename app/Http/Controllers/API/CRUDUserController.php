@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\RecoverPasswordRequest;
 use App\Http\Requests\User\ResetPassRequest;
+use App\Http\Requests\User\UpdateUserClientRequest;
 use App\Http\Requests\User\UpdateUserRequest;
 use App\User;
 use App\Utils\GeneratePassword;
@@ -13,6 +14,9 @@ use Illuminate\Support\Facades\DB;
 
 class CRUDUserController extends Controller
 {
+    /**
+     * Update user.
+     */
     public function index(UpdateUserRequest $request)
     {
         try {
@@ -258,6 +262,88 @@ class CRUDUserController extends Controller
                 'code' => (int) $code,
                 'message' => $ex->getMessage(),
             ], $code);
+        }
+    }
+
+    /**
+     * @OA\POST(
+     *  path="/api/v2/user/update",
+     *  tags={"App móvil"},
+     *  summary="Actualización de datos del cliente",
+     *  description="Actualización de datos del cliente",
+     *  security={{"bearer_token":{}}},
+     *  @OA\RequestBody(
+     *      required=true ,
+     *      description="Actualización de datos del cliente",
+     *      @OA\JsonContent(
+     *       required={"name", "last_name1", "last_name2", "phone"},
+     *       @OA\Property(property="name", type="string", format="string", example="nombre", description="Nombre(s) del clientes"),
+     *       @OA\Property(property="last_name1", type="string", format="string", example="apellido materno", description="Apellido materno del cliente"),
+     *       @OA\Property(property="last_name2", type="string", format="string", example="apellido paterno", description="Apellido paterno del cliente"),
+     *       @OA\Property(property="phone", type="string", format="string", example="2228630218", description="Actualización del cliente"),
+     *      )
+     *  ),
+     *  @OA\Response(
+     *    response=200,
+     *    description="Ok",
+     *    @OA\JsonContent(
+     *       @OA\Property(
+     *        property="code",
+     *        type="int",
+     *        example="200"
+     *      ),
+     *    @OA\Property(
+     *        property="message",
+     *        type="string",
+     *        example="Datos actualizados"
+     *      )
+     *    )
+     *  ),
+     *  @OA\Response(
+     *   response=422,
+     *   description="Unprocessable Entity",
+     *    @OA\JsonContent(
+     *      @OA\Property(
+     *          property="message",
+     *          type="string",
+     *          example="The given data was invalid."
+     *        ),
+     *      @OA\Property(
+     *            property="errors",
+     *            type="object",
+     *            @OA\Property(
+     *                property="name",
+     *                type="array",
+     *                collectionFormat="multi",
+     *                @OA\Items(type="string", example="El campo name es obligatorio.")
+     *            )
+     *       )
+     *    )
+     *  )
+     * )
+     */
+    public function updateUserOnlyPhoneAndNames(UpdateUserClientRequest $request)
+    {
+        try {
+            $user = $request->user();
+            $data = $request->all();
+            $user->name = $data['name'];
+            $user->last_name1 = $data['last_name1'];
+            $user->last_name2 = $data['last_name2'];
+
+            $r = $user->save();
+
+            return response()->json([
+                'code' => 200,
+                'message' => 'Datos actualizados',
+            ], 200);
+        } catch (\Exception $ex) {
+            \Log::error('Error en update de usuario'.$ex->getMessage().$ex->getCode());
+
+            return response()->json([
+                'code' => (int) $ex->getCode(),
+                'message' => $ex->getMessage(),
+        ], (int) $ex->getCode());
         }
     }
 }

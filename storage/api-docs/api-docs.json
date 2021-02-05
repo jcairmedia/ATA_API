@@ -794,6 +794,115 @@
                 }
             }
         },
+        "/api/v2/user/update": {
+            "post": {
+                "tags": [
+                    "App móvil"
+                ],
+                "summary": "Actualización de datos del cliente",
+                "description": "Actualización de datos del cliente",
+                "operationId": "App\\Http\\Controllers\\API\\CRUDUserController::updateUserOnlyPhoneAndNames",
+                "requestBody": {
+                    "description": "Actualización de datos del cliente",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "last_name1",
+                                    "last_name2",
+                                    "phone"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "description": "Nombre(s) del clientes",
+                                        "type": "string",
+                                        "format": "string",
+                                        "example": "nombre"
+                                    },
+                                    "last_name1": {
+                                        "description": "Apellido materno del cliente",
+                                        "type": "string",
+                                        "format": "string",
+                                        "example": "apellido materno"
+                                    },
+                                    "last_name2": {
+                                        "description": "Apellido paterno del cliente",
+                                        "type": "string",
+                                        "format": "string",
+                                        "example": "apellido paterno"
+                                    },
+                                    "phone": {
+                                        "description": "Actualización del cliente",
+                                        "type": "string",
+                                        "format": "string",
+                                        "example": "2228630218"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "code": {
+                                            "type": "int",
+                                            "example": "200"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Datos actualizados"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "properties": {
+                                                "name": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "El campo name es obligatorio."
+                                                    },
+                                                    "collectionFormat": "multi"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
         "/api/cases/payments": {
             "get": {
                 "summary": "Consulta de pagos del caso",

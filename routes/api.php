@@ -146,4 +146,6 @@ Route::group(['prefix' => 'v2', 'middleware' => 'auth:api'], function () {
     Route::get('events/case', [EventsCaseController::class, 'eventsByCase']);
     Route::post('case/event', [EventsCaseController::class, 'addEvent']);
     Route::get('events', [EventsCaseController::class, 'index']);
+
+    Route::post('/user/update', [CRUDUserController::class, 'updateUserOnlyPhoneAndNames']);
 });
