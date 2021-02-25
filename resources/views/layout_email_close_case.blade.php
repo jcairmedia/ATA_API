@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 </head>
 
-<body style="max-width: 600px">
+<body style="max-width: 600px; font-size:16px;">
     <table>
         <tr>
 
@@ -25,14 +25,15 @@
             <td></td>
             <td>
                 <div style="border:1px solid #6fb258;padding: 70px;width: 458px;">
-                    <p style="text-align: center">
-                        Para ATA es un placer haberte
+                    <p style="text-align: center; line-height: 30px;">
+                        Para
+                        <img src="{{config('services.imgsEmails.imgs')}}logo-ico.png" alt="ATA" style="width:30px; vertical-align:middle;"></span>
+                        es un placer haberte
                         acompañado durante tu proceso legal.</p>
-                    <p style="text-align: center">
+                    <p style="text-align: center; line-height: 30px;">
                         Te notificamos que hemos dado por terminado tu caso,
                         si aún tienes dudas por resolver, no olvides contactar
-                        a tu abogado, contestar este correo o comunicarte a los números de atención al cliente.
-                        55-2625-0649
+                        a tu abogado o contestar este correo.
                     </p>
                 </div>
             </td>

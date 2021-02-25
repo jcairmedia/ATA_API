@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 </head>
 
-<body style="max-width: 600px">
+<body style="max-width: 600px; font-size:16px; line-height: 30px;">
     <table>
         <tr>
 
@@ -43,7 +43,9 @@
                         </a>
                     @else
                         <p>
-                            En ATA estamos muy contentos de poder ofrecerte
+                            En
+                            <img src="{{config('services.imgsEmails.imgs')}}logo-ico.png" alt="ATA" style="width:30px; vertical-align:middle;"></span>
+                          estamos muy contentos de poder ofrecerte
                             la mejor asesoría legal, asi como te lo comunico
                             tu abogado, si quieres continuar con tu proceso legal,
                             te invitamos a realizar el pago de nuestros servicio y la firma de tu contrato.

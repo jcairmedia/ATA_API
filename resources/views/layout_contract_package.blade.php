@@ -15,7 +15,7 @@
         </tr>
         <tr>
             <td style="width: 180px;"></td>
-            <td><img src="{{config('services.imgsEmails.imgs')}}banner_correo.png" alt="banner_correo" style="
+            <td><img src="{{config('services.imgsEmails.imgs')}}banner_correo.jpg" alt="banner_correo" style="
                 text-align: center;
                 margin-bottom: 20px;
                 margin-top: 10px;" /></td>
@@ -28,11 +28,11 @@
                     <p style="text-align: center">Gracias por confiar en ATA </p>
                     <p style="text-align: justify">
                         Te notificamos que hemos recibido confirmación de tu pago para nuestro servicio
-                        de asesoría legal en nuestro <strong>"Paquete {{$package}}"</strong>
-                        , este pago cubre nuestro servicio en el periodo del
-                        <strong>{{$day}}</strong> de <strong>{{ $month}}</strong>
-                        hasta el
-                        <strong>{{$day_valid}}</strong> de <strong>{{$month_valid}}</strong>.
+                        de asesoría legal en nuestro <strong>"Paquete {{$package}}"</strong>.
+
+                    </p>
+                    <p>
+                        Si tienes dudas, por favor escríbenos o comunícate a nuestros números de atención al cliente.
                     </p>
                 </div>
             </td>
