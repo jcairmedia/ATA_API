@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 </head>
 
-<body style="max-width: 600px">
+<body style="max-width: 600px; font-size:16px;">
     <table>
         <tr>
 
@@ -15,7 +15,7 @@
         </tr>
         <tr>
             <td style="width: 180px;"></td>
-            <td><img src="{{config('services.imgsEmails.imgs')}}banner_correo.png" alt="banner_correo" style="
+            <td><img src="{{config('services.imgsEmails.imgs')}}banner_correo.jpg" alt="banner_correo" style="
                 text-align: center;
                 margin-bottom: 20px;
                 margin-top: 10px;" /></td>
@@ -24,8 +24,10 @@
         <tr>
             <td></td>
             <td>
-                <div style="border:1px solid #6fb258;padding: 70px;width: 458px;">
-                    <p style="text-align: justify">¡Hola!  En ATA, estamos contentos de ser tu elección para protección y acompañamiento legal.</p>
+                <div style="border:1px solid #6fb258;padding: 70px;width: 458px; line-height: 30px;">
+                    <p style="text-align: justify">¡Hola! En
+                        <img src="{{config('services.imgsEmails.imgs')}}logo-ico.png" alt="ATA" style="width:30px; vertical-align:middle;"></span>
+                        estamos contentos de ser tu elección para protección y acompañamiento legal.</p>
                     <p style="text-align: justify">Tu caso lo llevará el/la Lic. <strong>{{$lawyer}}</strong>, al cuál podrás encontrar en el siguiente número y correo:</p>
                     <p style="text-align: center;">Teléfono: <strong style="color:#6fb258;">{{$phone}}</strong></p>
                     <p style="text-align: center;">Correo electrónico: <strong style="color:#6fb258;">{{$email}}</strong></p>

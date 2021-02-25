@@ -25,7 +25,9 @@
 <div class="main">
     <img src="" alt="">
 
-    <h1 class="text-center">En ATA estamos para escucharte y ayudarte en cualquier problema legal que tengas</h1>
+    <h1 class="text-center">En
+        <img src="{{config('services.imgsEmails.imgs')}}logo-ico.png" alt="ATA" style="width:40px; vertical-align:middle;"></span>
+        estamos para escucharte y ayudarte en cualquier problema legal que tengas</h1>
     <form action="#" method="POST" id="payment-form">
         <input type="hidden" name="token_id" id="token_id">
         <input type="hidden" name="use_card_points" id="use_card_points" value="false">

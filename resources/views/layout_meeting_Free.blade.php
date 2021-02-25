@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 </head>
 
-<body style="max-width: 600px">
+<body style="max-width: 600px; font-size:16px;">
     <table>
         <tr>
             <td colspan="3"><img src="{{config('services.imgsEmails.imgs')}}header.png" alt="" /></td>
@@ -15,7 +15,9 @@
         <tr>
             <td style="width: 180px;"></td>
             <td style="width: 420px">
-                <p style="text-align: center; font-size:1.5em; font-weight: bold">En ATA estamos para escucharte y ayudarte en cualquier problema legal que tengas.</p>
+                <p style="text-align: center; font-size:1.5em; font-weight: bold">En
+                    <img src="{{config('services.imgsEmails.imgs')}}logo-ico.png" alt="ATA" style="width:42px; vertical-align:middle;"></span>
+                    estamos para escucharte y ayudarte en cualquier problema legal que tengas.</p>
             </td>
             <td></td>
         </tr>
