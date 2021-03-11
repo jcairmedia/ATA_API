@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AlterMeetingLawyerFinish extends Migration
+class CreateFederalentitiesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,11 @@ class AlterMeetingLawyerFinish extends Migration
      */
     public function up()
     {
-        Schema::table('meetings', function (Blueprint $table) {
-            $table->string('lawyer')->nullable()->comment('assigned lawyer attended');
+        Schema::create('federalentities', function (Blueprint $table) {
+            $table->id();
+            $table->integer('idfe')->comment('Catalogue´s id ATA');
+            $table->string("name")->comment("name");
+            $table->timestamps();
         });
     }
 
@@ -25,8 +28,6 @@ class AlterMeetingLawyerFinish extends Migration
      */
     public function down()
     {
-        Schema::table('meetings', function (Blueprint $table) {
-            $table->dropColumn('lawyer');
-        });
+        Schema::dropIfExists('federalentities');
     }
 }

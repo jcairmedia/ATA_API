@@ -10,6 +10,7 @@ class Meeting extends Model
         'folio',
         'category',
         'type_meeting',
+        'idfe',
         'url_meeting',
         'dt_start',
         'dt_end',
