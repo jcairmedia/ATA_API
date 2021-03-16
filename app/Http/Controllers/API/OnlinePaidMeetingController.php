@@ -33,10 +33,20 @@ class OnlinePaidMeetingController extends Controller
      *   required=true ,
      *   description="Registrar una cita por pago en línea",
      *   @OA\JsonContent(
-     *    required={"name","email","phone","date","time","type_meeting", "type_payment", "deviceIdHiddenFieldName", "token_id"},
+     *    required={"name", "lastname_1", "lastname_2", "curp","email","phone","street", "out_number", "idcp", "idfe", "date","time","type_meeting", "type_payment", "deviceIdHiddenFieldName", "token_id"},
      *    @OA\Property(property="name", type="string", description="Nombre y apellidos del cliente", format="string", example="Nombres"),
+     *    @OA\Property(property="lastname_1", type="string", description="Nombre y apellidos del cliente", format="string", example="Nombres"),
+     *    @OA\Property(property="lastname_2", type="string", description="Nombre y apellidos del cliente", format="string", example="Nombres"),
+     *    @OA\Property(property="curp", type="string", description="Nombre y apellidos del cliente", format="string", example="Nombres"),
      *    @OA\Property(property="email", type="string", format="email", example="user1@mail.com"),
      *    @OA\Property(property="phone", type="string", pattern="[0-9]{10}", format="number", example="1234567890"),
+     *
+     *    @OA\Property(property="street", type="string", example="Nombre de la calle"),
+     *    @OA\Property(property="out_number", type="string", example="Número exterior"),
+     *    @OA\Property(property="int_number", type="string", example="Número interior"),
+     *    @OA\Property(property="idcp", type="string", example="Identificador único de código postal"),
+     *    @OA\Property(property="idfe", type="string", example="Indetificador unico de la entidad federativa"),
+     *
      *    @OA\Property(property="date", type="string", format="date", example="2020-10-26"),
      *    @OA\Property(property="time", type="string", format="string", example="18:00", pattern="/^(09|(1[0-8]))\:[0-5][0-9]$/"),
      *    @OA\Property(property="type_meeting", type="string", format="string", example="CALL", pattern="/^(CALL|VIDEOCALL|PRESENTIAL)$/"),

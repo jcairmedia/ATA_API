@@ -14,11 +14,12 @@ class AlterContactAddress extends Migration
     public function up()
     {
         Schema::table('contacts', function (Blueprint $table) {
-            $table->unsignedBigInteger('idcp')->comment('FK to postalcodes');
-            $table->string('street')->comment("street's name");
-            $table->string('out_number')->comment('outdoor number');
-            $table->string('int_number')->nullable()->comment('interior number');
-            $table->timestamps();
+            $table->string('curp')->nullable()->after('phone')->comment("curp");
+            $table->unsignedBigInteger('idcp')->nullable()->after('curp')->comment('FK to postalcodes');
+            $table->string('street')->nullable()->after('idcp')->comment("street's name");
+            $table->string('out_number')->nullable()->after('street')->comment('outdoor number');
+            $table->string('int_number')->nullable()->after('out_number')->nullable()->comment('interior number');
+
 
             $table->foreign('idcp')->references('id')->on('postalcodes');
         });

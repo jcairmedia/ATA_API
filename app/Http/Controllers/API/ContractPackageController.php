@@ -38,10 +38,11 @@ class ContractPackageController extends Controller
      *   required=true ,
      *   description="Contración de paquetes: El tipo de autenticacion es bearer",
      *   @OA\JsonContent(
-     *    required={"tokenId", "deviceSessionId", "packageId", "serviceId"},
+     *    required={"tokenId", "deviceSessionId", "packageId", "serviceId", "idfe"},
      *    @OA\Property(property="tokenId", type="string", example="kl8gm1x69epllqw1sqdj"),
      *    @OA\Property(property="deviceSessionId", type="string", example="kl8gm1x69epllqw1sqdj"),
      *    @OA\Property(property="packageId", type="number", example="1", description="Id del paquete"),
+     *    @OA\Property(property="idfe", type="number", example="1", description="Id de la entidad federativa"),
      *    @OA\Property(property="serviceId", type="number", example="1", description="Id del servicio"),
      *   )
      *  ),
@@ -117,7 +118,8 @@ class ContractPackageController extends Controller
                 $arrayResponseSubscription['customerId'],
                 $user->id,
                 $data['serviceId'],
-                ''
+                '',
+                $data['idfe']
             );
 
             // --- Create CONTRACT ---

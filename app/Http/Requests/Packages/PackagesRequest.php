@@ -28,6 +28,8 @@ class PackagesRequest extends FormRequest
             'deviceSessionId' => 'required|string',
             'packageId' => 'required|exists:packages,id',
             'serviceId' => 'required|exists:services,id',
+
+            'idfe' => 'numeric|exists:federalentities,id' // federative entities
         ];
     }
 }

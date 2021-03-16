@@ -8,7 +8,9 @@ use App\Http\Controllers\API\ConfigSystemController;
 use App\Http\Controllers\API\ContractPackageController;
 use App\Http\Controllers\API\CRUDCardsController;
 use App\Http\Controllers\API\CRUDContractsController;
+use App\Http\Controllers\API\CRUDFederativeEntitieController;
 use App\Http\Controllers\API\CRUDMeetingController;
+use App\Http\Controllers\API\CRUDPostalCodeController;
 use App\Http\Controllers\API\CRUDQuestionController;
 use App\Http\Controllers\API\CRUDQuestionnaireController;
 use App\Http\Controllers\API\CRUDUserController;
@@ -75,6 +77,11 @@ Route::group(['prefix' => 'meeting'], function () {
 
 // valid code for activate user
 Route::get('/register/verify/{code}', [UsersController::class, 'verify']);
+
+// get federal entities
+Route::get('/federalentities', [CRUDFederativeEntitieController::class, 'index']);
+Route::get('/cp', [CRUDPostalCodeController::class, 'index']);
+Route::get('/cp/asentas', [CRUDPostalCodeController::class, 'asentas']);
 
 // request in open pay
 Route::post('/hook', [WebHookOfflinePaidMeetingController::class, 'index']);

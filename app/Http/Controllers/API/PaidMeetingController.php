@@ -19,6 +19,7 @@ use App\Main\OpenPay_payment_references\Domain\CreaterChargeDomain;
 use App\Main\OpenPay_payment_references\UseCases\RegisterOpenPayChargeUseCase;
 use App\Utils\StorePaymentOpenPay;
 
+// [deprecated]
 class PaidMeetingController extends Controller
 {
     public function __construct()
