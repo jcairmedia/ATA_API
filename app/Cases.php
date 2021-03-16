@@ -10,6 +10,7 @@ class Cases extends Model
         'packages_id',
         'url_doc',
         'price',
+        'idfe',
         'id_customer_openpay',
         'created_at',
         'updated_at',

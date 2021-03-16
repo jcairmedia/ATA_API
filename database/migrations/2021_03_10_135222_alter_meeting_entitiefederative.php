@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AlterMeetingLawyerFinish extends Migration
+class AlterMeetingEntitiefederative extends Migration
 {
     /**
      * Run the migrations.
@@ -14,8 +14,10 @@ class AlterMeetingLawyerFinish extends Migration
     public function up()
     {
         Schema::table('meetings', function (Blueprint $table) {
-            $table->string('lawyer')->nullable()->comment('assigned lawyer attended');
+            $table->unsignedBigInteger('idfe')->nullable()->after('dt_end')->comment("FK table federalentities");
+            $table->foreign('idfe')->references('id')->on('federalentities');
         });
+
     }
 
     /**
@@ -26,7 +28,8 @@ class AlterMeetingLawyerFinish extends Migration
     public function down()
     {
         Schema::table('meetings', function (Blueprint $table) {
-            $table->dropColumn('lawyer');
+            $table->dropForeign('meetings_idfe_foreign');
+            $table->dropColumn('idfe');
         });
     }
 }
