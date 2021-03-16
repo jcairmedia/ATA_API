@@ -22,6 +22,9 @@ class MeetingRegisterUseCase
         return $meetingD(new Meeting([
             'folio' => $this->generateFolio(),
             'category' => $data['category'],
+
+            'idfe' => $data['idfe'],
+
             'type_meeting' => $data['type_meeting'],
             'url_meeting' => '',
             'dt_start' => $data['date'].' '.$data['time'],

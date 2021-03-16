@@ -189,6 +189,282 @@
                 }
             }
         },
+        "/api/cp": {
+            "get": {
+                "summary": "Consulta de codigos postales",
+                "operationId": "App\\Http\\Controllers\\API\\CRUDPostalCodeController::index",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "page",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "string"
+                        },
+                        "example": "1"
+                    },
+                    {
+                        "name": "cp",
+                        "in": "query",
+                        "description": "Código postal",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "string"
+                        },
+                        "example": "72"
+                    }
+                ],
+                "responses": {
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "required": [
+                                        "message",
+                                        "errors"
+                                    ],
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "date": {
+                                                        "type": "string",
+                                                        "example": "El campo cp es obligatorio"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            },
+                                            "collectionFormat": "multi"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "current_page": {
+                                            "type": "number",
+                                            "example": "1"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "cp": {
+                                                        "type": "string",
+                                                        "example": "72500"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            },
+                                            "collectionFormat": "multi"
+                                        },
+                                        "first_page_url": {
+                                            "type": "string",
+                                            "example": "http://localhost:8000/api/cp?page=1"
+                                        },
+                                        "from": {
+                                            "type": "number",
+                                            "example": "1"
+                                        },
+                                        "last_page": {
+                                            "type": "number",
+                                            "example": "1"
+                                        },
+                                        "last_page_url": {
+                                            "type": "string",
+                                            "example": "http://localhost:8000/api/cp?page=1"
+                                        },
+                                        "next_page_url": {
+                                            "type": "string",
+                                            "example": "http://localhost:8000/api/cp?page=2"
+                                        },
+                                        "path": {
+                                            "type": "string",
+                                            "example": "http://localhost:8000/api/cp/"
+                                        },
+                                        "per_page": {
+                                            "type": "number",
+                                            "example": "15"
+                                        },
+                                        "prev_page_url": {
+                                            "type": "string",
+                                            "example": "null"
+                                        },
+                                        "to": {
+                                            "type": "number",
+                                            "example": "15"
+                                        },
+                                        "total": {
+                                            "type": "number",
+                                            "example": "439"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/cp/asentas": {
+            "get": {
+                "summary": "Consulta de asentas de acuerdo a un código postal",
+                "operationId": "App\\Http\\Controllers\\API\\CRUDPostalCodeController::asentas",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "page",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "string"
+                        },
+                        "example": "1"
+                    },
+                    {
+                        "name": "cp",
+                        "in": "query",
+                        "description": "Código postal completo",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "string"
+                        },
+                        "example": "72500"
+                    }
+                ],
+                "responses": {
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "required": [
+                                        "message",
+                                        "errors"
+                                    ],
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "date": {
+                                                        "type": "string",
+                                                        "example": "El campo cp es obligatorio"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            },
+                                            "collectionFormat": "multi"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "current_page": {
+                                            "type": "number",
+                                            "example": "1"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "cp": {
+                                                        "type": "string",
+                                                        "example": "75000"
+                                                    },
+                                                    "id": {
+                                                        "type": "number",
+                                                        "example": "1000216"
+                                                    },
+                                                    "d_asenta": {
+                                                        "type": "string",
+                                                        "example": "Ignacio Zaragoza"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            },
+                                            "collectionFormat": "multi"
+                                        },
+                                        "first_page_url": {
+                                            "type": "string",
+                                            "example": "http://localhost:8000/api/cp/asentas?page=1"
+                                        },
+                                        "from": {
+                                            "type": "number",
+                                            "example": "1"
+                                        },
+                                        "last_page": {
+                                            "type": "number",
+                                            "example": "1"
+                                        },
+                                        "last_page_url": {
+                                            "type": "number",
+                                            "example": "http://localhost:8000/api/cp/asentas?page=1"
+                                        },
+                                        "next_page_url": {
+                                            "type": "string",
+                                            "example": "null"
+                                        },
+                                        "path": {
+                                            "type": "string",
+                                            "example": "http:\\/\\/localhost:8000\\/api\\/cp\\/asentas"
+                                        },
+                                        "per_page": {
+                                            "type": "number",
+                                            "example": "15"
+                                        },
+                                        "prev_page_url": {
+                                            "type": "string",
+                                            "example": "null"
+                                        },
+                                        "to": {
+                                            "type": "number",
+                                            "example": "4"
+                                        },
+                                        "total": {
+                                            "type": "number",
+                                            "example": "4"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/user/pass": {
             "post": {
                 "summary": "Cambiar contraseña (nueva)",
@@ -717,8 +993,15 @@
                             "schema": {
                                 "required": [
                                     "name",
+                                    "lastname_1",
+                                    "lastname_2",
+                                    "curp",
                                     "email",
                                     "phone",
+                                    "street",
+                                    "out_number",
+                                    "idcp",
+                                    "idfe",
                                     "date",
                                     "time",
                                     "type_meeting",
@@ -732,6 +1015,21 @@
                                         "format": "string",
                                         "example": "Nombres"
                                     },
+                                    "lastname_1": {
+                                        "type": "string",
+                                        "format": "string",
+                                        "example": "Apellido paterno"
+                                    },
+                                    "lastname_2": {
+                                        "type": "string",
+                                        "format": "string",
+                                        "example": "Apellidos materno"
+                                    },
+                                    "curp": {
+                                        "type": "string",
+                                        "format": "string",
+                                        "example": "CURP"
+                                    },
                                     "email": {
                                         "type": "string",
                                         "format": "email",
@@ -742,6 +1040,28 @@
                                         "format": "number",
                                         "pattern": "[0-9]{10}",
                                         "example": "1234567890"
+                                    },
+                                    "street": {
+                                        "type": "string",
+                                        "example": "Nombre de la calle"
+                                    },
+                                    "out_number": {
+                                        "type": "string",
+                                        "example": "número exterior"
+                                    },
+                                    "int_number": {
+                                        "type": "string",
+                                        "example": "número interior"
+                                    },
+                                    "idcp": {
+                                        "type": "number",
+                                        "format": "number",
+                                        "example": "Identificador único de la información del código postal"
+                                    },
+                                    "idfe": {
+                                        "type": "number",
+                                        "format": "number",
+                                        "example": "Identificador único de entidad federativa"
                                     },
                                     "date": {
                                         "type": "string",
@@ -922,8 +1242,15 @@
                             "schema": {
                                 "required": [
                                     "name",
+                                    "lastname_1",
+                                    "lastname_2",
+                                    "curp",
                                     "email",
                                     "phone",
+                                    "street",
+                                    "out_number",
+                                    "idcp",
+                                    "idfe",
                                     "date",
                                     "time",
                                     "type_meeting",
@@ -933,6 +1260,24 @@
                                 ],
                                 "properties": {
                                     "name": {
+                                        "description": "Nombre y apellidos del cliente",
+                                        "type": "string",
+                                        "format": "string",
+                                        "example": "Nombres"
+                                    },
+                                    "lastname_1": {
+                                        "description": "Nombre y apellidos del cliente",
+                                        "type": "string",
+                                        "format": "string",
+                                        "example": "Nombres"
+                                    },
+                                    "lastname_2": {
+                                        "description": "Nombre y apellidos del cliente",
+                                        "type": "string",
+                                        "format": "string",
+                                        "example": "Nombres"
+                                    },
+                                    "curp": {
                                         "description": "Nombre y apellidos del cliente",
                                         "type": "string",
                                         "format": "string",
@@ -948,6 +1293,26 @@
                                         "format": "number",
                                         "pattern": "[0-9]{10}",
                                         "example": "1234567890"
+                                    },
+                                    "street": {
+                                        "type": "string",
+                                        "example": "Nombre de la calle"
+                                    },
+                                    "out_number": {
+                                        "type": "string",
+                                        "example": "Número exterior"
+                                    },
+                                    "int_number": {
+                                        "type": "string",
+                                        "example": "Número interior"
+                                    },
+                                    "idcp": {
+                                        "type": "string",
+                                        "example": "Identificador único de código postal"
+                                    },
+                                    "idfe": {
+                                        "type": "string",
+                                        "example": "Indetificador unico de la entidad federativa"
                                     },
                                     "date": {
                                         "type": "string",
@@ -1186,7 +1551,8 @@
                                     "tokenId",
                                     "deviceSessionId",
                                     "packageId",
-                                    "serviceId"
+                                    "serviceId",
+                                    "idfe"
                                 ],
                                 "properties": {
                                     "tokenId": {
@@ -1199,6 +1565,11 @@
                                     },
                                     "packageId": {
                                         "description": "Id del paquete",
+                                        "type": "number",
+                                        "example": "1"
+                                    },
+                                    "idfe": {
+                                        "description": "Id de la entidad federativa",
                                         "type": "number",
                                         "example": "1"
                                     },
@@ -1781,6 +2152,47 @@
                         "bearer_token": []
                     }
                 ]
+            }
+        },
+        "/api/federalentities": {
+            "get": {
+                "summary": "Consulta de entidades federativas",
+                "operationId": "App\\Main\\FederalEntities\\Domain\\FederalEntitiesDomain::__invoke",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "number",
+                                                        "example": "1"
+                                                    },
+                                                    "idfe": {
+                                                        "type": "number",
+                                                        "example": "1"
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "Federal"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            },
+                                            "collectionFormat": "multi"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     },

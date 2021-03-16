@@ -4,7 +4,9 @@ use App\Http\Controllers\API\AppointmentDateController;
 use App\Http\Controllers\API\BenefitsController;
 use App\Http\Controllers\API\CasesController;
 use App\Http\Controllers\API\CasesPaymentsController;
+use App\Http\Controllers\API\CRUDFederativeEntitieController;
 use App\Http\Controllers\API\CRUDMeetingController;
+use App\Http\Controllers\API\CRUDPostalCodeController;
 use App\Http\Controllers\API\CRUDQuestionController;
 use App\Http\Controllers\API\CRUDQuestionnaireController;
 use App\Http\Controllers\API\CRUDUserController;
@@ -54,12 +56,17 @@ Route::group(['prefix' => 'contracts', 'middleware' => 'auth:api'], function () 
 });
 
 Route::post('/meeting/free', [FreeMeetingController::class, 'register']);
-Route::post('/meeting/paid', [PaidMeetingController::class, 'register']);
+// Route::post('/meeting/paid', [PaidMeetingController::class, 'register']);
 Route::post('/meeting/paid/offline', [OfflinePaidMeetingController::class, 'index']);
 Route::post('/meeting/paid/online', [OnlinePaidMeetingController::class, 'index']);
 
 // valid code for activate user
 Route::get('/register/verify/{code}', [UsersController::class, 'verify']);
+
+// get federal entities
+Route::get('/federalentities', [CRUDFederativeEntitieController::class, 'index']);
+Route::get('/cp', [CRUDPostalCodeController::class, 'index']);
+Route::get('/cp/asentas', [CRUDPostalCodeController::class, 'asentas']);
 
 // request in open pay
 Route::post('/hook', [WebHookOfflinePaidMeetingController::class, 'index']);

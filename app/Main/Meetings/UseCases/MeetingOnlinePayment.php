@@ -72,6 +72,7 @@ class MeetingOnlinePayment
         // 2. Create charge OPEN PAY
         $customer = [
             'name' => $data['name'],
+            'last_name' => $data["lastname_1"]. " ". $data["lastname_1"],
             'phone_number' => $data['phone'],
             'email' => $data['email'],
         ];
@@ -232,11 +233,7 @@ class MeetingOnlinePayment
         $contact_id = 0;
         try {
             // Register contact
-            $contact = $this->contactregisterusecase->__invoke([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'phone' => $data['phone'],
-            ]);
+            $contact = $this->contactregisterusecase->__invoke($data);
             $contact_id = $contact->id;
         } catch (\Exception $ex) {
             \Log::error(__FILE__.PHP_EOL.$ex->getMessage());

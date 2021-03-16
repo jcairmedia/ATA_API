@@ -73,10 +73,11 @@ class PackagesController extends Controller
      *   required=true ,
      *   description="Registrar una cita gratuita",
      *   @OA\JsonContent(
-     *    required={"tokenId", "deviceSessionId", "packageId", "serviceId"},
+     *    required={"tokenId", "deviceSessionId", "packageId", "serviceId", "idfe"},
      *    @OA\Property(property="tokenId", type="string", example="kl8gm1x69epllqw1sqdj"),
      *    @OA\Property(property="deviceSessionId", type="string", example="kl8gm1x69epllqw1sqdj"),
      *    @OA\Property(property="packageId", type="number", example="1", description="Id del paquete"),
+     *    @OA\Property(property="idfe", type="number", example="1", description="Id de la entidad federativa"),
      *    @OA\Property(property="serviceId", type="number", example="1", description="Id del servicio"),
      *   )
      *  ),
@@ -146,13 +147,14 @@ class PackagesController extends Controller
             );
             \Log::error(print_r($arrayResponseSubscription, 1));
 
-            // Guardar caso en BD
+            // Save case in BD
             $objCase = (new CasesCasesUse())(
                 $packageObj,
                 $arrayResponseSubscription['customerId'],
                 $user->id,
                 $data['serviceId'],
-                ''
+                '',
+                $data['idfe']
             );
 
             // --- Create CONTRACT ---
@@ -164,7 +166,7 @@ class PackagesController extends Controller
             $view = (new TemplateContractCasesUse())($obj);
             $namefile = preg_replace('/[^A-Za-z0-9\-]/', '', uniqid($obj->packages_id.$obj->services_id.$obj->customer_id.date('Ymdhis'))).'.pdf';
 
-            // Create and save PDF
+            // Create and save CONTRACT PDF
             ini_set('max_execution_time', 5000);
             ini_set('memory_limit', '512M');
 
@@ -184,13 +186,13 @@ class PackagesController extends Controller
             );
 
             // -- ENVIAR DATOS AL USUARIO
-            // Enviar SMS
+            // Send SMS
             $testSMS = $this->textSMS($packageObj->name);
             if ($user->phone != null) {
                 (new SMSUtil())($testSMS, $user->phone);
             }
 
-            // Enviar correo
+            //Send Email
             $DT_valid = new \DateTime(date('Y-m-d', strtotime(date('Y-m-d').'+1month-1day')));
 
             $dateUtil = new DateUtil();
@@ -215,7 +217,7 @@ class PackagesController extends Controller
                 '',
                 $view
             );
-            // response cliente
+            // response
             return response()->json(['data' => $subs->toArray()], 201);
         } catch (\Exception $ex) {
             \Log::error($ex->getMessage());

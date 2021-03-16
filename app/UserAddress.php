@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class UserAddress extends Model
 {
-
     /**
      * The primary key associated with the table.
      *
@@ -14,11 +13,12 @@ class UserAddress extends Model
      */
     protected $primaryKey = 'users_id';
     protected $fillable = [
-        "idcp",
-        "street",
-        "out_number",
-        "int_number",
-        "created_at",
-        "updated_at",
+        'users_id',
+        'idcp',
+        'street',
+        'out_number',
+        'int_number',
+        'created_at',
+        'updated_at',
     ];
 }

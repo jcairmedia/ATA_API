@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\UserRequest;
+use App\Main\Users\Domain\AddAddressDomain;
 use App\Main\Users\Domain\FindUserDomain;
 use App\Main\Users\Domain\UserCreatorDomain;
 use App\Main\Users\UseCases\RegisterUseCase;
@@ -24,11 +25,18 @@ class UsersController extends Controller
      *   @OA\JsonContent(
      *    required={"name","email","password","last_name1","last_name2","phone"},
      *    @OA\Property(property="name", type="string", format="string", example="Nombres"),
-     *    @OA\Property(property="email", type="string", format="email", example="user1@mail.com"),
-     *    @OA\Property(property="password", type="string", format="password", example="PassWord12345"),
      *    @OA\Property(property="last_name1", type="string", format="string", example="Apellido materno"),
      *    @OA\Property(property="last_name2", type="string", format="string", example="Apellido paterno"),
+     *    @OA\Property(property="curp", type="string", format="string", example="CURP"),
+     *    @OA\Property(property="email", type="string", format="email", example="user1@mail.com"),
      *    @OA\Property(property="phone", type="string", pattern="[0-9]{10}", format="number", example="1234567890"),
+
+     *    @OA\Property(property="street", type="string", example="Nombre de la calle"),
+     *    @OA\Property(property="out_number", type="string", example="número exterior"),
+     *    @OA\Property(property="int_number", type="string", example="número interior"),
+     *    @OA\Property(property="idcp", type="number", format="number", example="Identificador único de la información del código postal"),
+
+     *    @OA\Property(property="password", type="string", format="password", example="PassWord12345"),
      *   )
      *  ),
      *  @OA\Response(
@@ -81,14 +89,27 @@ class UsersController extends Controller
      *  )
      * )
      */
+    // TODO: Add Direction in request and RFC
+    // Save direction
     public function register(UserRequest $req)
     {
         try {
             $user = $req->all();
             $dt = date('dmYHis');
             $user['confirmation_code'] = uniqid($dt);
+
             $r = new RegisterUseCase(new UserCreatorDomain());
             $userSaved = $r($user);
+            \Log::error('usuario: '.print_r(($userSaved)->toArray(), 1));
+            \Log::error('usuario-id: '.$userSaved->id);
+            $address = [
+                'users_id' => $userSaved->id,
+                'idcp' => $user['idcp'],
+                'street' => $user['street'],
+                'out_number' => $user['out_number'],
+                'int_number' => $user['int_number'],
+            ];
+            (new AddAddressDomain())($address);
 
             $sendEmail = new SendEmail();
             $data = [

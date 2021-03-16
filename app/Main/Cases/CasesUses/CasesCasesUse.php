@@ -13,13 +13,15 @@ class CasesCasesUse
         string $idCustomerOpenpay,
         $customerId,
         $serviceId,
-        string $urlDoc
+        string $urlDoc,
+        int $idfe
     ) {
         try {
             $data = [
             'packages_id' => $package->id,
             'url_doc' => $urlDoc,
             'price' => $package->amount,
+            'idfe' => $idfe,
             'id_customer_openpay' => $idCustomerOpenpay,
             'services_id' => $serviceId,
             'customer_id' => $customerId,

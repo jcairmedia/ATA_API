@@ -75,9 +75,12 @@ class MeetingOffilePayment
             if ($rangeHour == null) {
                 throw new Exception('Horario no encontrado');
             }
-            // 3. Crear un cargo
+
+
+            // 3. Create charge
             $customer = [
                 'name' => $data['name'],
+                'last_name' => $data["lastname_1"]. " ". $data["lastname_1"],
                 'phone_number' => $data['phone'],
                 'email' => $data['email'],
             ];
@@ -94,6 +97,7 @@ class MeetingOffilePayment
             $array_charge = json_decode($response_OPEN_PAY_JSON_charge, true);
             \Log::error(__FILE__.PHP_EOL.$response_OPEN_PAY_JSON_charge);
 
+            // Prepare charge
             $charge = [
                 'description' => $array_charge['description'],
                 'error_message' => $array_charge['error_message'],
@@ -111,7 +115,8 @@ class MeetingOffilePayment
                 'method' => $array_charge['method'],
                 'json_create_reference' => json_encode($array_charge),
             ];
-            // 2. Registar un evento al calendar
+
+            // 2. register event to calendar
             $dtStart = ($data['date'].' '.$rangeHour->start);
             $dtEnd = ($data['date'].' '.$rangeHour->end);
 
@@ -125,21 +130,24 @@ class MeetingOffilePayment
                     $idCalendar
             );
 
-            // 4. Registar el contacto
+
+            // 4. Register contacts
             try {
                 // Register contact
-                $contact = $this->contactregisterusecase->__invoke([
-                'name' => $data['name'],
-                'email' => $data['email'],
-                'phone' => $data['phone'],
-                ]);
+                \Log::error('in: '. print_r($data, 1));
+                if(array_key_exists('int_number', $data)){
+                    $arrayContact['int_number'] = $contact['int_number'];
+                };
+                $contact = $this->contactregisterusecase->__invoke($data);
                 $contact_id = $contact->id;
             } catch (\Exception $ex) {
                 \Log::error(__FILE__.PHP_EOL.$ex->getMessage());
                 $contact = $this->contactfindusecase->__invoke($data['email']);
                 $contact_id = $contact->id;
             }
-            // 5. Registrar una reunión en BD
+
+
+            // 5. Register meeting in DB
             $data['amount'] = $amount_paid;
             $data['category'] = 'PAID';
             $data['paid'] = 0;
@@ -155,15 +163,15 @@ class MeetingOffilePayment
             } catch (\Exception $ex) {
                 \Log::error('ErrorOfflineAddEvent: '.$ex->getMessage());
             }
-            // 6. Persistir el cargo en BD
+            // 6. Register charge in db
             $charge['meeting_id'] = $meetingObj->id;
             $chargeObj = $this->registeropenpaychargeusecase->__invoke($charge);
 
-            // 7. Enviar la url del recibo del pago
+            // 7. get url recibo de pago
             // {DASHBOARD_PATH}/paynet-pdf/{MERCHANT_ID}/{REFERENCE}
             $url_file_charge = $this->getURLFileCharge($array_charge['payment_method']['reference']);
 
-            // 9. Enviar correo
+            // 9. Send email
             $textHtml = $this->getTextInHTML($url_file_charge, $meetingObj->type_meeting);
             (new SendEmail())(
                 ['email' => env('EMAIL_FROM')],
@@ -177,8 +185,7 @@ class MeetingOffilePayment
 
             (new SMSUtil())($this->getTextForSMS(), $data['phone']);
 
-            // Enviar la url de la reunión
-            // $responseUrl_meeting = $this->getUrlZoom($data['date'], $data['type_meeting'], 'ATA | Cita');
+
             return [
                 'meeting' => $meetingObj->toArray(),
                 'url_file_charge' => $url_file_charge,
