@@ -8,14 +8,16 @@ use App\Main\Meetings\Domain\MeetingWhereDomain;
 use App\Main\Meetings\Utils\DoURLZoomMeetingPaidUtils;
 use App\Main\Meetings\Utils\TextForEmailMeetingPaidUtils;
 use App\Main\Meetings\Utils\TextForSMSMeetingPaidUtils;
+use App\Main\Meetings_payments\Domain\PaymentDomain;
 use App\Main\OpenPay_payment_references\Domain\FindOpenPayReferencesDomain;
+use App\Meeting_payments;
 use App\Utils\DateUtil;
 use App\Utils\SendEmail;
 use App\Utils\SMSUtil;
 
 class PaymentSuccessStoreUseCase
 {
-    public function __invoke(string $referenceHook)
+    public function __invoke(string $referenceHook, array $data)
     {
         $referenceObj = (new FindOpenPayReferencesDomain())(['payment_reference' => $referenceHook]);
         if (!$referenceObj) {
@@ -24,6 +26,7 @@ class PaymentSuccessStoreUseCase
             return 0;
         }
         $meetingId = $referenceObj->meeting_id;
+        // Change status paid of Meeting
         (new MeetingUpdateDomain())($meetingId, ['paid_state' => 1]);
         $meetingObj = (new MeetingWhereDomain())(['id' => $meetingId]);
         if ($meetingObj->count() <= 0) {
@@ -38,6 +41,24 @@ class PaymentSuccessStoreUseCase
         $contactObj = (new FindContactDomain())(['id' => $contactId]);
         $email_contact = $contactObj->email;
         $phone_contact = $contactObj->phone;
+
+        // save payment case
+        $payment = [
+            'price' => $data['transaction']['amount'],
+            'folio' => $data['transaction']['id'],
+            'bank_auth_code' => '',
+            'type_payment' => 'OFFLINE',
+            'card_type' => '',
+            'bank' => '',
+            'currency' => '',
+            'brand' => '',
+            'json' => json_encode($data),
+            'created_at' => '',
+            'updated_at' => '',
+            'meeting_id' => $meetingId,
+        ];
+        $meetingPaymentObj = (new Meeting_payments($payment));
+        (new PaymentDomain())->save($meetingPaymentObj);
 
         // Send SMS
         $type_meeting = $meetingObj->type_meeting;
@@ -80,5 +101,7 @@ class PaymentSuccessStoreUseCase
             '',
             $textEmail
         );
+
+        return $meetingObj->id;
     }
 }

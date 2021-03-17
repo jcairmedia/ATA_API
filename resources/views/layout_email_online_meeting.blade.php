@@ -29,7 +29,7 @@
                         @case("VIDEOCALL")
                             <p style="text-align: center">Hemos recibido y confirmado tu pago para tú asesoria en línea</p>
                             <p style="text-align: justify">Recuerda seguir el enlace que se encuentra debajo,
-                                el día <strong>{{$day}}</strong> de <strong>{{$month}}</strong> a las <strong>{{$hours}}</strong>
+                                el día <strong>{{$day}}</strong> de <strong>{{$month}}</strong> a las <strong>{{$hours}}</strong> horas
                                 , para llevar a cabo tu asesoria con duración de 45 minutos
                             </p>
                             <table>
@@ -66,7 +66,7 @@
                             <p style="text-align: justify">Hemos recibido y confirmado tu pago para tu asesoría legal vía telefónica.</p>
                             <p style="text-align: justify">Recuerda mantenerte atento al número telefónico que nos proporcionaste
                                 el día <strong>{{$day}}</strong> de <strong>{{$month}}</strong>
-                                a las <strong>{{$hours}}</strong> hrs, para llevar a cabo tu
+                                a las <strong>{{$hours}}</strong> horas, para llevar a cabo tu
                                 asesoría con duración de 45 minutos.
                             </p>
                             <p>A tomar en cuenta:</p>
@@ -97,7 +97,7 @@
                                 </tr>
                             </table>
                             <p>Recuerda acudir a Avenida, Av. Cuauhtémoc 145, Cuauhtémoc,
-                                06700 CDMX , el día {{$day}} de {{$month}} a las {{$hours}},
+                                06700 CDMX , el día {{$day}} de {{$month}} a las {{$hours}} horas,
                                 para llevar a cabo tu asesoría con duración de 45 minutos.
                             </p>
                         @break

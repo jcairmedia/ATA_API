@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Events\UserSendMeetingEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Meetings\OfflinePaidMeetingRequest;
 use App\Main\Config_System\Domain\SearchConfigDomain;
@@ -46,7 +47,6 @@ class OfflinePaidMeetingController extends Controller
      *    @OA\Property(property="int_number", type="string", example="número interior"),
      *    @OA\Property(property="idcp", type="number", format="number", example="Identificador único de la información del código postal"),
      *    @OA\Property(property="idfe", type="number", format="number", example="Identificador único de entidad federativa"),
-     *
      *
      *    @OA\Property(property="date", type="string", format="date", example="2020-10-26"),
      *    @OA\Property(property="time", type="string", format="string", example="18:00", pattern="/^(09|(1[0-8]))\:[0-5][0-9]$/"),
@@ -162,7 +162,8 @@ class OfflinePaidMeetingController extends Controller
                                     new ContactFindUseCase(new ContactSelectDomain()));
 
             $objectMeeting = $meetingOffile($data, $MEETING_PAID_DURATION, $PHONE_OFFICE, $MEETING_PAID_AMOUNT, $numberPlaces, $idCalendar);
-            \Log::error(print_r($objectMeeting, 1));
+
+            // event(new UserSendMeetingEvent($objectMeeting['meeting'], $objectMeeting['contact']));
 
             return response()->json(['code' => 201, 'data' => $objectMeeting], 201);
         } catch (\Exception $ex) {

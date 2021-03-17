@@ -76,11 +76,10 @@ class MeetingOffilePayment
                 throw new Exception('Horario no encontrado');
             }
 
-
             // 3. Create charge
             $customer = [
                 'name' => $data['name'],
-                'last_name' => $data["lastname_1"]. " ". $data["lastname_1"],
+                'last_name' => $data['lastname_1'].' '.$data['lastname_1'],
                 'phone_number' => $data['phone'],
                 'email' => $data['email'],
             ];
@@ -130,14 +129,13 @@ class MeetingOffilePayment
                     $idCalendar
             );
 
-
             // 4. Register contacts
             try {
                 // Register contact
-                \Log::error('in: '. print_r($data, 1));
-                if(array_key_exists('int_number', $data)){
+                \Log::error('in: '.print_r($data, 1));
+                if (array_key_exists('int_number', $data)) {
                     $arrayContact['int_number'] = $contact['int_number'];
-                };
+                }
                 $contact = $this->contactregisterusecase->__invoke($data);
                 $contact_id = $contact->id;
             } catch (\Exception $ex) {
@@ -145,7 +143,6 @@ class MeetingOffilePayment
                 $contact = $this->contactfindusecase->__invoke($data['email']);
                 $contact_id = $contact->id;
             }
-
 
             // 5. Register meeting in DB
             $data['amount'] = $amount_paid;
@@ -185,10 +182,12 @@ class MeetingOffilePayment
 
             (new SMSUtil())($this->getTextForSMS(), $data['phone']);
 
+            // 11. Send other software
 
             return [
                 'meeting' => $meetingObj->toArray(),
                 'url_file_charge' => $url_file_charge,
+                'contact' => $contact->toArray(),
             ];
         } catch (\Exception $ex) {
             \Log::error($ex->getMessage());

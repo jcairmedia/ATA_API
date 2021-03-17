@@ -72,7 +72,7 @@ class MeetingOnlinePayment
         // 2. Create charge OPEN PAY
         $customer = [
             'name' => $data['name'],
-            'last_name' => $data["lastname_1"]. " ". $data["lastname_1"],
+            'last_name' => $data['lastname_1'].' '.$data['lastname_2'],
             'phone_number' => $data['phone'],
             'email' => $data['email'],
         ];
@@ -100,7 +100,8 @@ class MeetingOnlinePayment
                 $idCalendar
         );
         // 4. Add contact
-        $contact_id = $this->registerContact($data);
+        $contact_ = $this->registerContact($data);
+        $contact_id = $contact_->id;
 
         // 5. Add meeting in BD
         $data['amount'] = $amount_paid;
@@ -167,7 +168,7 @@ class MeetingOnlinePayment
             $textEmail
         );
 
-        return ['meeting' => $meetingObj];
+        return ['meeting' => $meetingObj->toArray(), 'contact' => $contact_->toArray()];
     }
 
     private function setTextSubjectEventInCalendar($type_meeting)
@@ -229,17 +230,17 @@ class MeetingOnlinePayment
 
     private function registerContact($data)
     {
-        $contact_id = 0;
+        $contact = null;
         try {
             // Register contact
             $contact = $this->contactregisterusecase->__invoke($data);
-            $contact_id = $contact->id;
+            // $contact_id = $contact->id;
         } catch (\Exception $ex) {
             \Log::error(__FILE__.PHP_EOL.$ex->getMessage());
             $contact = $this->contactfindusecase->__invoke($data['email']);
-            $contact_id = $contact->id;
+            // $contact_id = $contact->id;
         }
 
-        return $contact_id;
+        return $contact;
     }
 }

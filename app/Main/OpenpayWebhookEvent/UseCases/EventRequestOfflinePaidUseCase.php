@@ -2,6 +2,7 @@
 
 namespace App\Main\OpenpayWebhookEvent\UseCases;
 
+use App\Events\SendUserMeetingOfflineEvent;
 use App\Main\Cases\Domain\CaseInnerJoinCustomerDomain;
 use App\Main\Meetings_payments\Domain\GetPaymentsMeetingDomain;
 use App\Main\OpenpayWebhookEvent\Domain\OpenpayHookEventDomain;
@@ -22,33 +23,17 @@ class EventRequestOfflinePaidUseCase
             'order_id' => Arr::get($data, 'transaction.order_id', null),
             'json' => json_encode($data),
         ]));
-        // FIXME: Change to a cron task
+
         sleep(2);
         \Log::error('open pay data: '.print_r($data, 1));
+
         // Heuristic payment method store
         if ($data['transaction']['method'] == 'store') {
-            $statusTansaction = $data['transaction']['status'];
-            $referenceHook = $data['transaction']['payment_method']['reference'];
-
-            switch ($statusTansaction) {
-                case 'cancelled':
-                    (new PaymentCancellStoreUseCase())($referenceHook);
-                    break;
-                case 'completed':
-                    $_paymntsMeeting = (new GetPaymentsMeetingDomain())(['folio' => $data['transaction']['id']]);
-                    if ($_paymntsMeeting->count() > 0) {
-                        \Log::error('COMPLETED::existe pago en DB: '.print_r($data, 1));
-
-                        return;
-                    }
-                    // Pago exitoso
-                    (new PaymentSuccessStoreUseCase())($referenceHook);
-                break;
-                default:break;
-            }
+            $this->store($data);
 
             return;
         }
+
         if ($data['transaction']['method'] != 'card') {
             return;
         }
@@ -90,6 +75,35 @@ class EventRequestOfflinePaidUseCase
             (new CompletedSubscriptionUseCase())($data, $subscriptionObj, $caseObj, $casesId);
 
             return;
+        }
+    }
+
+    private function store($data)
+    {
+        $statusTansaction = $data['transaction']['status'];
+        $referenceHook = $data['transaction']['payment_method']['reference'];
+
+        switch ($statusTansaction) {
+            case 'cancelled':
+                (new PaymentCancellStoreUseCase())($referenceHook);
+                break;
+            case 'completed':
+                $_paymntsMeeting = (new GetPaymentsMeetingDomain())(['folio' => $data['transaction']['id']]);
+                \Log::error('_paymntsMeeting: '.print_r($_paymntsMeeting, 1));
+
+                if ($_paymntsMeeting->count() > 0) {
+                    \Log::error('COMPLETED::existe pago en DB: '.print_r($data, 1));
+
+                    return;
+                }
+
+                // Pago exitoso
+                $idMeeting = (new PaymentSuccessStoreUseCase())($referenceHook, $data);
+                \Log::error('Meetings: '.print_r($idMeeting, 1));
+                event(new SendUserMeetingOfflineEvent($idMeeting));
+
+            break;
+            default:break;
         }
     }
 }

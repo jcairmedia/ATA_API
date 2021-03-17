@@ -26,7 +26,8 @@ class DoURLZoomMeetingPaidUtils
             $search = new SearchConfigurationUseCase(new SearchConfigDomain());
             $config = $search->__invoke('ZOOM_ACCESS_TOKEN');
             $zoomMeeting = new ZoomMeetings(env('ZOOM_USER_ID'), $config->value);
-            $response = $zoomMeeting->build($date.':00', $subject);
+
+            $response = $zoomMeeting->build($date, $subject);
             // Save request Zoom
             $dt_meeting_zoom = new \DateTime($response['start_time'], new \DateTimeZone($response['timezone']));
             \Log::error('Id: '.print_r($response, 1));
