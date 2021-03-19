@@ -32,7 +32,7 @@ class CustomerContractPackageController extends Controller
      *  security={{"bearer_token":{}}},
      *  @OA\RequestBody(
      *   required=true ,
-     *   description="Contratación de paquete pagado con tarjeta previamente registrada",
+     *   description="Para más información consultar acerca del pago con tarjetas guardadas previamente, consultar la API de open pay https://www.openpay.mx/docs/api/#crear-una-nueva-suscripci-n",
      *   @OA\JsonContent(
      *    required={"cardId", "packageId", "serviceId"},
      *    @OA\Property(property="cardId", type="string", example="1"),

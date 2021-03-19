@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Events\UserSendMeetingEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Meetings\CustomerMeetingsOnlinePaymentsRequest;
 use App\Main\Config_System\Domain\SearchConfigDomain;
@@ -10,6 +11,7 @@ use App\Main\Meetings\UseCases\MeetingOnlineCardPayment;
 use App\Main\Meetings\UseCases\MeetingRegisterUseCase;
 use App\Main\Meetings_payments\Domain\PaymentDomain;
 use App\Main\Meetings_payments\UseCases\RegisterPaymentUseCases;
+use App\Main\UserAddress\Domain\GetAddressUserDomain;
 use App\Utils\ChargeByCardCustomerOpenPay;
 
 class CustomerMeetingsOnlinePaymentController extends Controller
@@ -25,12 +27,12 @@ class CustomerMeetingsOnlinePaymentController extends Controller
      * @OA\POST(
      *  tags={"App móvil"},
      *  path="/api/v2/meeting/paid/online",
-     *  summary="Registro de citas online, pagada con tarjeta seleccionada (Nuevo)",
+     *  summary="Registro de citas online, pagada con tarjeta seleccionada",
      *  description="",
      *  security={{"bearer_token":{}}},
      *  @OA\RequestBody(
      *   required=true ,
-     *   description="Registro de citas online, pagada con tarjeta seleccionada",
+     *   description="Para más información sobre cargo con tarjeta previamente registrada, consultar la siguiente dirección https://www.openpay.mx/docs/api/#con-id-de-tarjeta-o-token",
      *   @OA\JsonContent(
      *    required={"idCard","cvv2","date","time","type_meeting", "type_payment", "deviceIdHiddenFieldName"},
      *    @OA\Property(property="idCard", type="string", format="string", example="1", description="Identificador único interno de la tarjeta registrada por el cliente"),
@@ -126,6 +128,20 @@ class CustomerMeetingsOnlinePaymentController extends Controller
                 $MEETING_PAID_DURATION,
                 $PHONE_OFFICE
             );
+            // select address User
+            $addressObj = (new GetAddressUserDomain())($request->user()->id);
+            event(new UserSendMeetingEvent($objectMeeting['meeting']->toArray(), [
+                'name' => $request->user()->name,
+                'lastname_1' => $request->user()->last_name1,
+                'lastname_2' => $request->user()->last_name2,
+                'curp' => $request->user()->curp,
+                'email' => $request->user()->email,
+                'phone' => $request->user()->phone,
+                'idcp' => $addressObj->idcp,
+                'street' => $addressObj->street,
+                'out_number' => $addressObj->out_number,
+                'int_number' => $addressObj->int_number,
+                ]));
 
             return response()->json(['code' => 201, 'data' => $objectMeeting], 201);
         } catch (\Exception $ex) {

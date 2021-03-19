@@ -143,6 +143,7 @@ Route::group(['prefix' => 'v2', 'middleware' => 'auth:api'], function () {
     Route::post('like', [UsersController::class, 'like']);
     Route::post('cards', [CRUDCardsController::class, 'index']);
     Route::get('cards', [CRUDCardsController::class, 'cards']);
+    // contract meeting payment bu account
     Route::post('meeting/paid/online', [CustomerMeetingsOnlinePaymentController::class, 'index']);
     Route::post('contracts', [CustomerContractPackageController::class, 'index']);
     Route::get('contracts', [CRUDContractsController::class, 'paginate']);

@@ -1440,7 +1440,7 @@
                 "summary": "Contratación de paquete pagado con tarjeta previamente registrada (Nuevo)",
                 "operationId": "App\\Http\\Controllers\\API\\CustomerContractPackageController::index",
                 "requestBody": {
-                    "description": "Contratación de paquete pagado con tarjeta previamente registrada",
+                    "description": "Para más información consultar acerca del pago con tarjetas guardadas previamente, consultar la API de open pay https://www.openpay.mx/docs/api/#crear-una-nueva-suscripci-n",
                     "required": true,
                     "content": {
                         "application/json": {
@@ -1555,11 +1555,11 @@
                 "tags": [
                     "App móvil"
                 ],
-                "summary": "Registro de citas online, pagada con tarjeta seleccionada (Nuevo)",
+                "summary": "Registro de citas online, pagada con tarjeta seleccionada",
                 "description": "",
                 "operationId": "App\\Http\\Controllers\\API\\CustomerMeetingsOnlinePaymentController::index",
                 "requestBody": {
-                    "description": "Registro de citas online, pagada con tarjeta seleccionada",
+                    "description": "Para más información sobre cargo con tarjeta previamente registrada, consultar la siguiente dirección https://www.openpay.mx/docs/api/#con-id-de-tarjeta-o-token",
                     "required": true,
                     "content": {
                         "application/json": {
