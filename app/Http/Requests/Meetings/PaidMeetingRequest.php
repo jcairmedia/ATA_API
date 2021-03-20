@@ -5,6 +5,7 @@ namespace App\Http\Requests\Meetings;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
+//[DEPRECATED]
 class PaidMeetingRequest extends FormRequest
 {
     /**
@@ -28,6 +29,7 @@ class PaidMeetingRequest extends FormRequest
             'name' => 'required|string|min:3|max:255',
             'email' => 'required|email|unique:users,email',
             'phone' => 'required|string|size:10|regex:/[0-9]{10}/',
+
             'date' => ['required', 'date', new \App\Rules\CustomDateMeeting()],
             'time' => ['required', 'string', 'regex:/^(09|(1[0-8]))\:[0-5][0-9]$/'],
             'type_meeting' => [

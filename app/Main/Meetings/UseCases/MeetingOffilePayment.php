@@ -32,7 +32,7 @@ class MeetingOffilePayment
         $this->LAYOUT_EMAIL_OFFLINE_MEETING = 'layout_email_offline_meeting';
     }
 
-    public function __invoke(array $data, $duration, $phone_office, $amount_paid, $numberPlaces, $idCalendar)
+    public function __invoke(array $data, $duration, $phone_office, $amount_paid, $numberPlaces, $idCalendar, $user)
     {
         try {
             /**
@@ -57,39 +57,18 @@ class MeetingOffilePayment
             \Log::error('Antes enable: '.print_r($data, 1));
 
             // 1. is enabled hour in Calendar
-            $n = new IsEnabledHourCaseUse();
-            $isEnableHour = $n(
-                $data['date'],
-                $data['time'],
-                'PAID',
-                $idCalendar,
-                $numberPlaces
-            );
-            if (!$isEnableHour) {
-                throw new \Exception('Hora no disponible', 400);
-            }
+            $this->isEnableHour($data, $idCalendar, $numberPlaces);
 
             // Exist hour in work's scheduler
-            $scheduler = new SearchSchedulerDomain();
-            $rangeHour = $scheduler->_searchRangeHour($data['time'], 'PAID');
-            if ($rangeHour == null) {
-                throw new Exception('Horario no encontrado');
-            }
+            $rangeHour = $this->existHourInScheduler($data);
 
-            // 3. Create charge
-            $customer = [
-                'name' => $data['name'],
-                'last_name' => $data['lastname_1'].' '.$data['lastname_1'],
-                'phone_number' => $data['phone'],
-                'email' => $data['email'],
-            ];
-            $chargeData = [
-                'method' => 'store',
-                'amount' => (float) $amount_paid,
-                'description' => 'ATA| Cargo para cita pagada por tienda',
-                'due_date' => $this->getDateValid(new \DateTime()),
-                'customer' => $customer,
-            ];
+            // 3. Create charge in open pay (web Service)
+            $customer = $this->prepareCustomer($data, $user);
+            $nameCustomer = $customer['name'].' '.$customer['last_name'];
+            $emailCustomer = $customer['email'];
+            $phoneCustomer = $customer['phone_number'];
+
+            $chargeData = $this->prepareJSONForCallServiceOpenpay($customer, $amount_paid);
             $response_OPEN_PAY_JSON_charge =
             // file_get_contents(storage_path('responseOpenPay/examples/').'cargoexitososinexpiracion.json');
             $this->storepaymentopenpay->__invoke($chargeData);
@@ -97,69 +76,30 @@ class MeetingOffilePayment
             \Log::error(__FILE__.PHP_EOL.$response_OPEN_PAY_JSON_charge);
 
             // Prepare charge
-            $charge = [
-                'description' => $array_charge['description'],
-                'error_message' => $array_charge['error_message'],
-                'authorization' => $array_charge['authorization'],
-                'amount' => $array_charge['amount'],
-                'operation_type' => $array_charge['operation_date'],
-                'payment_type' => $array_charge['payment_method']['type'],
-                'payment_reference' => $array_charge['payment_method']['reference'],
-                'payment_barcode_url' => $array_charge['payment_method']['barcode_url'],
-                'order_id' => $array_charge['order_id'],
-                'transaction_type' => $array_charge['transaction_type'],
-                'creation_date' => $array_charge['creation_date'],
-                'currency' => $array_charge['currency'],
-                'status' => $array_charge['status'],
-                'method' => $array_charge['method'],
-                'json_create_reference' => json_encode($array_charge),
-            ];
+            $charge = $this->prepareJSONChargeforSaveDB($array_charge);
 
-            // 2. register event to calendar
-            $dtStart = ($data['date'].' '.$rangeHour->start);
-            $dtEnd = ($data['date'].' '.$rangeHour->end);
+            // Save event to calendar
+            $eventResult = $this->registerEventInCalendar($data['date'], $nameCustomer, $data['type_meeting'], $rangeHour, $idCalendar);
 
-            $event = new Event();
-            $eventResult = $event->create(
-                [
-                    'name' => 'Llamar a '.$data['name'],
-                    'description' => $this->setTextSubjectEventInCalendar($data['type_meeting']),
-                    'startDateTime' => new Carbon($dtStart),
-                    'endDateTime' => new Carbon($dtEnd), ],
-                    $idCalendar
-            );
-
-            // 4. Register contacts
-            try {
-                // Register contact
-                \Log::error('in: '.print_r($data, 1));
-                if (array_key_exists('int_number', $data)) {
-                    $arrayContact['int_number'] = $contact['int_number'];
-                }
-                $contact = $this->contactregisterusecase->__invoke($data);
+            // 4. Save contacts
+            $contact_id = 0;
+            $user_id = 0;
+            if (is_null($user)) {
+                $contact = $this->saveContactInDB($data);
                 $contact_id = $contact->id;
-            } catch (\Exception $ex) {
-                \Log::error(__FILE__.PHP_EOL.$ex->getMessage());
-                $contact = $this->contactfindusecase->__invoke($data['email']);
-                $contact_id = $contact->id;
+            } else {
+                $user_id = $user->id;
             }
 
             // 5. Register meeting in DB
             $data['amount'] = $amount_paid;
             $data['category'] = 'PAID';
             $data['paid'] = 0;
-            $meetingObj = $this->meetingUseCase->__invoke($data, $contact_id, $duration, 0);
+            $meetingObj = $this->meetingUseCase->__invoke($data, $contact_id, $duration, $user_id);
 
             // 5.1 Add event in DB
-            try {
-                $calendar = new AddEventDomain();
-                $calendar(new CalendarEventMeeting([
-                'meetings_id' => $meetingObj->id,
-                'idevent' => $eventResult->id,
-                'idcalendar' => $idCalendar, ]));
-            } catch (\Exception $ex) {
-                \Log::error('ErrorOfflineAddEvent: '.$ex->getMessage());
-            }
+            $this->saveEventInDB($meetingObj->id, $eventResult->id, $idCalendar);
+
             // 6. Register charge in db
             $charge['meeting_id'] = $meetingObj->id;
             $chargeObj = $this->registeropenpaychargeusecase->__invoke($charge);
@@ -169,25 +109,17 @@ class MeetingOffilePayment
             $url_file_charge = $this->getURLFileCharge($array_charge['payment_method']['reference']);
 
             // 9. Send email
-            $textHtml = $this->getTextInHTML($url_file_charge, $meetingObj->type_meeting);
-            (new SendEmail())(
-                ['email' => env('EMAIL_FROM')],
-                [$data['email']],
-                'Estás a un paso de agendar tu asesoría legal',
-                '',
-                $textHtml
-            );
+            $this->sendEmail($emailCustomer, $url_file_charge, $meetingObj->type_meeting);
 
             // 10. Envio de SMS
 
-            (new SMSUtil())($this->getTextForSMS(), $data['phone']);
+            (new SMSUtil())($this->getTextForSMS(), $phoneCustomer);
 
             // 11. Send other software
 
             return [
                 'meeting' => $meetingObj->toArray(),
                 'url_file_charge' => $url_file_charge,
-                'contact' => $contact->toArray(),
             ];
         } catch (\Exception $ex) {
             \Log::error($ex->getMessage());
@@ -246,5 +178,145 @@ class MeetingOffilePayment
         ' Continua con tu asesoria al realizar'.
         ' tu pago en las siguientes 24 hrs.'.
         ' De lo contrario tu fecha y día agendado se perderá.';
+    }
+
+    private function isEnableHour($data, $idCalendar, $numberPlaces)
+    {
+        $n = new IsEnabledHourCaseUse();
+        $isEnableHour = $n(
+                $data['date'],
+                $data['time'],
+                'PAID',
+                $idCalendar,
+                $numberPlaces
+            );
+        if (!$isEnableHour) {
+            throw new \Exception('Hora no disponible', 400);
+        }
+    }
+
+    private function existHourInScheduler($data)
+    {
+        $scheduler = new SearchSchedulerDomain();
+        $rangeHour = $scheduler->_searchRangeHour($data['time'], 'PAID');
+        if ($rangeHour == null) {
+            throw new \Exception('Horario no encontrado');
+        }
+
+        return $rangeHour;
+    }
+
+    private function prepareJSONChargeforSaveDB($array_charge)
+    {
+        return [
+            'description' => $array_charge['description'],
+            'error_message' => $array_charge['error_message'],
+            'authorization' => $array_charge['authorization'],
+            'amount' => $array_charge['amount'],
+            'operation_type' => $array_charge['operation_date'],
+            'payment_type' => $array_charge['payment_method']['type'],
+            'payment_reference' => $array_charge['payment_method']['reference'],
+            'payment_barcode_url' => $array_charge['payment_method']['barcode_url'],
+            'order_id' => $array_charge['order_id'],
+            'transaction_type' => $array_charge['transaction_type'],
+            'creation_date' => $array_charge['creation_date'],
+            'currency' => $array_charge['currency'],
+            'status' => $array_charge['status'],
+            'method' => $array_charge['method'],
+            'json_create_reference' => json_encode($array_charge),
+        ];
+    }
+
+    private function prepareJSONForCallServiceOpenpay($customer, $amount_paid)
+    {
+        $chargeData = [
+            'method' => 'store',
+            'amount' => (float) $amount_paid,
+            'description' => 'ATA| Cargo para cita pagada por tienda',
+            'due_date' => $this->getDateValid(new \DateTime()),
+            'customer' => $customer,
+        ];
+
+        return $chargeData;
+    }
+
+    private function registerEventInCalendar($date, $name, $type_meeting, $rangeHour, $idCalendar)
+    {
+        $dtStart = ($date.' '.$rangeHour->start);
+        $dtEnd = ($date.' '.$rangeHour->end);
+
+        $event = new Event();
+        $eventResult = $event->create(
+            [
+                'name' => 'Llamar a '.$name,
+                'description' => $this->setTextSubjectEventInCalendar($type_meeting),
+                'startDateTime' => new Carbon($dtStart),
+                'endDateTime' => new Carbon($dtEnd), ],
+                $idCalendar
+        );
+
+        return $eventResult;
+    }
+
+    private function sendEmail($email, $url_file_charge, $type_meeting)
+    {
+        $textHtml = $this->getTextInHTML($url_file_charge, $type_meeting);
+        (new SendEmail())(
+            ['email' => env('EMAIL_FROM')],
+            [$email],
+            'Estás a un paso de agendar tu asesoría legal',
+            '',
+            $textHtml
+        );
+    }
+
+    private function saveEventInDB($meetingId, $eventId, $idCalendar)
+    {
+        try {
+            $calendar = new AddEventDomain();
+            $calendar(new CalendarEventMeeting([
+            'meetings_id' => $meetingId,
+            'idevent' => $eventId,
+            'idcalendar' => $idCalendar, ]));
+        } catch (\Exception $ex) {
+            \Log::error('ErrorOfflineAddEvent: '.$ex->getMessage());
+        }
+    }
+
+    private function saveContactInDB($data)
+    {
+        try {
+            // Register contact
+            if (array_key_exists('int_number', $data)) {
+                $arrayContact['int_number'] = $contact['int_number'];
+            }
+            $contact = $this->contactregisterusecase->__invoke($data);
+        } catch (\Exception $ex) {
+            \Log::error(__FILE__.PHP_EOL.$ex->getMessage());
+            $contact = $this->contactfindusecase->__invoke($data['email']);
+        }
+
+        return $contact;
+    }
+
+    public function prepareCustomer($data, $user)
+    {
+        if (is_null($user)) {
+            $customer = [
+                'name' => $data['name'],
+                'last_name' => $data['lastname_1'].' '.$data['lastname_2'],
+                'phone_number' => $data['phone'],
+                'email' => $data['email'],
+            ];
+        } else {
+            $customer = [
+                'name' => $user->name,
+                'last_name' => $user->last_name1.' '.$user->last_name2,
+                'phone_number' => $user->phone,
+                'email' => $user->email,
+            ];
+        }
+
+        return $customer;
     }
 }

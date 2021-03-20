@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Events\UserSendMeetingEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Meetings\OfflinePaidMeetingRequest;
 use App\Main\Config_System\Domain\SearchConfigDomain;
@@ -153,17 +152,21 @@ class OfflinePaidMeetingController extends Controller
             $PHONE_OFFICE = $response_CONFIG_PHONE_OFFICE->value;
             $MEETING_PAID_DURATION = $response_CONFIG_MEETING_PAID_DURATION->value;
             $MEETING_PAID_AMOUNT = $response_CONFIG_MEETING_PAID_AMOUNT->value;
-
             $meetingOffile = new MeetingOffilePayment(
                                     new StorePaymentOpenPay(),
                                     new MeetingRegisterUseCase(),
                                     new RegisterOpenPayChargeUseCase(new CreaterChargeDomain()),
                                     new ContactRegisterUseCase(new ContactCreatorDomain()),
-                                    new ContactFindUseCase(new ContactSelectDomain()));
+                                    new ContactFindUseCase(new ContactSelectDomain())
+                                );
 
-            $objectMeeting = $meetingOffile($data, $MEETING_PAID_DURATION, $PHONE_OFFICE, $MEETING_PAID_AMOUNT, $numberPlaces, $idCalendar);
-
-            // event(new UserSendMeetingEvent($objectMeeting['meeting'], $objectMeeting['contact']));
+            $objectMeeting = $meetingOffile(
+                $data,
+                $MEETING_PAID_DURATION,
+                $PHONE_OFFICE,
+                $MEETING_PAID_AMOUNT,
+                $numberPlaces,
+                $idCalendar, $request->user());
 
             return response()->json(['code' => 201, 'data' => $objectMeeting], 201);
         } catch (\Exception $ex) {
