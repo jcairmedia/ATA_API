@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\AllNotificationUserController;
 use App\Http\Controllers\API\AppointmentDateController;
 use App\Http\Controllers\API\BenefitsController;
 use App\Http\Controllers\API\CasesController;
@@ -140,6 +141,8 @@ Route::group(['middleware' => ['auth:api']], function () {
 });
 
 Route::group(['prefix' => 'v2', 'middleware' => 'auth:api'], function () {
+    Route::get('/notification/user', [AllNotificationUserController::class, 'index']);
+
     Route::post('like', [UsersController::class, 'like']);
     Route::post('cards', [CRUDCardsController::class, 'index']);
     Route::get('cards', [CRUDCardsController::class, 'cards']);

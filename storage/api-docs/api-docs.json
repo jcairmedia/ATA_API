@@ -13,6 +13,116 @@
         }
     ],
     "paths": {
+        "/api/v2/notification/user": {
+            "get": {
+                "tags": [
+                    "App móvil"
+                ],
+                "summary": "Consulta de notificaciones del usuarios de los últimos 6 meses",
+                "operationId": "App\\Http\\Controllers\\API\\AllNotificationUserController::index",
+                "parameters": [
+                    {
+                        "name": "byPage",
+                        "in": "query",
+                        "description": "Número de registros por página",
+                        "required": false,
+                        "schema": {
+                            "type": "number",
+                            "format": "number",
+                            "example": "30"
+                        }
+                    },
+                    {
+                        "name": "index",
+                        "in": "query",
+                        "description": "Número de página",
+                        "required": false,
+                        "schema": {
+                            "type": "number",
+                            "format": "number",
+                            "example": "1"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "complete": {
+                                            "type": "boolean",
+                                            "example": "false"
+                                        },
+                                        "total": {
+                                            "type": "number",
+                                            "example": "30"
+                                        },
+                                        "index": {
+                                            "type": "number",
+                                            "example": "1"
+                                        },
+                                        "rows": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "number",
+                                                        "example": "1"
+                                                    },
+                                                    "title": {
+                                                        "example": "Titulo de una notificación de prueba"
+                                                    },
+                                                    "body": {
+                                                        "example": "Cuerpo del notificación de prueba"
+                                                    },
+                                                    "created_at": {
+                                                        "example": "2021-02-02 12:56:87"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            },
+                                            "collectionFormat": "multi"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "uuid incorrecto",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "properties": {
+                                                "uuid": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "El campo uuid seleccionado no existe."
+                                                    },
+                                                    "collectionFormat": "multi"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/hours": {
             "get": {
                 "summary": "Horarios disponibles referente a la fecha seleccionada y al tipo de cita",
