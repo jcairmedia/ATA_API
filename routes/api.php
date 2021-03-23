@@ -31,6 +31,7 @@ use App\Http\Controllers\API\PaidMeetingController;
 use App\Http\Controllers\API\PermissionController;
 use App\Http\Controllers\API\RCasesController;
 use App\Http\Controllers\API\RolesController;
+use App\Http\Controllers\API\SendUsersController;
 use App\Http\Controllers\API\ServicesController;
 use App\Http\Controllers\API\TestCustomerController;
 use App\Http\Controllers\API\UserRolesController;
@@ -159,4 +160,8 @@ Route::group(['prefix' => 'v2', 'middleware' => 'auth:api'], function () {
     Route::get('events', [EventsCaseController::class, 'index']);
 
     Route::post('/user/update', [CRUDUserController::class, 'updateUserOnlyPhoneAndNames']);
+});
+
+Route::group(['prefix' => 'relate', 'middleware' => 'auth:api'], function () {
+    Route::get('/news/users', [SendUsersController::class, 'index']);
 });

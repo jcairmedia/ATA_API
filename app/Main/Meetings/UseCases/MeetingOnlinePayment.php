@@ -153,20 +153,15 @@ class MeetingOnlinePayment
         );
 
         // 10. Send EMail
-        $textEmail = (new TextForEmailMeetingPaidUtils())(
+        $textEmail = $this->getTextEmail(
             $data['type_meeting'],
             $day,
             $month,
             $data['time'],
             $zoomresponse
         );
-        (new SendEmail())(
-            ['email' => env('EMAIL_FROM')],
-            [$data['email']],
-            'Tu asesoria legal ha sido confirmada ',
-            '',
-            $textEmail
-        );
+
+        $this->sendEmail($data['email'], $textEmail);
 
         return ['meeting' => $meetingObj->toArray(), 'contact' => $contact_->toArray()];
     }
@@ -242,5 +237,27 @@ class MeetingOnlinePayment
         }
 
         return $contact;
+    }
+
+    private function getTextEmail($type_meeting, $day, $month, $time, $zoomresponse)
+    {
+        return (new TextForEmailMeetingPaidUtils())(
+            $type_meeting,
+            $day,
+            $month,
+            $time,
+            $zoomresponse
+        );
+    }
+
+    private function sendEmail($email, $textEmail)
+    {
+        (new SendEmail())(
+            ['email' => env('EMAIL_FROM')],
+            [$email],
+            'Tu asesoria legal ha sido confirmada ',
+            '',
+            $textEmail
+        );
     }
 }

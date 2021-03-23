@@ -12,6 +12,7 @@ class AllNotificationUserController extends Controller
      * @OA\Get(
      *      path="/api/v2/notification/user",
      *      tags={"App móvil"},
+     *      security={{"bearer_token":{}}},
      *      summary="Consulta de notificaciones del usuarios de los últimos 6 meses",
      *      @OA\Parameter(in="query",
      *           required=false,

@@ -12,7 +12,7 @@ class Meeting extends Model
         'type_meeting',
 
         'idfe',
-        
+
         'url_meeting',
         'dt_start',
         'dt_end',
@@ -28,7 +28,7 @@ class Meeting extends Model
         'dt_start_rescheduler',
         'dt_end_rescheduler',
         'notes',
-        'lawyer'
+        'lawyer',
     ];
     protected $casts = [
         'dt_start' => 'datetime:Y-m-d H:i:s',

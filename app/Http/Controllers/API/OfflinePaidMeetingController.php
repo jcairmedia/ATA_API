@@ -29,6 +29,9 @@ class OfflinePaidMeetingController extends Controller
      * @OA\Post(
      *  path="/api/meeting/paid/offline",
      *  summary="Registrar una cita de pago en tienda",
+     *  security={{"bearer_token":{}}},
+     *  description="Se puede hacer uso de este end point con un JWT
+     *              o sin el agregando los valores para los campos name, lastname_1, lastname_2, curp, email, phone, street, out_number, int_number y idcp",
      *  @OA\RequestBody(
      *   required=true ,
      *   description="Registrar una cita por pago en tienda",

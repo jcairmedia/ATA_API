@@ -91,8 +91,8 @@
                             }
                         }
                     },
-                    "422": {
-                        "description": "uuid incorrecto",
+                    "401": {
+                        "description": "Unauthorized",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -100,19 +100,6 @@
                                         "message": {
                                             "type": "string",
                                             "example": "The given data was invalid."
-                                        },
-                                        "errors": {
-                                            "properties": {
-                                                "uuid": {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "type": "string",
-                                                        "example": "El campo uuid seleccionado no existe."
-                                                    },
-                                                    "collectionFormat": "multi"
-                                                }
-                                            },
-                                            "type": "object"
                                         }
                                     },
                                     "type": "object"
@@ -120,7 +107,12 @@
                             }
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
             }
         },
         "/api/hours": {
@@ -2298,6 +2290,7 @@
         "/api/meeting/paid/offline": {
             "post": {
                 "summary": "Registrar una cita de pago en tienda",
+                "description": "Se puede hacer uso de este end point con un JWT\n     *              o sin el agregando los valores para los campos name, lastname_1, lastname_2, curp, email, phone, street, out_number, int_number y idcp",
                 "operationId": "App\\Http\\Controllers\\API\\OfflinePaidMeetingController::index",
                 "requestBody": {
                     "description": "Registrar una cita por pago en tienda",
@@ -2541,7 +2534,12 @@
                             }
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
             }
         },
         "/api/meeting/paid/online": {
