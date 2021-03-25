@@ -19,5 +19,6 @@ class Contact extends Model
         'phone',
         'created_at',
         'updated_at',
+        'colonia',
     ];
 }

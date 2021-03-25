@@ -21,13 +21,13 @@ class MeetingByContactsQuery
             'c.curp as CURP',
             'meetings.idfe as ENTIDAD_FEDERATIVA',
             DB::raw("CONCAT(
-                c.street,' ',
+                c.street,', ',
+                IFNULL(c.int_number, 'NA, '),
                 c.out_number, ', ',
-                IFNULL(c.int_number, ''), IF(c.int_number is not null, ', ', ''),
-                p.d_asenta, ', ',
                 p.D_mnpio, ', ',
-                p.d_estado, ', ',
-                p.d_ciudad
+                p.d_asenta, ', ',
+                IFNULL(c.colonia, ''), ', ',
+                p.d_estado
                 ) as DOMICILIO"),
             'c.email as CORREO',
             'c.phone as TELEFONO_FIJO',

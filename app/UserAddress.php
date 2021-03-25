@@ -18,6 +18,7 @@ class UserAddress extends Model
         'street',
         'out_number',
         'int_number',
+        'colonia',
         'created_at',
         'updated_at',
     ];
