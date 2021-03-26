@@ -11,19 +11,25 @@ class MeetingsByUsersQuery
         $sql1 = "
         SELECT
             max(m.id) AS MEETING_ID,
-            max(m.idfe) AS ENTIDAD_FEDERAL,
             max(c.name) AS NOMBRES,
             max(c.lastname_1) AS APELLIDO_PATERNO,
             max(c.lastname_2) AS APELLIDO_MATERNO,
             c.curp AS CURP,
+            max(m.idfe) AS ENTIDAD_FEDERAL,
             CONCAT(
-                max(c.street),',',
-                max(c.out_number),',',
-                max(c.int_number),    ',',
-                max(p.d_asenta),',',
-                max(p.D_mnpio),',',
-                max(p.d_estado),',',
-                max(p.d_ciudad)
+                max(c.street),
+                ',',
+                max(IFNULL(c.int_number, 'NA')),
+                ', ',
+                max(c.out_number),
+                ', ',
+                max(p.D_mnpio),
+                ', ',
+                max(p.d_asenta),
+                ', ',
+                max(IFNULL(c.colonia, '')),
+                ', ',
+                max(p.d_estado)
             ) AS DOMICILIO,
             c.email AS CORREO,
             max(c.phone) AS TELEFONO_FIJO,
@@ -41,11 +47,11 @@ class MeetingsByUsersQuery
 
         $sql2 = "UNION (SELECT
         MAX(m.id) AS MEETING_ID,
-        MAX(m.idfe) AS ENTIDAD_FEDERATIVA,
         MAX(u.name) AS NOMBRES,
         MAX(u.last_name1) AS APELLIDOS_PATERNO,
         MAX(u.last_name2) AS APELLIDOS_MATERNO,
         u.curp AS CURP,
+        MAX(m.idfe) AS ENTIDAD_FEDERATIVA,
         CONCAT(MAX(ua.street),
                 ', ',
                 MAX(IFNULL(ua.int_number, 'NA, ')),
