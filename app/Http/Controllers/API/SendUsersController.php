@@ -11,10 +11,10 @@ class SendUsersController extends Controller
 {
     public function index(SendUserRequest $request)
     {
-        $m = (new MeetingByContactsQuery())();
+        // $m = (new MeetingByContactsQuery())();
         $u = (new MeetingsByUsersQuery())();
-        $r = $m->union($u)->get();
+        // $r = $m->union($u)->get();
 
-        return response()->json($r->toArray(), 200);
+        return response()->json($u, 200);
     }
 }

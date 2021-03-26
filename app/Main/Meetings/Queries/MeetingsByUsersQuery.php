@@ -2,37 +2,79 @@
 
 namespace App\Main\Meetings\Queries;
 
-use App\Meeting;
 use Illuminate\Support\Facades\DB;
 
 class MeetingsByUsersQuery
 {
     public function __invoke()
     {
-        return Meeting::query()
-            ->join('users as u', 'meetings.customer_id', '=', 'u.id')
-            ->join('user_addresses as ua', 'ua.users_id', '=', 'u.id')
-            ->join('postalcodes as p', 'p.id', '=', 'ua.idcp')
-            ->where('meetings.paid_state', '=', '1')
-            ->select([
-                'meetings.id AS MEETING_ID',
-                'u.name as NOMBRES',
-                'u.last_name1 AS APELLIDO_PATERNO',
-                'u.last_name2 AS APELLIDO_MATERNO',
-                'u.curp AS CURP',
-                'meetings.idfe as ENTIDAD_FEDERAL',
-                DB::raw("CONCAT(
-                    ua.street,', ',
-                    IFNULL(ua.int_number, 'NA, '),
-                    ua.out_number, ', ',
-                    p.D_mnpio, ', ',
-                    p.d_asenta, ', ',
-                    IFNULL(ua.colonia, ''), ', ',
-                    p.d_estado
-                    ) as DOMICILIO"),
-                'u.email AS CORREO',
-                'u.phone AS TELEFONO_FIJO',
-                'u.phone AS TELEFONO_MOVIL',
-                    ]);
+        $sql1 = "
+        SELECT
+            max(m.id) AS MEETING_ID,
+            max(m.idfe) AS ENTIDAD_FEDERAL,
+            max(c.name) AS NOMBRES,
+            max(c.lastname_1) AS APELLIDO_PATERNO,
+            max(c.lastname_2) AS APELLIDO_MATERNO,
+            c.curp AS CURP,
+            CONCAT(
+                max(c.street),',',
+                max(c.out_number),',',
+                max(c.int_number),    ',',
+                max(p.d_asenta),',',
+                max(p.D_mnpio),',',
+                max(p.d_estado),',',
+                max(p.d_ciudad)
+            ) AS DOMICILIO,
+            c.email AS CORREO,
+            max(c.phone) AS TELEFONO_FIJO,
+            max(c.phone) AS TELEFONO_MOVIL
+        FROM
+            meetings AS m
+                INNER JOIN
+            contacts AS c ON m.contacts_id = c.id
+                INNER JOIN
+            postalcodes AS p ON p.id = c.idcp
+        WHERE
+            m.paid_state = 1
+        GROUP BY c.email, c.curp
+        ";
+
+        $sql2 = "UNION (SELECT
+        MAX(m.id) AS MEETING_ID,
+        MAX(m.idfe) AS ENTIDAD_FEDERATIVA,
+        MAX(u.name) AS NOMBRES,
+        MAX(u.last_name1) AS APELLIDOS_PATERNO,
+        MAX(u.last_name2) AS APELLIDOS_MATERNO,
+        u.curp AS CURP,
+        CONCAT(MAX(ua.street),
+                ', ',
+                MAX(IFNULL(ua.int_number, 'NA, ')),
+                ', ',
+                MAX(ua.out_number),
+                ', ',
+                MAX(p.D_mnpio),
+                ', ',
+                MAX(p.d_asenta),
+                ', ',
+                MAX(IFNULL(ua.colonia, '')),
+                ', ',
+                MAX(p.d_estado)) AS DOMICILIO,
+        u.email AS CORREO,
+        MAX(u.phone) AS TELEFONO_FIJO,
+        MAX(u.phone) AS TELEFONO_MOVIL
+    FROM
+        meetings AS m
+            INNER JOIN
+        users AS u ON m.customer_id = u.id
+            INNER JOIN
+        user_addresses AS ua ON ua.users_id = u.id
+            INNER JOIN
+        postalcodes AS p ON p.id = ua.idcp
+    WHERE
+        m.paid_state = 1
+    GROUP BY u.email , u.curp);";
+        //        where m.paid_state = 1
+
+        return DB::select(DB::raw($sql1.$sql2));
     }
 }
