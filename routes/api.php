@@ -40,6 +40,7 @@ use App\Http\Controllers\API\WebHookOfflinePaidMeetingController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\UploadFirstPaymentOfflineContractCaseController;
+use App\Http\Controllers\API\CRUDFirstPaymentOfflineContractPackageController;
 
 /*
 |--------------------------------------------------------------------------
@@ -52,7 +53,9 @@ use App\Http\Controllers\API\UploadFirstPaymentOfflineContractCaseController;
 |
 */
 
-Route::post('/payment/offline/cases', [UploadFirstPaymentOfflineContractCaseController::class, 'index']);
+
+
+Route::post('/evidence/case/upload', [UploadFirstPaymentOfflineContractCaseController::class, 'index']);
 
 Route::get('/user', [UsersController::class, 'getuser'])->middleware(['auth:api']);
 
@@ -107,6 +110,8 @@ Route::post('/user/recover', [CRUDUserController::class, 'recoverPassword']);
 
 Route::group(['middleware' => ['auth:api']], function () {
 
+    Route::post('/evidence/case/evaluate', [CRUDFirstPaymentOfflineContractPackageController::class, 'evaluate']);
+
     Route::post('/package/contract/offline', [ContractPackageOfflineController::class, 'index']);
 
 
@@ -148,7 +153,16 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::get('notifications/general', [NotificationsForAllUserController::class, 'paginate']);
 });
 
+Route::get('/evidence/byfolio', [CRUDFirstPaymentOfflineContractPackageController::class, 'evidenceByFolio']);
+
+
 Route::group(['prefix' => 'v2', 'middleware' => 'auth:api'], function () {
+
+
+    Route::get('/evidences/byuser', [CRUDFirstPaymentOfflineContractPackageController::class, 'YoursEvidences']);
+    Route::get('/evidences', [CRUDFirstPaymentOfflineContractPackageController::class, 'allEvidences']);
+
+
     Route::get('/notification/user', [AllNotificationUserController::class, 'index']);
 
     Route::post('like', [UsersController::class, 'like']);

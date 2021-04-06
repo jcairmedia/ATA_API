@@ -26,6 +26,7 @@ class CreateDocumentsCasesTable extends Migration
                 'IN_REVIEW_CUSTOMER',
                 'UPLOAD_PENDING',
             ])->comment('1: aprobado, 2: no aprobado, 0: pendiente de revisar, 3: en revision, 4: pendiente de correción por el usuario');
+            $table->text('comment')->nullable()->comment('comments');
             $table->timestamp('time_review')->comment('time limit for user upload file');
             $table->bigInteger('number_times_review')->default(0)->comment('time limit for user upload file');
             $table->foreign('case_id')->references('id')->on('cases');

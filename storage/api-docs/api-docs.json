@@ -671,6 +671,117 @@
                 ]
             }
         },
+        "/api/v2/evidences/byuser": {
+            "get": {
+                "tags": [
+                    "App móvil"
+                ],
+                "summary": "Obtener todas las evidencis del cliente (paginadas) ",
+                "operationId": "App\\Http\\Controllers\\API\\CRUDFirstPaymentOfflineContractPackageController::YoursEvidences",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "complete": {
+                                            "type": "boolean",
+                                            "example": "true"
+                                        },
+                                        "total": {
+                                            "type": "number",
+                                            "example": "4"
+                                        },
+                                        "index": {
+                                            "type": "number",
+                                            "example": "0"
+                                        },
+                                        "row": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "number",
+                                                        "example": "1"
+                                                    },
+                                                    "reviewer_user_id": {
+                                                        "description": "FK table users",
+                                                        "type": "number",
+                                                        "example": "12"
+                                                    },
+                                                    "case_id": {
+                                                        "description": "FK table case",
+                                                        "type": "number",
+                                                        "example": "12"
+                                                    },
+                                                    "folio": {
+                                                        "description": "Folio evidence",
+                                                        "type": "number",
+                                                        "example": "606412154545484"
+                                                    },
+                                                    "status": {
+                                                        "description": "UPLOAD_PENDING: pendiente que el usuario suba su evidencia, IN_REVIEW_REVIEWER: en proceso de revisiòn, APPROVED: Aprobado, NO_APPROVED: no aprobado",
+                                                        "type": "string",
+                                                        "example": "UPLOAD_PENDING"
+                                                    },
+                                                    "comment": {
+                                                        "type": "string",
+                                                        "example": "un comentario que tenga"
+                                                    },
+                                                    "time_review": {
+                                                        "description": "fecha en la cual se reviso la evidencia",
+                                                        "type": "string",
+                                                        "format": "date",
+                                                        "example": "2020-02-10 15:20"
+                                                    },
+                                                    "number_times_review": {
+                                                        "description": "Numero de veces revisada la evidencia",
+                                                        "type": "number",
+                                                        "example": "1"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date",
+                                                        "example": "2020-02-10 15:20"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date",
+                                                        "example": "2020-02-10 15:20"
+                                                    },
+                                                    "package": {
+                                                        "type": "string",
+                                                        "example": "Intermedio"
+                                                    },
+                                                    "service": {
+                                                        "type": "string",
+                                                        "example": "Procedimiento y\\/o juicio de divorcio voluntario"
+                                                    },
+                                                    "customer": {
+                                                        "description": "Nombre del cliente",
+                                                        "type": "string",
+                                                        "example": "Juan Perez Perez"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            },
+                                            "collectionFormat": "multi"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
         "/api/cp": {
             "get": {
                 "summary": "Consulta de codigos postales",

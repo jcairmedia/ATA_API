@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\CRUDFirstPaymentOfflineContractPackageController;
 use App\Utils\SendEmail;
 use Illuminate\Support\Facades\Route;
 
@@ -14,8 +15,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('/evidencefile', [CRUDFirstPaymentOfflineContractPackageController::class, 'getEvidence'])->name('evidencefile');
+
 Route::get('/', function () {
-    return view('welcome');
+    return view('formpaidonline');
 });
 Route::get('/contract', function () {
     $sendEmail = new SendEmail();

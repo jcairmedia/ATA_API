@@ -11,6 +11,7 @@ class Documents_case extends Model
         'reviewer_user_id',
         'case_id',
         'url',
+        'comment',
         'status',
         'time_review',
         'number_times_review',

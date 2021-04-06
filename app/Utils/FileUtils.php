@@ -1,13 +1,16 @@
 <?php
-namespace App\Utils;
-use Illuminate\Http\Request;
 
+namespace App\Utils;
+
+use Illuminate\Http\Request;
 
 class FileUtils
 {
-    public function __construct(Request $file) {
+    public function __construct(Request $file)
+    {
         $this->file = $file;
     }
+
     public function read(string $nameTagFile)
     {
         try {
@@ -20,27 +23,30 @@ class FileUtils
             $extension = pathinfo($namefile, PATHINFO_EXTENSION); //get extension
             if (false === (array_search(
                 $extension,
-                array(
+                [
                     'jpg',
                     'jpeg',
                     'png',
-                    'pdf'
-                ),
+                    'pdf',
+                ],
                 true
             ))
             ) {
                 throw new \Exception('Invalid file format.');
             }
+
+            return [$namefile, $extension];
         } catch (\Exception $th) {
             throw new \Exception($th->getMessage());
-
         }
     }
-    public function save($path, $newName){
+
+    public function save($path, $newName)
+    {
         $path = $this->file->file->storeAs(
             $path, $newName
         );
+
         return $path;
     }
-
 }
