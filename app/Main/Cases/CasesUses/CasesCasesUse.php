@@ -18,13 +18,14 @@ class CasesCasesUse
     ) {
         try {
             $data = [
+            'folio' => preg_replace('/[^A-Za-z0-9\-\_]/', '', uniqid('', true)),
             'packages_id' => $package->id,
             'url_doc' => $urlDoc,
             'price' => $package->amount,
             'idfe' => $idfe,
             'id_customer_openpay' => $idCustomerOpenpay,
             'services_id' => $serviceId,
-            'customer_id' => $customerId,
+            'customer_id' => $customerId
         ];
             \Log::error('CaseUseCase: '.print_r($data, 1));
             // Register Cases

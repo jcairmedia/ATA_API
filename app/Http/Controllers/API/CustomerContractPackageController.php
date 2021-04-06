@@ -136,7 +136,9 @@ class CustomerContractPackageController extends Controller
                 $idcustomeropenpay,
                 $user->id,
                 $data['serviceId'],
-                ''
+                '',
+                $data['idfe']
+
             );
 
             // --- Create CONTRACT ---

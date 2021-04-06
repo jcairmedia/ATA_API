@@ -9,7 +9,11 @@ class Packages extends Model
     protected $fillable = [
         'name',
         'description',
-        'state',
+        'periodicity',
+        'amount',
         'id_plan_openpay',
+        'state',
+        'created_at',
+        'updated_at',
     ];
 }

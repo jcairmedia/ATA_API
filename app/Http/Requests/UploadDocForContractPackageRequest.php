@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Packages;
+namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class ContractPackagesByCustomerRequest extends FormRequest
+class UploadDocForContractPackageRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,10 +24,13 @@ class ContractPackagesByCustomerRequest extends FormRequest
     public function rules()
     {
         return [
-            'packageId' => 'required|exists:packages,id',
-            'serviceId' => 'required|exists:services,id',
-            'cardId' => 'required|exists:openpay_customer_cards,id',
-            'idfe' => 'required|exists:federalentities,id',
+            'folio' => [
+                'required',
+                'exists:documents_cases,folio',
+            ],
+            'file' => [
+                'required','file'
+            ],
         ];
     }
 }

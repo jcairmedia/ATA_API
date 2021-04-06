@@ -2,7 +2,7 @@
 
 namespace App\Main\OpenpayWebhookEvent\UseCases;
 
-use App\Events\SendUserMeetingOfflineEvent;
+// use App\Events\SendUserMeetingOfflineEvent;
 use App\Main\Cases\Domain\CaseInnerJoinCustomerDomain;
 use App\Main\Meetings_payments\Domain\GetPaymentsMeetingDomain;
 use App\Main\OpenpayWebhookEvent\Domain\OpenpayHookEventDomain;
@@ -100,7 +100,7 @@ class EventRequestOfflinePaidUseCase
                 // Pago exitoso
                 $idMeeting = (new PaymentSuccessStoreUseCase())($referenceHook, $data);
                 \Log::error('Meetings: '.print_r($idMeeting, 1));
-                event(new SendUserMeetingOfflineEvent($idMeeting));
+                // event(new SendUserMeetingOfflineEvent($idMeeting));
 
             break;
             default:break;

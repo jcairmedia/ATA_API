@@ -1,5 +1,5 @@
 <?php
-
+use App\Http\Controllers\API\ContractPackageOfflineController;
 use App\Http\Controllers\API\AllNotificationUserController;
 use App\Http\Controllers\API\AppointmentDateController;
 use App\Http\Controllers\API\BenefitsController;
@@ -39,6 +39,7 @@ use App\Http\Controllers\API\UsersController;
 use App\Http\Controllers\API\WebHookOfflinePaidMeetingController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\API\UploadFirstPaymentOfflineContractCaseController;
 
 /*
 |--------------------------------------------------------------------------
@@ -50,6 +51,8 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+
+Route::post('/payment/offline/cases', [UploadFirstPaymentOfflineContractCaseController::class, 'index']);
 
 Route::get('/user', [UsersController::class, 'getuser'])->middleware(['auth:api']);
 
@@ -103,6 +106,10 @@ Route::post('/roles/permission', [RolesController::class, 'associate']);
 Route::post('/user/recover', [CRUDUserController::class, 'recoverPassword']);
 
 Route::group(['middleware' => ['auth:api']], function () {
+
+    Route::post('/package/contract/offline', [ContractPackageOfflineController::class, 'index']);
+
+
     Route::post('/prices/meeting/paid', [ConfigSystemController::class, 'priceMeetingPaid']);
     Route::get('/prices/meeting/paid', [ConfigSystemController::class, 'getPriceMeetingPaid']);
 

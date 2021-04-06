@@ -23,7 +23,7 @@ class RCasesController extends Controller
         $byPage = $request->input('byPage') ?? 10;
         $caseUse = new ListCaseCaseUses();
 
-        return response()->json($caseUse($filter, $index, $byPage, []));
+        return response()->json($caseUse($filter, $index, $byPage, ['cases.state_paid_opening' => 0]));
     }
 
     public function setLawyer(SetLawyerRequest $request)

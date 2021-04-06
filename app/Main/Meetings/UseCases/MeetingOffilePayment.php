@@ -68,6 +68,25 @@ class MeetingOffilePayment
             $emailCustomer = $customer['email'];
             $phoneCustomer = $customer['phone_number'];
 
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
             $chargeData = $this->prepareJSONForCallServiceOpenpay($customer, $amount_paid);
             $response_OPEN_PAY_JSON_charge =
             // file_get_contents(storage_path('responseOpenPay/examples/').'cargoexitososinexpiracion.json');

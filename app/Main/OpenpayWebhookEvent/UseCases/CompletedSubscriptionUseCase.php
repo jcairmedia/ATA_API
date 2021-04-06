@@ -9,6 +9,8 @@ use App\Utils\DateUtil;
 use App\Utils\SendEmail;
 use App\Utils\SMSUtil;
 use Illuminate\Support\Arr;
+use App\Main\Cases\Domain\CaseFindDomain;
+
 
 class CompletedSubscriptionUseCase
 {
@@ -34,12 +36,22 @@ class CompletedSubscriptionUseCase
         ];
         (new CreatePaymentCasesDomain())->save(new Cases_payments($data_payment));
 
+        // Search number times paments if first time, change state case
+        $arrayPayments = (new GetPaymentCasesDomain())(['cases_id' => $casesId]);
+
+        if($arrayPayments->count() <=1){
+            // update state case
+            $case = (new CaseFindDomain())(['id' => $casesId]);
+            $case->state_paid_opening = 1;
+            $case->save();
+        }
+        // Send SMS
         if (!is_null($caseObj->customer_phone)) {
             $testSMS = $this->textSMS($caseObj->package_name);
             (new SMSUtil())($testSMS, $caseObj->customer_phone);
         }
 
-        // Enviar correo
+        // Send Email
         $subscription_Id = $subscriptionObj->id_suscription_openpay;
         $customer_Id = $subscriptionObj->id_customer_openpay;
         $stringResponseService = (new GetStatusSubscriptionServices())($customer_Id, $subscription_Id);

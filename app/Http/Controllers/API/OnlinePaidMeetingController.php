@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Events\UserSendMeetingEvent;
+// use App\Events\UserSendMeetingEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Meetings\OnlinePaidMeetingRequest;
 use App\Main\Config_System\Domain\SearchConfigDomain;
@@ -156,7 +156,7 @@ class OnlinePaidMeetingController extends Controller
             $MEETING_PAID_AMOUNT,
             $MEETING_PAID_DURATION,
             $PHONE_OFFICE);
-            event(new UserSendMeetingEvent($objectMeeting['meeting'], $objectMeeting['contact']));
+            // event(new UserSendMeetingEvent($objectMeeting['meeting'], $objectMeeting['contact']));
 
             return response()->json(['code' => 201, 'data' => $objectMeeting['meeting']], 201);
         } catch (\Exception $ex) {

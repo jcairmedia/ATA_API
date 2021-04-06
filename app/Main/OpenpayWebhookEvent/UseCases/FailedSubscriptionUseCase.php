@@ -6,7 +6,9 @@ use App\Main\Cases\Domain\CaseInnerJoinCustomerDomain;
 use App\Main\OpenpayWebhookEvent\Services\GetStatusSubscriptionServices;
 use App\Main\Subscription\Domain\SubscriptionDomain;
 use App\Utils\SendEmail;
+use App\Cases\CaseFindDomain;
 use App\Utils\SMSUtil;
+use App\Main\Cases_payments\Domain\GetPaymentCasesDomain;
 
 class FailedSubscriptionUseCase
 {
@@ -18,12 +20,23 @@ class FailedSubscriptionUseCase
         $stringResponseService = (new GetStatusSubscriptionServices())($customer_Id, $subscription_Id);
         $jsonOPENPAY_SUSCRIPTION = json_decode($stringResponseService, true);
         $status = $jsonOPENPAY_SUSCRIPTION['status'];
+
         if ($status == 'cancelled') {
             $subscriptionObj->active = 0;
             $subscriptionObj->dt_cancelation = ((new \DateTime())->format('Y-m-d H:i:s'));
             (new SubscriptionDomain())->create($subscriptionObj);
             // Send SMS
             $case_id = $subscriptionObj->cases_id;
+
+            //Mark state case like no payment when the first pay
+            $arrayPayments = (new GetPaymentCasesDomain())(['cases_id' => $case_id]);
+            if($arrayPayments->count() <=1){
+                // update state case
+                $case = (new CaseFindDomain())(['id' => $case_id]);
+                $case->state_paid_opening = 2;
+                $case->save();
+            }
+
             // Search Case and Customer
             $caseObj = (new CaseInnerJoinCustomerDomain())(['cases.id' => $case_id]);
             $phone = $caseObj->customer_phone;

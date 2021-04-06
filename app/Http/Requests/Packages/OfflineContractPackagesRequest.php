@@ -4,7 +4,7 @@ namespace App\Http\Requests\Packages;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class ContractPackagesByCustomerRequest extends FormRequest
+class OfflineContractPackagesRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,8 +26,7 @@ class ContractPackagesByCustomerRequest extends FormRequest
         return [
             'packageId' => 'required|exists:packages,id',
             'serviceId' => 'required|exists:services,id',
-            'cardId' => 'required|exists:openpay_customer_cards,id',
-            'idfe' => 'required|exists:federalentities,id',
+            'idfe' => 'required|exists:openpay_customer_cards,id',
         ];
     }
 }
