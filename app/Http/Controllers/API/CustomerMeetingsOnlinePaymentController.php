@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Events\UserSendMeetingEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Meetings\CustomerMeetingsOnlinePaymentsRequest;
 use App\Main\Config_System\Domain\SearchConfigDomain;
@@ -11,7 +10,6 @@ use App\Main\Meetings\UseCases\MeetingOnlineCardPayment;
 use App\Main\Meetings\UseCases\MeetingRegisterUseCase;
 use App\Main\Meetings_payments\Domain\PaymentDomain;
 use App\Main\Meetings_payments\UseCases\RegisterPaymentUseCases;
-use App\Main\UserAddress\Domain\GetAddressUserDomain;
 use App\Utils\ChargeByCardCustomerOpenPay;
 
 class CustomerMeetingsOnlinePaymentController extends Controller
@@ -39,6 +37,7 @@ class CustomerMeetingsOnlinePaymentController extends Controller
      *    @OA\Property(property="cvv2", type="string", format="string", example="121", description="cvv de la tarjeta"),
      *    @OA\Property(property="date", type="string",  format="date", example="2021-01-26", description="fecha de la cita"),
      *    @OA\Property(property="time", type="string", example="10:00", description="hora de la cita"),
+     *    @OA\Property(property="description", type="string", example="una descripción"),
      *    @OA\Property(property="type_meeting", type="string", example="CALL", pattern="/^(CALL|VIDEOCALL|PRESENTIAL)$/" ),
      *    @OA\Property(property="type_payment", type="string", example="ONLINE", pattern="/^(ONLINE)$/"),
      *    @OA\Property(property="deviceIdHiddenFieldName", type="string", example="236454545454848484", format="string", description="Deberá ser generada desde el API JavaScript")
@@ -128,20 +127,6 @@ class CustomerMeetingsOnlinePaymentController extends Controller
                 $MEETING_PAID_DURATION,
                 $PHONE_OFFICE
             );
-            // select address User
-            $addressObj = (new GetAddressUserDomain())($request->user()->id);
-            event(new UserSendMeetingEvent($objectMeeting['meeting']->toArray(), [
-                'name' => $request->user()->name,
-                'lastname_1' => $request->user()->last_name1,
-                'lastname_2' => $request->user()->last_name2,
-                'curp' => $request->user()->curp,
-                'email' => $request->user()->email,
-                'phone' => $request->user()->phone,
-                'idcp' => $addressObj->idcp,
-                'street' => $addressObj->street,
-                'out_number' => $addressObj->out_number,
-                'int_number' => $addressObj->int_number,
-                ]));
 
             return response()->json(['code' => 201, 'data' => $objectMeeting], 201);
         } catch (\Exception $ex) {

@@ -37,8 +37,8 @@ class OnlinePaidMeetingRequest extends FormRequest
             'int_number' => 'string|min:0|max:255',
             'idcp' => 'required|numeric|exists:postalcodes,id',
 
+            'description' => 'string|min:2|max:500',
             'idfe' => 'required|numeric|exists:federalentities,id', // federative entities
-
 
             'date' => ['required', 'date', new \App\Rules\CustomDateMeeting()],
             'time' => ['required', 'string', 'regex:/^(09|(1[0-8]))\:[0-5][0-9]$/'],

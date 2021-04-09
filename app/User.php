@@ -32,6 +32,7 @@ class User extends Authenticatable
         'email_verified_at',
         'facebook_user_id',
         'state',
+        'id_ext_software_ata',
     ];
 
     /**

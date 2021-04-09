@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
+// Expone evidencia
 Route::get('/evidencefile', [CRUDFirstPaymentOfflineContractPackageController::class, 'getEvidence'])->name('evidencefile');
 
 Route::get('/', function () {

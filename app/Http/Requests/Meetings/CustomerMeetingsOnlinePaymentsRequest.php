@@ -27,7 +27,7 @@ class CustomerMeetingsOnlinePaymentsRequest extends FormRequest
         return [
             'idCard' => 'required|exists:openpay_customer_cards,id',
             'cvv2' => 'required|string|min:3|max:255',
-
+            'description' => 'string|min:3|max:500',
             'idfe' => 'required|numeric|exists:federalentities,id', // federative entities
 
             'date' => ['required', 'date', new \App\Rules\CustomDateMeeting()],

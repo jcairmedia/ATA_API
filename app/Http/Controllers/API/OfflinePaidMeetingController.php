@@ -43,7 +43,9 @@ class OfflinePaidMeetingController extends Controller
      *    @OA\Property(property="curp", type="string", format="string", example="CURP"),
      *    @OA\Property(property="email", type="string", format="email", example="user1@mail.com"),
      *    @OA\Property(property="phone", type="string", pattern="[0-9]{10}", format="number", example="1234567890"),
-     *
+
+     *    @OA\Property(property="description", type="string", example="Una descripción"),
+
      *    @OA\Property(property="street", type="string", example="Nombre de la calle"),
      *    @OA\Property(property="out_number", type="string", example="número exterior"),
      *    @OA\Property(property="int_number", type="string", example="número interior"),
@@ -74,6 +76,7 @@ class OfflinePaidMeetingController extends Controller
      *          @OA\Property(property="id", type="number", example="1"),
      *          @OA\Property(property="folio", type="string", example="261020201320595f97219b21381"),
      *          @OA\Property(property="category", type="string", example="PAID"),
+     *          @OA\Property(property="description", type="string", example="una descripción"),
      *          @OA\Property(property="type_meeting", type="number", example="CALL"),
      *          @OA\Property(property="url_meeting", type="number", example=""),
      *          @OA\Property(property="dt_start", type="string", format="date-time", example="2020-10-26 18:40:00"),

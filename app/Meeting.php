@@ -12,6 +12,7 @@ class Meeting extends Model
         'type_meeting',
 
         'idfe',
+        'description',
 
         'url_meeting',
         'dt_start',

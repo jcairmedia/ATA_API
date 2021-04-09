@@ -21,10 +21,13 @@ class MeetingRegisterUseCase
         $meetingD = new MeetingCreatorDomain();
         // $amount_meeting = $data['category'] == 'FREE' ? 0 : '';
         // $paid = $data['category'] == 'FREE' ? 1 : 0;
+        if (!array_key_exists('description', $data)) {
+            $data['description'] = '';
+        }
         $array = [
             'folio' => $this->generateFolio(),
             'category' => $data['category'],
-
+            'description' => $data['description'],
             'idfe' => $data['idfe'],
 
             'type_meeting' => $data['type_meeting'],
