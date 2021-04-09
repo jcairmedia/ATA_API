@@ -48,6 +48,7 @@ class refreshTokenZoom extends Command
             $token = $zoom->build();
             // Save in Database
             $update = new UpdateConfigSystemUseCase(new UpdateConfigDomain());
+            // Search key
             $search = new SearchConfigurationUseCase(new SearchConfigDomain());
             $config = $search->__invoke('ZOOM_ACCESS_TOKEN');
             $update->__invoke($config->id, ['value' => $token]);
