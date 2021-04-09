@@ -33,8 +33,6 @@ class MeetingOnlineCardPayment
     }
 
     /**
-     * Undocumented function.
-     *
      * array = [
      * idCard,
      * cvv2,
@@ -42,7 +40,7 @@ class MeetingOnlineCardPayment
      * time,
      * type_meeting,
      * deviceIdHiddenFieldName,
-     * customerId, name, phone ]
+     * customerId, name, phone ].
      *
      * @param [type] $amount_paid
      * @param [type] $durationMeeting
@@ -82,9 +80,9 @@ class MeetingOnlineCardPayment
         $dtStart = ($data['date'].' '.$rangeHour->start);
         $dtEnd = ($data['date'].' '.$rangeHour->end);
 
-        //--------------------------------------------------------------------------------
+        // //--------------------------------------------------------------------------------
 
-        // Buscar la card
+        // // Buscar la card
         $responseCard = (new FindCustomerCardOpenPayDomain() )(['openpay_customer_cards.id' => $data['idCard']]);
         if (is_null($responseCard)) {
             throw new \Exception('Tarjeta inválida', 404);
