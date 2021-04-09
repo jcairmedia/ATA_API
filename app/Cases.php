@@ -34,6 +34,7 @@ class Cases extends Model
     'closed_at',
     'state_paid_opening',
     'idfe',
+    'description',
 ];
     protected $table = 'cases';
 }
