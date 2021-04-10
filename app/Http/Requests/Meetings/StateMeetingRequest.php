@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Meetings;
 
+use App\Main\Meetings\Domain\FindMeetingDomain;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StateMeetingRequest extends FormRequest
 {
@@ -26,7 +28,17 @@ class StateMeetingRequest extends FormRequest
         return [
             'id' => 'required|exists:meetings,id',
             'option' => 'required',
-            'reason' => 'required',
+            'reason' => [
+                Rule::requiredIf(function () {
+                    $request = request();
+                    $meetingObj = (new FindMeetingDomain())(['id' => $request->id]);
+                    if (is_null($meetingObj)) {
+                        return false;
+                    }
+
+                    return !$meetingObj->category == 'FREE';
+                }),
+            ],
         ];
     }
 }

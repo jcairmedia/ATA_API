@@ -19,6 +19,7 @@ use App\Main\Questionnaire\Domain\FindQuestionnaireByMeetingIdDomain;
 use App\Main\Questionnaire\Domain\FindQuestionnaireDomain;
 use App\Main\TestCustomer\Domain\CreateTestDomain;
 use App\Main\TestCustomer\Domain\FindTestDomain;
+use App\Main\Users\Domain\FindUserByIdDomain;
 use App\Main\ZoomRequest\Domain\ZoomRequestGetDomain;
 use App\Utils\SendEmail;
 use App\Utils\ZoomDelete;
@@ -77,7 +78,6 @@ class CRUDMeetingController extends Controller
                 }
                 // CREATE TEST
                 $_meeting_id_ = $meetingNew->id;
-                $_contactId_ = $meetingNew->contacts_id;
 
                 $_questionnaire_id_ = $questionnaireObj->id;
                 $uuid = preg_replace('/[^A-Za-z0-9\-\_]/', '', uniqid('', true));
@@ -86,9 +86,15 @@ class CRUDMeetingController extends Controller
                     'questionnaire_id' => $_questionnaire_id_,
                     'meeting_id' => $_meeting_id_,
                 ]));
-                // Find Contact
-                $contactObj = (new FindContactDomain())(['id' => $_contactId_]);
-                $_email_contact_ = $contactObj->email;
+                $_email_contact_ = '';
+                if (!is_null($meetingNew->contacts_id)) {
+                    $contactObj = (new FindContactDomain())(['id' => $meetingNew->contacts_id]);
+                    $_email_contact_ = $contactObj->email;
+                } else {
+                    $userObj = (new FindUserByIdDomain())(['id' => $meetingNew->customer_id]);
+                    $_email_contact_ = $userObj->email;
+                }
+
                 $url = env('URL_TEST').'/'.$uuid;
                 // render view
                 $view = view('layout_email_send_url_test', [
