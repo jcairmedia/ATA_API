@@ -1,5 +1,5 @@
 <?php
-use App\Http\Controllers\API\ContractPackageOfflineController;
+
 use App\Http\Controllers\API\AllNotificationUserController;
 use App\Http\Controllers\API\AppointmentDateController;
 use App\Http\Controllers\API\BenefitsController;
@@ -7,9 +7,11 @@ use App\Http\Controllers\API\CasesController;
 use App\Http\Controllers\API\CasesPaymentsController;
 use App\Http\Controllers\API\ConfigSystemController;
 use App\Http\Controllers\API\ContractPackageController;
+use App\Http\Controllers\API\ContractPackageOfflineController;
 use App\Http\Controllers\API\CRUDCardsController;
 use App\Http\Controllers\API\CRUDContractsController;
 use App\Http\Controllers\API\CRUDFederativeEntitieController;
+use App\Http\Controllers\API\CRUDFirstPaymentOfflineContractPackageController;
 use App\Http\Controllers\API\CRUDMeetingController;
 use App\Http\Controllers\API\CRUDPostalCodeController;
 use App\Http\Controllers\API\CRUDQuestionController;
@@ -24,8 +26,6 @@ use App\Http\Controllers\API\MeetingReSchedulerController;
 use App\Http\Controllers\API\NotificationsByGroupController;
 use App\Http\Controllers\API\NotificationsByUsersController;
 use App\Http\Controllers\API\NotificationsForAllUserController;
-use App\Http\Controllers\API\OfflinePaidMeetingController;
-use App\Http\Controllers\API\OnlinePaidMeetingController;
 use App\Http\Controllers\API\PackagesController;
 use App\Http\Controllers\API\PaidMeetingController;
 use App\Http\Controllers\API\PermissionController;
@@ -34,13 +34,13 @@ use App\Http\Controllers\API\RolesController;
 use App\Http\Controllers\API\SendUsersController;
 use App\Http\Controllers\API\ServicesController;
 use App\Http\Controllers\API\TestCustomerController;
+use App\Http\Controllers\API\TransferPaidMeetingController;
+use App\Http\Controllers\API\UploadFirstPaymentOfflineContractCaseController;
 use App\Http\Controllers\API\UserRolesController;
 use App\Http\Controllers\API\UsersController;
 use App\Http\Controllers\API\WebHookOfflinePaidMeetingController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\API\UploadFirstPaymentOfflineContractCaseController;
-use App\Http\Controllers\API\CRUDFirstPaymentOfflineContractPackageController;
 
 /*
 |--------------------------------------------------------------------------
@@ -52,8 +52,6 @@ use App\Http\Controllers\API\CRUDFirstPaymentOfflineContractPackageController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-
-
 
 Route::post('/evidence/case/upload', [UploadFirstPaymentOfflineContractCaseController::class, 'index']);
 
@@ -79,8 +77,6 @@ Route::group(['prefix' => 'contracts', 'middleware' => 'auth:api'], function () 
 Route::group(['prefix' => 'meeting'], function () {
     Route::post('free', [FreeMeetingController::class, 'register']);
     Route::post('paid', [PaidMeetingController::class, 'register']);
-    Route::post('paid/offline', [OfflinePaidMeetingController::class, 'index']);
-    Route::post('paid/online', [OnlinePaidMeetingController::class, 'index']);
 });
 
 // valid code for activate user
@@ -109,11 +105,12 @@ Route::post('/roles/permission', [RolesController::class, 'associate']);
 Route::post('/user/recover', [CRUDUserController::class, 'recoverPassword']);
 
 Route::group(['middleware' => ['auth:api']], function () {
+    Route::post('meeting/paid/offline', [OfflinePaidMeetingController::class, 'index']);
+    Route::post('meeting/paid/online', [OnlinePaidMeetingController::class, 'index']);
 
     Route::post('/evidence/case/evaluate', [CRUDFirstPaymentOfflineContractPackageController::class, 'evaluate']);
 
     Route::post('/package/contract/offline', [ContractPackageOfflineController::class, 'index']);
-
 
     Route::post('/prices/meeting/paid', [ConfigSystemController::class, 'priceMeetingPaid']);
     Route::get('/prices/meeting/paid', [ConfigSystemController::class, 'getPriceMeetingPaid']);
@@ -155,13 +152,11 @@ Route::group(['middleware' => ['auth:api']], function () {
 
 Route::get('/evidence/byfolio', [CRUDFirstPaymentOfflineContractPackageController::class, 'evidenceByFolio']);
 
-
 Route::group(['prefix' => 'v2', 'middleware' => 'auth:api'], function () {
-
+    Route::post('/meeting/paid/transaction', [TransferPaidMeetingController::class, 'index']);
 
     Route::get('/evidences/byuser', [CRUDFirstPaymentOfflineContractPackageController::class, 'YoursEvidences']);
     Route::get('/evidences', [CRUDFirstPaymentOfflineContractPackageController::class, 'allEvidences']);
-
 
     Route::get('/notification/user', [AllNotificationUserController::class, 'index']);
 
