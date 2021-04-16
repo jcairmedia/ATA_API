@@ -17,7 +17,7 @@ class FileUtils
             //code...
 
             if (!$this->file->file($nameTagFile)->isValid()) {
-                throw new \Exception('Error en la carga del archivo: '.$file->file($nameTagFile), 400);
+                throw new \Exception('Error en la carga del archivo: '.$this->file->file($nameTagFile), 400);
             }
             $namefile = $this->file->file($nameTagFile)->getClientOriginalName();
             $extension = pathinfo($namefile, PATHINFO_EXTENSION); //get extension

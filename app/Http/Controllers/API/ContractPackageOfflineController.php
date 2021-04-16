@@ -3,18 +3,16 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Main\Cases\CasesUses\CreatePDFContractCaseUse;
+use App\Main\Cases\CasesUses\TemplateContractCasesUse;
+use App\Main\Cases\Domain\CaseInnerJoinCustomerDomain;
+use App\Main\Cases\Domain\SaveCaseDomain;
 use App\Main\Documents_Cases\Domain\CreateDocumentDomain;
 use App\Main\Packages\Domain\WherePackageDomain;
-use App\Main\Cases\Domain\SaveCaseDomain;
-use App\Main\Cases\Domain\CaseInnerJoinCustomerDomain;
-use App\Main\Cases\CasesUses\TemplateContractCasesUse;
-use App\Main\Cases\CasesUses\CreatePDFContractCaseUse;
-use App\Utils\SMSUtil;
 use App\Utils\DateUtil;
 use App\Utils\SendEmail;
-
+use App\Utils\SMSUtil;
 use Illuminate\Http\Request;
-
 
 class ContractPackageOfflineController extends Controller
 {
