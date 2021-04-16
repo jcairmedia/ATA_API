@@ -7,10 +7,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Meetings\OnlinePaidMeetingRequest;
 use App\Main\Config_System\Domain\SearchConfigDomain;
 use App\Main\Config_System\UseCases\SearchConfigurationUseCase;
-use App\Main\Contact\Domain\ContactCreatorDomain;
-use App\Main\Contact\Domain\ContactSelectDomain;
-use App\Main\Contact\UseCases\ContactFindUseCase;
-use App\Main\Contact\UseCases\ContactRegisterUseCase;
 use App\Main\Meetings\UseCases\MeetingOnlinePayment;
 use App\Main\Meetings\UseCases\MeetingRegisterUseCase;
 use App\Main\Meetings_payments\Domain\PaymentDomain;
@@ -34,22 +30,9 @@ class OnlinePaidMeetingController extends Controller
      *   required=true ,
      *   description="Registrar una cita por pago en línea",
      *   @OA\JsonContent(
-     *    required={"name", "lastname_1", "lastname_2", "curp","email","phone","street", "out_number", "idcp", "idfe", "date","time","type_meeting", "type_payment", "deviceIdHiddenFieldName", "token_id"},
-     *    @OA\Property(property="name", type="string", description="Nombre y apellidos del cliente", format="string", example="Nombres"),
-     *    @OA\Property(property="lastname_1", type="string", description="Nombre y apellidos del cliente", format="string", example="Nombres"),
-     *    @OA\Property(property="lastname_2", type="string", description="Nombre y apellidos del cliente", format="string", example="Nombres"),
-     *    @OA\Property(property="curp", type="string", description="Nombre y apellidos del cliente", format="string", example="Nombres"),
-     *    @OA\Property(property="email", type="string", format="email", example="user1@mail.com"),
-     *    @OA\Property(property="phone", type="string", pattern="[0-9]{10}", format="number", example="1234567890"),
-     *
+     *    required={"idfe","date","time","type_meeting", "type_payment", "deviceIdHiddenFieldName", "token_id"},
      *    @OA\Property(property="description", type="string", example="Una descripción"),
-     *
-     *    @OA\Property(property="street", type="string", example="Nombre de la calle"),
-     *    @OA\Property(property="out_number", type="string", example="Número exterior"),
-     *    @OA\Property(property="int_number", type="string", example="Número interior"),
-     *    @OA\Property(property="idcp", type="string", example="Identificador único de código postal"),
      *    @OA\Property(property="idfe", type="string", example="Indetificador unico de la entidad federativa"),
-     *
      *    @OA\Property(property="date", type="string", format="date", example="2020-10-26"),
      *    @OA\Property(property="time", type="string", format="string", example="18:00", pattern="/^(09|(1[0-8]))\:[0-5][0-9]$/"),
      *    @OA\Property(property="type_meeting", type="string", format="string", example="CALL", pattern="/^(CALL|VIDEOCALL|PRESENTIAL)$/"),
@@ -136,8 +119,6 @@ class OnlinePaidMeetingController extends Controller
      */
     public function index(OnlinePaidMeetingRequest $request)
     {
-        $contact_id = 0;
-
         try {
             $data = $request->all();
             $searchconfusecase = new SearchConfigurationUseCase(new SearchConfigDomain());
@@ -152,13 +133,13 @@ class OnlinePaidMeetingController extends Controller
             $meeting_online = new MeetingOnlinePayment(
                     new StorePaymentOpenPay(),
                     new RegisterPaymentUseCases(new PaymentDomain()),
-                    new MeetingRegisterUseCase(),
-                    new ContactRegisterUseCase(new ContactCreatorDomain()),
-                    new ContactFindUseCase(new ContactSelectDomain()));
+                    new MeetingRegisterUseCase());
             $objectMeeting = $meeting_online($data,
-            $MEETING_PAID_AMOUNT,
-            $MEETING_PAID_DURATION,
-            $PHONE_OFFICE);
+                                            $MEETING_PAID_AMOUNT,
+                                            $MEETING_PAID_DURATION,
+                                            $PHONE_OFFICE,
+                                            $request->user()
+                                        );
             // event(new UserSendMeetingEvent($objectMeeting['meeting'], $objectMeeting['contact']));
 
             return response()->json(['code' => 201, 'data' => $objectMeeting['meeting']], 201);

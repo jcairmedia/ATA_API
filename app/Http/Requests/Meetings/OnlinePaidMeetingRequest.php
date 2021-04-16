@@ -25,18 +25,6 @@ class OnlinePaidMeetingRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|string|min:3|max:255',
-            'lastname_1' => 'required|string|min:3|max:255',
-            'lastname_2' => 'required|string|min:3|max:255',
-            'curp' => 'required|string|min:3|max:255',
-            'email' => 'required|email',
-            'phone' => 'required|string|size:10|regex:/[0-9]{10}/',
-
-            'street' => 'required|string|min:2|max:255',
-            'out_number' => 'required|string|min:1|max:255',
-            'int_number' => 'string|min:0|max:255',
-            'idcp' => 'required|numeric|exists:postalcodes,id',
-
             'description' => 'string|min:2|max:500',
             'idfe' => 'required|numeric|exists:federalentities,id', // federative entities
 

@@ -6,8 +6,6 @@ use App\CalendarEventMeeting;
 use App\Main\CalendarEventMeeting\Domain\AddEventDomain;
 use App\Main\Config_System\Domain\SearchConfigDomain;
 use App\Main\Config_System\UseCases\SearchConfigurationUseCase;
-use App\Main\Contact\UseCases\ContactFindUseCase;
-use App\Main\Contact\UseCases\ContactRegisterUseCase;
 use App\Main\Date\CaseUses\IsEnabledHourCaseUse;
 use App\Main\Meetings\Utils\DoURLZoomMeetingPaidUtils;
 use App\Main\Meetings\Utils\TextForEmailMeetingPaidUtils;
@@ -26,18 +24,14 @@ class MeetingOnlinePayment
     public function __construct(
         StorePaymentOpenPay $storepayment,
         RegisterPaymentUseCases $registerPayment,
-        MeetingRegisterUseCase $meetingUseCase,
-        ContactRegisterUseCase $contactRegisterUseCase,
-        ContactFindUseCase $contactfindusecase
+        MeetingRegisterUseCase $meetingUseCase
     ) {
         $this->storepaymentopenpay = $storepayment;
         $this->meetingUseCase = $meetingUseCase;
-        $this->contactregisterusecase = $contactRegisterUseCase;
-        $this->contactfindusecase = $contactfindusecase;
         $this->registerPayment = $registerPayment;
     }
 
-    public function __invoke(array $data, $amount_paid, $durationMeeting, $phone_office)
+    public function __invoke(array $data, $amount_paid, $durationMeeting, $phone_office, $user)
     {
         // 1. Verificar en el motor de calendar que la fecha este disponible
         $searchconfusecase = new SearchConfigurationUseCase(new SearchConfigDomain());
@@ -71,10 +65,10 @@ class MeetingOnlinePayment
 
         // 2. Create charge OPEN PAY
         $customer = [
-            'name' => $data['name'],
-            'last_name' => $data['lastname_1'].' '.$data['lastname_2'],
-            'phone_number' => $data['phone'],
-            'email' => $data['email'],
+            'name' => $user->name,
+            'last_name' => $user->last_name1.' '.$user->last_name2,
+            'phone_number' => $user->phone,
+            'email' => $user->email,
         ];
         $chargeData = [
             'method' => 'card',
@@ -93,15 +87,12 @@ class MeetingOnlinePayment
         $event = new Event();
         $eventResult = $event->create(
             [
-                'name' => 'Llamar a '.$data['name'],
+                'name' => 'Llamar a '.$user->name,
                 'description' => $this->setTextSubjectEventInCalendar($data['type_meeting']),
                 'startDateTime' => new Carbon($dtStart),
                 'endDateTime' => new Carbon($dtEnd), ],
                 $idCalendar
         );
-        // 4. Add contact
-        $contact_ = $this->registerContact($data);
-        $contact_id = $contact_->id;
 
         // 5. Add meeting in BD
         $data['amount'] = $amount_paid;
@@ -110,7 +101,7 @@ class MeetingOnlinePayment
         if (!array_key_exists('description', $data)) {
             $data['description'] = '';
         }
-        $meetingObj = $this->meetingUseCase->__invoke($data, $contact_id, $durationMeeting, 0);
+        $meetingObj = $this->meetingUseCase->__invoke($data, 0, $durationMeeting, $user->id);
 
         // 6. Add payment in DB
         $payment = [
@@ -144,7 +135,7 @@ class MeetingOnlinePayment
         $month = $dateUtil->getNameMonthByDate($date);
         if (env('APP_ENV') != 'local') {
             $textSMS = (new TextForSMSMeetingPaidUtils())($data['type_meeting'], $day, $month, $data['time']);
-            (new SMSUtil())($textSMS, $data['phone']);
+            (new SMSUtil())($textSMS, $user->phone);
         }
 
         // 9. Generate de url de zoom
@@ -164,9 +155,9 @@ class MeetingOnlinePayment
             $zoomresponse
         );
 
-        $this->sendEmail($data['email'], $textEmail);
+        $this->sendEmail($user->email, $textEmail);
 
-        return ['meeting' => $meetingObj->toArray(), 'contact' => $contact_->toArray()];
+        return ['meeting' => $meetingObj->toArray(), 'contact' => $user->toArray()];
     }
 
     private function setTextSubjectEventInCalendar($type_meeting)
@@ -224,22 +215,6 @@ class MeetingOnlinePayment
                 'description' => 'Cargo inicial a mi cuenta',
                 'error_message' => null,
                 'order_id' => 'oid-00051', ];
-    }
-
-    private function registerContact($data)
-    {
-        $contact = null;
-        try {
-            // Register contact
-            $contact = $this->contactregisterusecase->__invoke($data);
-            // $contact_id = $contact->id;
-        } catch (\Exception $ex) {
-            \Log::error(__FILE__.PHP_EOL.$ex->getMessage());
-            $contact = $this->contactfindusecase->__invoke($data['email']);
-            // $contact_id = $contact->id;
-        }
-
-        return $contact;
     }
 
     private function getTextEmail($type_meeting, $day, $month, $time, $zoomresponse)
