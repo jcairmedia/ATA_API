@@ -29,8 +29,7 @@
                         @case("VIDEOCALL")
                             <p style="text-align: center">Hemos recibido y confirmado tu pago para tú asesoria en línea</p>
                             <p style="text-align: justify">Recuerda seguir el enlace que se encuentra debajo,
-                                el día <strong>{{$day}}</strong> de <strong>{{$month}}</strong> a las <strong>{{$hours}}</strong> horas
-                                , para llevar a cabo tu asesoria con duración de 45 minutos
+                                el día <strong>{{$day}}</strong> de <strong>{{$month}}</strong> a las <strong>{{$hours}}</strong> horas, para llevar a cabo tu asesoria con duración de 45 minutos
                             </p>
                             <table>
                                 <tr>

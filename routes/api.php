@@ -26,6 +26,8 @@ use App\Http\Controllers\API\MeetingReSchedulerController;
 use App\Http\Controllers\API\NotificationsByGroupController;
 use App\Http\Controllers\API\NotificationsByUsersController;
 use App\Http\Controllers\API\NotificationsForAllUserController;
+use App\Http\Controllers\API\OfflinePaidMeetingController;
+use App\Http\Controllers\API\OnlinePaidMeetingController;
 use App\Http\Controllers\API\PackagesController;
 use App\Http\Controllers\API\PaidMeetingController;
 use App\Http\Controllers\API\PermissionController;

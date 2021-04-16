@@ -2,11 +2,11 @@
 
 namespace App\Main\Meetings\UseCases;
 
-use App\CalendarEventMeeting;
-use App\Main\CalendarEventMeeting\Domain\AddEventDomain;
 use App\Main\Config_System\Domain\SearchConfigDomain;
 use App\Main\Config_System\UseCases\SearchConfigurationUseCase;
 use App\Main\Date\CaseUses\IsEnabledHourCaseUse;
+use App\Main\EventsCalendar\Domain\SaveEventInDBDomain;
+use App\Main\EventsCalendar\Services\AddEventInCalendarService;
 use App\Main\Meetings\Utils\DoURLZoomMeetingPaidUtils;
 use App\Main\Meetings\Utils\TextForEmailMeetingPaidUtils;
 use App\Main\Meetings\Utils\TextForSMSMeetingPaidUtils;
@@ -16,7 +16,6 @@ use App\Utils\DateUtil;
 use App\Utils\SendEmail;
 use App\Utils\SMSUtil;
 use App\Utils\StorePaymentOpenPay;
-use Carbon\Carbon;
 use Spatie\GoogleCalendar\Event;
 
 class MeetingOnlinePayment
@@ -31,7 +30,12 @@ class MeetingOnlinePayment
         $this->registerPayment = $registerPayment;
     }
 
-    public function __invoke(array $data, $amount_paid, $durationMeeting, $phone_office, $user)
+    public function __invoke(
+        array $data,
+        $amount_paid,
+        $durationMeeting,
+        $phone_office,
+        $user)
     {
         // 1. Verificar en el motor de calendar que la fecha este disponible
         $searchconfusecase = new SearchConfigurationUseCase(new SearchConfigDomain());
@@ -42,7 +46,7 @@ class MeetingOnlinePayment
         $numberPlaces = (int) $config_places->value;
         $idCalendar = $config->value;
 
-        // 1. is enabled hour in Calendar
+        // is enabled hour in Calendar
         $n = new IsEnabledHourCaseUse();
         $isEnableHour = $n(
                 $data['date'],
@@ -60,10 +64,7 @@ class MeetingOnlinePayment
             throw new \Exception('Horario no encontrado');
         }
 
-        $dtStart = ($data['date'].' '.$rangeHour->start);
-        $dtEnd = ($data['date'].' '.$rangeHour->end);
-
-        // 2. Create charge OPEN PAY
+        // Create charge OPEN PAY
         $customer = [
             'name' => $user->name,
             'last_name' => $user->last_name1.' '.$user->last_name2,
@@ -83,18 +84,16 @@ class MeetingOnlinePayment
         \Log::error(__FILE__.' PAGO online: '.PHP_EOL.$response_OPEN_PAY_JSON_charge);
 
         // $array_charge = $this->mockupPaymentOpenpay();
-        // 3. Add event in google Calendar
-        $event = new Event();
-        $eventResult = $event->create(
-            [
-                'name' => 'Llamar a '.$user->name,
-                'description' => $this->setTextSubjectEventInCalendar($data['type_meeting']),
-                'startDateTime' => new Carbon($dtStart),
-                'endDateTime' => new Carbon($dtEnd), ],
-                $idCalendar
+        // Add event in google Calendar
+        $eventResult = (new AddEventInCalendarService())(
+            $data['date'],
+            $user->name,
+            $this->setTextSubjectEventInCalendar($data['type_meeting']),
+            $rangeHour,
+            $idCalendar
         );
 
-        // 5. Add meeting in BD
+        // Add meeting in BD
         $data['amount'] = $amount_paid;
         $data['category'] = 'PAID';
         $data['paid'] = 1;
@@ -103,7 +102,7 @@ class MeetingOnlinePayment
         }
         $meetingObj = $this->meetingUseCase->__invoke($data, 0, $durationMeeting, $user->id);
 
-        // 6. Add payment in DB
+        // Add payment in DB
         $payment = [
             'price' => $amount_paid,
             'folio' => $array_charge['id'],
@@ -118,17 +117,14 @@ class MeetingOnlinePayment
         ];
         $this->registerPayment->__invoke($payment);
 
-        // 7. Add Event and meeting in DB
-        try {
-            $calendar = new AddEventDomain();
-            $calendar(new CalendarEventMeeting([
-                'meetings_id' => $meetingObj->id,
-                'idevent' => $eventResult->id,
-                'idcalendar' => $idCalendar, ]));
-        } catch (\Exception $ex) {
-            \Log::error('Error add Event in DB: '.$ex->getMessage());
-        }
-        // 8. Send sms
+        // Add Event and meeting in DB
+        (new SaveEventInDBDomain())(
+            $meetingObj->id,
+            $eventResult->id,
+            $idCalendar
+        );
+
+        // Send sms
         $dateUtil = new DateUtil();
         $date = $data['date'];
         $day = $dateUtil->getDayByDate($date);
@@ -138,7 +134,7 @@ class MeetingOnlinePayment
             (new SMSUtil())($textSMS, $user->phone);
         }
 
-        // 9. Generate de url de zoom
+        // Generate de url de zoom
         $zoomresponse = (new DoURLZoomMeetingPaidUtils())(
             $meetingObj->id,
             $data['date'].' '.$data['time'],
@@ -146,7 +142,7 @@ class MeetingOnlinePayment
             'ATA | Cita'
         );
 
-        // 10. Send EMail
+        // Send EMail
         $textEmail = $this->getTextEmail(
             $data['type_meeting'],
             $day,

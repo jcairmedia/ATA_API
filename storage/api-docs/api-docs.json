@@ -2676,15 +2676,6 @@
                         "application/json": {
                             "schema": {
                                 "required": [
-                                    "name",
-                                    "lastname_1",
-                                    "lastname_2",
-                                    "curp",
-                                    "email",
-                                    "phone",
-                                    "street",
-                                    "out_number",
-                                    "idcp",
                                     "idfe",
                                     "date",
                                     "time",
@@ -2694,60 +2685,9 @@
                                     "token_id"
                                 ],
                                 "properties": {
-                                    "name": {
-                                        "description": "Nombre y apellidos del cliente",
-                                        "type": "string",
-                                        "format": "string",
-                                        "example": "Nombres"
-                                    },
-                                    "lastname_1": {
-                                        "description": "Nombre y apellidos del cliente",
-                                        "type": "string",
-                                        "format": "string",
-                                        "example": "Nombres"
-                                    },
-                                    "lastname_2": {
-                                        "description": "Nombre y apellidos del cliente",
-                                        "type": "string",
-                                        "format": "string",
-                                        "example": "Nombres"
-                                    },
-                                    "curp": {
-                                        "description": "Nombre y apellidos del cliente",
-                                        "type": "string",
-                                        "format": "string",
-                                        "example": "Nombres"
-                                    },
-                                    "email": {
-                                        "type": "string",
-                                        "format": "email",
-                                        "example": "user1@mail.com"
-                                    },
-                                    "phone": {
-                                        "type": "string",
-                                        "format": "number",
-                                        "pattern": "[0-9]{10}",
-                                        "example": "1234567890"
-                                    },
                                     "description": {
                                         "type": "string",
                                         "example": "Una descripción"
-                                    },
-                                    "street": {
-                                        "type": "string",
-                                        "example": "Nombre de la calle"
-                                    },
-                                    "out_number": {
-                                        "type": "string",
-                                        "example": "Número exterior"
-                                    },
-                                    "int_number": {
-                                        "type": "string",
-                                        "example": "Número interior"
-                                    },
-                                    "idcp": {
-                                        "type": "string",
-                                        "example": "Identificador único de código postal"
                                     },
                                     "idfe": {
                                         "type": "string",
@@ -3194,11 +3134,11 @@
                 }
             }
         },
-        "/api/v2/meeting/paid/transaction": {
+        "/api/v2/meeting/paid/transfer": {
             "post": {
-                "summary": "Registrar una cita de pago por transaction",
+                "summary": "Registrar una cita de pago por transferencia",
                 "description": "Solicitud de asesoría de pago pagada por transferencia",
-                "operationId": "App\\Http\\Controllers\\API\\TransactionPaidMeetingController::index",
+                "operationId": "App\\Http\\Controllers\\API\\TransferPaidMeetingController::index",
                 "requestBody": {
                     "description": "Registrar una cita por pago por transferencia",
                     "required": true,

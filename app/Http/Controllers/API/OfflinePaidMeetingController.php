@@ -6,10 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Meetings\OfflinePaidMeetingRequest;
 use App\Main\Config_System\Domain\SearchConfigDomain;
 use App\Main\Config_System\UseCases\SearchConfigurationUseCase;
-use App\Main\Contact\Domain\ContactCreatorDomain;
-use App\Main\Contact\Domain\ContactSelectDomain;
-use App\Main\Contact\UseCases\ContactFindUseCase;
-use App\Main\Contact\UseCases\ContactRegisterUseCase;
 use App\Main\Meetings\UseCases\MeetingOffilePayment;
 use App\Main\Meetings\UseCases\MeetingRegisterUseCase;
 use App\Main\OpenPay_payment_references\Domain\CreaterChargeDomain;
@@ -36,22 +32,9 @@ class OfflinePaidMeetingController extends Controller
      *   required=true ,
      *   description="Registrar una cita por pago en tienda",
      *   @OA\JsonContent(
-     *    required={"name", "lastname_1", "lastname_2", "curp", "email","phone","street", "out_number", "idcp", "idfe", "date","time","type_meeting", "type_payment", "deviceIdHiddenFieldName", "token_id"},
-     *    @OA\Property(property="name", type="string", format="string", example="Nombres"),
-     *    @OA\Property(property="lastname_1", type="string", format="string", example="Apellido paterno"),
-     *    @OA\Property(property="lastname_2", type="string", format="string", example="Apellidos materno"),
-     *    @OA\Property(property="curp", type="string", format="string", example="CURP"),
-     *    @OA\Property(property="email", type="string", format="email", example="user1@mail.com"),
-     *    @OA\Property(property="phone", type="string", pattern="[0-9]{10}", format="number", example="1234567890"),
-
+     *    required={"idfe", "date","time","type_meeting", "type_payment"},
      *    @OA\Property(property="description", type="string", example="Una descripción"),
-
-     *    @OA\Property(property="street", type="string", example="Nombre de la calle"),
-     *    @OA\Property(property="out_number", type="string", example="número exterior"),
-     *    @OA\Property(property="int_number", type="string", example="número interior"),
-     *    @OA\Property(property="idcp", type="number", format="number", example="Identificador único de la información del código postal"),
      *    @OA\Property(property="idfe", type="number", format="number", example="Identificador único de entidad federativa"),
-     *
      *    @OA\Property(property="date", type="string", format="date", example="2020-10-26"),
      *    @OA\Property(property="time", type="string", format="string", example="18:00", pattern="/^(09|(1[0-8]))\:[0-5][0-9]$/"),
      *    @OA\Property(property="type_meeting", type="string", format="string", example="CALL", pattern="/^(CALL|VIDEOCALL|PRESENTIAL)$/"),
@@ -82,7 +65,7 @@ class OfflinePaidMeetingController extends Controller
      *          @OA\Property(property="dt_start", type="string", format="date-time", example="2020-10-26 18:40:00"),
      *          @OA\Property(property="dt_end", type="string", format="date-time", example="2020-10-26 19:20:00"),
      *          @OA\Property(property="price", type="number", example="1650.50"),
-     *          @OA\Property(property="contacts_id", type="number", example="23"),
+     *          @OA\Property(property="customer_id", type="number", example="23"),
      *          @OA\Property(property="updated_at", type="number", example="1"),
      *          @OA\Property(property="created_at", type="number", example="1"),
      *         ),
@@ -161,9 +144,7 @@ class OfflinePaidMeetingController extends Controller
             $meetingOffile = new MeetingOffilePayment(
                                     new StorePaymentOpenPay(),
                                     new MeetingRegisterUseCase(),
-                                    new RegisterOpenPayChargeUseCase(new CreaterChargeDomain()),
-                                    new ContactRegisterUseCase(new ContactCreatorDomain()),
-                                    new ContactFindUseCase(new ContactSelectDomain())
+                                    new RegisterOpenPayChargeUseCase(new CreaterChargeDomain())
                                 );
 
             $objectMeeting = $meetingOffile(
@@ -172,7 +153,9 @@ class OfflinePaidMeetingController extends Controller
                 $PHONE_OFFICE,
                 $MEETING_PAID_AMOUNT,
                 $numberPlaces,
-                $idCalendar, $request->user());
+                $idCalendar,
+                $request->user()
+            );
 
             return response()->json(['code' => 201, 'data' => $objectMeeting], 201);
         } catch (\Exception $ex) {
