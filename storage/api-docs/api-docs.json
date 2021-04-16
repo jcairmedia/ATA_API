@@ -676,7 +676,7 @@
                 "tags": [
                     "App móvil"
                 ],
-                "summary": "Obtener todas las evidencis del cliente (paginadas) ",
+                "summary": "Obtener todas las evidencias del cliente (paginadas) ",
                 "operationId": "App\\Http\\Controllers\\API\\CRUDFirstPaymentOfflineContractPackageController::YoursEvidences",
                 "responses": {
                     "200": {
@@ -1810,6 +1810,10 @@
                                         "type": "string",
                                         "example": "10:00"
                                     },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "una descripción"
+                                    },
                                     "type_meeting": {
                                         "type": "string",
                                         "pattern": "/^(CALL|VIDEOCALL|PRESENTIAL)$/",
@@ -2401,7 +2405,7 @@
         "/api/meeting/paid/offline": {
             "post": {
                 "summary": "Registrar una cita de pago en tienda",
-                "description": "Se puede hacer uso de este end point con un JWT\n     *              o sin el agregando los valores para los campos name, lastname_1, lastname_2, curp, email, phone, street, out_number, int_number y idcp",
+                "description": "Se puede hacer uso de este end point con un JWT\r\n     *              o sin el agregando los valores para los campos name, lastname_1, lastname_2, curp, email, phone, street, out_number, int_number y idcp",
                 "operationId": "App\\Http\\Controllers\\API\\OfflinePaidMeetingController::index",
                 "requestBody": {
                     "description": "Registrar una cita por pago en tienda",
@@ -2458,6 +2462,10 @@
                                         "format": "number",
                                         "pattern": "[0-9]{10}",
                                         "example": "1234567890"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Una descripción"
                                     },
                                     "street": {
                                         "type": "string",
@@ -2536,6 +2544,10 @@
                                                         "category": {
                                                             "type": "string",
                                                             "example": "PAID"
+                                                        },
+                                                        "description": {
+                                                            "type": "string",
+                                                            "example": "una descripción"
                                                         },
                                                         "type_meeting": {
                                                             "type": "number",
@@ -2717,6 +2729,10 @@
                                         "pattern": "[0-9]{10}",
                                         "example": "1234567890"
                                     },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Una descripción"
+                                    },
                                     "street": {
                                         "type": "string",
                                         "example": "Nombre de la calle"
@@ -2800,6 +2816,10 @@
                                                         "folio": {
                                                             "type": "string",
                                                             "example": "261020201320595f97219b21381"
+                                                        },
+                                                        "description": {
+                                                            "type": "string",
+                                                            "example": "una descripción"
                                                         },
                                                         "category": {
                                                             "type": "string",
@@ -3172,6 +3192,176 @@
                         }
                     }
                 }
+            }
+        },
+        "/api/v2/meeting/paid/transaction": {
+            "post": {
+                "summary": "Registrar una cita de pago por transaction",
+                "description": "Solicitud de asesoría de pago pagada por transferencia",
+                "operationId": "App\\Http\\Controllers\\API\\TransactionPaidMeetingController::index",
+                "requestBody": {
+                    "description": "Registrar una cita por pago por transferencia",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "idfe",
+                                    "date",
+                                    "time",
+                                    "type_meeting",
+                                    "type_payment"
+                                ],
+                                "properties": {
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Una descripción"
+                                    },
+                                    "idfe": {
+                                        "type": "number",
+                                        "format": "number",
+                                        "example": "Identificador único de entidad federativa"
+                                    },
+                                    "date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2020-10-26"
+                                    },
+                                    "time": {
+                                        "type": "string",
+                                        "format": "string",
+                                        "pattern": "/^(09|(1[0-8]))\\:[0-5][0-9]$/",
+                                        "example": "18:00"
+                                    },
+                                    "type_meeting": {
+                                        "type": "string",
+                                        "format": "string",
+                                        "pattern": "/^(CALL|VIDEOCALL|PRESENTIAL)$/",
+                                        "example": "CALL"
+                                    },
+                                    "type_payment": {
+                                        "type": "string",
+                                        "format": "string",
+                                        "pattern": "/^(OFFLINE)$/",
+                                        "example": "OFFLINE"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "code": {
+                                            "type": "int",
+                                            "example": "201"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "meeting": {
+                                                    "properties": {
+                                                        "meeting_id": {
+                                                            "type": "number",
+                                                            "example": "1"
+                                                        },
+                                                        "folio": {
+                                                            "type": "string",
+                                                            "example": "261020201320595f97219b21381"
+                                                        },
+                                                        "status": {
+                                                            "type": "string",
+                                                            "example": "UPLOAD_PENDING"
+                                                        },
+                                                        "number_times_review": {
+                                                            "type": "number",
+                                                            "example": "1"
+                                                        },
+                                                        "times_review": {
+                                                            "type": "string",
+                                                            "format": "date-time",
+                                                            "example": "2020-10-26 18:40:00"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "code": {
+                                            "type": "int",
+                                            "example": "422"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "properties": {
+                                                "email": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "El campo email es obligatorio."
+                                                    },
+                                                    "collectionFormat": "multi"
+                                                },
+                                                "last_name": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "El campo lastname es obligatorio"
+                                                    },
+                                                    "collectionFormat": "multi"
+                                                },
+                                                "deviceIdHiddenFieldName": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "El campo device id hidden field name es obligatorio."
+                                                    },
+                                                    "collectionFormat": "multi"
+                                                },
+                                                "token_id": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "El campo token id es obligatorio."
+                                                    },
+                                                    "collectionFormat": "multi"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
             }
         },
         "/api/users": {
