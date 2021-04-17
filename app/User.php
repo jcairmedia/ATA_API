@@ -29,6 +29,7 @@ class User extends Authenticatable
         'url_image',
         'confirmation_code',
         'phone',
+        'reference_code',
         'email_verified_at',
         'facebook_user_id',
         'state',

@@ -91,7 +91,7 @@ class UsersController extends Controller
      *  )
      * )
      */
-    // TODO: Add Direction in request and RFC
+    // TODO: Add RFC (no defined)
     // Save direction
     public function register(UserRequest $req)
     {
@@ -100,10 +100,9 @@ class UsersController extends Controller
             $dt = date('dmYHis');
             $user['confirmation_code'] = uniqid($dt);
 
-            $r = new RegisterUseCase(new UserCreatorDomain());
-            $userSaved = $r($user);
+            $registerusecase = new RegisterUseCase(new UserCreatorDomain());
+            $userSaved = $registerusecase($user);
             \Log::error('usuario: '.print_r(($userSaved)->toArray(), 1));
-            \Log::error('usuario-id: '.$userSaved->id);
             $address = [
                 'users_id' => $userSaved->id,
                 'idcp' => $user['idcp'],
@@ -158,8 +157,8 @@ class UsersController extends Controller
             ];
 
             $dt = date('dmYHis');
-            $r = new RegisterUseCase(new UserCreatorDomain());
-            $userSaved = $r($data);
+            $registerusecase = new RegisterUseCase(new UserCreatorDomain());
+            $userSaved = $registerusecase($data);
 
             return response()->json([
                 'code' => 201,
@@ -423,6 +422,4 @@ class UsersController extends Controller
 
         return response()->json($r);
     }
-
-
 }
