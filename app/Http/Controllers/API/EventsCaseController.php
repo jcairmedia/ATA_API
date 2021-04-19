@@ -23,12 +23,22 @@ class EventsCaseController extends Controller
      *
      * @return void
      */
-    public function index(Request $request)
+
+    /**
+     * @OA\Get(
+     *  path="/api/v2/events",
+     *  summary="Lista de eventos de un cliente",
+     *  @OA\Response(
+     *    response=200,
+     *    description="Ok",)
+     * )
+     */
+    public function index($clientId, Request $request)
     {
         $index = (int) $request->input('index') ?? 0;
         $filter = $request->input('filter') ?? '';
         $byPage = $request->input('byPage') ?? 100;
-        $clientId = $request->input('clientId') ?? 0;
+        // $clientId = $request->input('clientId') ?? 0;
         $array = [];
         if ($clientId > 0) {
             $array['clientId'] = $clientId;

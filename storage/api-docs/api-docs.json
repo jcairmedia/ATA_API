@@ -1946,6 +1946,17 @@
                 ]
             }
         },
+        "/api/v2/events": {
+            "get": {
+                "summary": "Lista de eventos de un cliente",
+                "operationId": "App\\Http\\Controllers\\API\\EventsCaseController::index",
+                "responses": {
+                    "200": {
+                        "description": "Ok"
+                    }
+                }
+            }
+        },
         "/api/exponent/devices/subscribe": {
             "post": {
                 "tags": [
@@ -2405,7 +2416,7 @@
         "/api/meeting/paid/offline": {
             "post": {
                 "summary": "Registrar una cita de pago en tienda",
-                "description": "Se puede hacer uso de este end point con un JWT\r\n     *              o sin el agregando los valores para los campos name, lastname_1, lastname_2, curp, email, phone, street, out_number, int_number y idcp",
+                "description": "Se puede hacer uso de este end point con un JWT\n     *              o sin el agregando los valores para los campos name, lastname_1, lastname_2, curp, email, phone, street, out_number, int_number y idcp",
                 "operationId": "App\\Http\\Controllers\\API\\OfflinePaidMeetingController::index",
                 "requestBody": {
                     "description": "Registrar una cita por pago en tienda",
@@ -2414,75 +2425,16 @@
                         "application/json": {
                             "schema": {
                                 "required": [
-                                    "name",
-                                    "lastname_1",
-                                    "lastname_2",
-                                    "curp",
-                                    "email",
-                                    "phone",
-                                    "street",
-                                    "out_number",
-                                    "idcp",
                                     "idfe",
                                     "date",
                                     "time",
                                     "type_meeting",
-                                    "type_payment",
-                                    "deviceIdHiddenFieldName",
-                                    "token_id"
+                                    "type_payment"
                                 ],
                                 "properties": {
-                                    "name": {
-                                        "type": "string",
-                                        "format": "string",
-                                        "example": "Nombres"
-                                    },
-                                    "lastname_1": {
-                                        "type": "string",
-                                        "format": "string",
-                                        "example": "Apellido paterno"
-                                    },
-                                    "lastname_2": {
-                                        "type": "string",
-                                        "format": "string",
-                                        "example": "Apellidos materno"
-                                    },
-                                    "curp": {
-                                        "type": "string",
-                                        "format": "string",
-                                        "example": "CURP"
-                                    },
-                                    "email": {
-                                        "type": "string",
-                                        "format": "email",
-                                        "example": "user1@mail.com"
-                                    },
-                                    "phone": {
-                                        "type": "string",
-                                        "format": "number",
-                                        "pattern": "[0-9]{10}",
-                                        "example": "1234567890"
-                                    },
                                     "description": {
                                         "type": "string",
                                         "example": "Una descripción"
-                                    },
-                                    "street": {
-                                        "type": "string",
-                                        "example": "Nombre de la calle"
-                                    },
-                                    "out_number": {
-                                        "type": "string",
-                                        "example": "número exterior"
-                                    },
-                                    "int_number": {
-                                        "type": "string",
-                                        "example": "número interior"
-                                    },
-                                    "idcp": {
-                                        "type": "number",
-                                        "format": "number",
-                                        "example": "Identificador único de la información del código postal"
                                     },
                                     "idfe": {
                                         "type": "number",
@@ -2571,7 +2523,7 @@
                                                             "type": "number",
                                                             "example": "1650.50"
                                                         },
-                                                        "contacts_id": {
+                                                        "customer_id": {
                                                             "type": "number",
                                                             "example": "23"
                                                         },
