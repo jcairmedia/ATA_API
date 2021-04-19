@@ -19,7 +19,9 @@ use App\Http\Controllers\API\CRUDQuestionnaireController;
 use App\Http\Controllers\API\CRUDUserController;
 use App\Http\Controllers\API\CustomerContractPackageController;
 use App\Http\Controllers\API\CustomerMeetingsOnlinePaymentController;
+use App\Http\Controllers\API\EntriesBlogController;
 use App\Http\Controllers\API\EventsCaseController;
+use App\Http\Controllers\API\ExternalCategoryController;
 use App\Http\Controllers\API\FreeMeetingController;
 use App\Http\Controllers\API\GroupController;
 use App\Http\Controllers\API\MeetingReSchedulerController;
@@ -154,6 +156,16 @@ Route::group(['middleware' => ['auth:api']], function () {
 
 Route::get('/evidence/byfolio', [CRUDFirstPaymentOfflineContractPackageController::class, 'evidenceByFolio']);
 
+Route::prefix('blog')->middleware('auth:api')->group(function () {
+    Route::get('entries', [EntriesBlogController::class, 'index']);
+    Route::post('entries', [EntriesBlogController::class, 'addEntry']);
+    Route::delete('entries', [EntriesBlogController::class, 'deleteEntry']);
+    Route::patch('entries/{blogEntryId}', [EntriesBlogController::class, 'updateEntry']);
+    Route::post('entries/{blogEntryId}/file', [EntriesBlogController::class, 'updateFile']);
+});
+
+Route::get('/categories', [ExternalCategoryController::class, 'index']);
+
 Route::group(['prefix' => 'v2', 'middleware' => 'auth:api'], function () {
     Route::post('/meeting/paid/transaction', [TransferPaidMeetingController::class, 'index']);
 
@@ -175,7 +187,7 @@ Route::group(['prefix' => 'v2', 'middleware' => 'auth:api'], function () {
 
     Route::get('events/case', [EventsCaseController::class, 'eventsByCase']);
     Route::post('case/event', [EventsCaseController::class, 'addEvent']);
-    Route::get('events', [EventsCaseController::class, 'index']);
+    Route::get('events/{clientId}', [EventsCaseController::class, 'index']);
 
     Route::post('/user/update', [CRUDUserController::class, 'updateUserOnlyPhoneAndNames']);
 });
