@@ -17,6 +17,78 @@ use App\Utils\FileUtils;
 
 class EntriesBlogController extends Controller
 {
+    /**
+     * @OA\Get(
+     *  path="/api/blog/entries",
+     *  summary="Consulta de las entradas del blog",
+     *  security={{"bearer_token":{}}},
+     *  @OA\Parameter(in="query",
+     *       required=false,
+     *       description="Número de página a mostrar, comienza desde 0",
+     *       name="index",
+     *       required=false,
+     *       @OA\Schema(
+     *          type="number",
+     *       ),
+     *       example="0"),
+     *  @OA\Parameter(in="query",
+     *       required=false,
+     *       description="Número de registros por página",
+     *       name="byPage",
+     *       required=false,
+     *       @OA\Schema(
+     *          type="number",
+     *       ),
+     *       example="100"),
+     *  @OA\Parameter(in="query",
+     *       required=false,
+     *       description="Identificador único de la categoria",
+     *       name="categoryId",
+     *       required=false,
+     *       @OA\Schema(
+     *          type="number",
+     *       ),
+     *       example="1"),
+     *  @OA\Response(
+     *    response=200,
+     *    description="Ok",
+     *    @OA\JsonContent(
+     *      @OA\Property(
+     *        property="complete",
+     *        type="boolean",
+     *        example="true",
+     *      ),
+     *      @OA\Property(
+     *        property="total",
+     *        type="number",
+     *        example="9",
+     *      ),
+     *      @OA\Property(
+     *        property="index",
+     *        type="number",
+     *        example="0",
+     *      ),
+     *      @OA\Property(
+     *        property="rows",
+     *        type="array",
+     *        collectionFormat="multi",
+     *        @OA\Items(
+     *            type="object",
+     *            @OA\Property(property="id", type="number", example="1"),
+     *            @OA\Property(property="external_category_id", type="number", example="1"),
+     *            @OA\Property(property="title", type="string", example="titulo de prueba"),
+     *            @OA\Property(property="description", type="string", example="descripción de prueba"),
+     *            @OA\Property(property="body", type="string", example="Cuerpo de la entrada"),
+     *            @OA\Property(property="url_img_main", type="string", example="src_entries_blogs/2021-04-19_210628607e3724cb3d7597285580.png"),
+     *            @OA\Property(property="name_img_main", type="string", example="Espolon_Blanco_750mL.png"),
+     *            @OA\Property(property="status", type="string", example="PUBLISHED"),
+     *            @OA\Property(property="category", type="number", example="Mis derechos en el trasnporte publico")
+     *        )
+     *      )
+     *    )
+     *  )
+     * )
+     */
     public function index(FilterGetEntriesRequest $request)
     {
         $byPage = $request->input('byPage') ?? 100;
@@ -79,6 +151,7 @@ class EntriesBlogController extends Controller
     public function updateFile($blogEntryId, UpdateFileEntryRequest $request)
     {
         try {
+            BlogEntry::findOrFail($blogEntryId);
             $uuid = preg_replace('/[^A-Za-z0-9\-\_]/', '', uniqid(date('Y-m-d_His'), true));
 
             $fileClass = new FileUtils($request);

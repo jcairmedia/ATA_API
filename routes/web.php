@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\API\CRUDFirstPaymentOfflineContractPackageController;
-use App\Utils\SendEmail;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,16 +13,11 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
-// Expone evidencia
+// Expone evidencia img or pdf
+
 Route::get('/evidencefile', [CRUDFirstPaymentOfflineContractPackageController::class, 'getEvidence'])->name('evidencefile');
 
+// Only test Form paid by target open pay
 Route::get('/', function () {
     return view('formpaidonline');
-});
-Route::get('/contract', function () {
-    $sendEmail = new SendEmail();
-    $view = view('layout_contract_package');
-    $sendEmail(['email' => 'noreply@usercenter.mx'], ['erika@airmedia.com.mx'], 'ATA| Confirmación de email', '', $view);
-
-    return view('layout_contract_package');
 });

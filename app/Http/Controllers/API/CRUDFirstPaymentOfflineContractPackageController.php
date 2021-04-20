@@ -226,6 +226,28 @@ class CRUDFirstPaymentOfflineContractPackageController extends Controller
      *
      * @return void
      */
+
+    /**
+     * @OA\Get(
+     *  path="/evidencefile",
+     *  summary="Obtener o descargar el binario de un archivo",
+     *  security={{"bearer_token":{}}},
+     *  @OA\Parameter(in="query",
+     *       required=false,
+     *       description="Nombre del archivo que se guardo en BD",
+     *       name="name",
+     *       required=true,
+     *       @OA\Schema(
+     *          type="string",
+     *       ),
+     *       example="src_entries_blogs/2021-04-19_122338607dbc9aee3f9938024177.png"),
+     *  @OA\Response(
+     *    response=200,
+     *    description="Binary stream",
+     *
+     *  )
+     * )
+     */
     public function getEvidence(Request $request)
     {
         $all = $request->all();

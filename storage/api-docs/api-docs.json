@@ -782,6 +782,34 @@
                 ]
             }
         },
+        "/evidencefile": {
+            "get": {
+                "summary": "Obtener o descargar el binario de un archivo",
+                "operationId": "App\\Http\\Controllers\\API\\CRUDFirstPaymentOfflineContractPackageController::getEvidence",
+                "parameters": [
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "Número de página a mostrar, comienza desde 0",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "src_entries_blogs/2021-04-19_122338607dbc9aee3f9938024177.png"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Binary stream"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
         "/api/cp": {
             "get": {
                 "summary": "Consulta de codigos postales",
@@ -1946,6 +1974,120 @@
                 ]
             }
         },
+        "/api/blog/entries": {
+            "get": {
+                "summary": "Consulta de las entradas del blog",
+                "operationId": "App\\Http\\Controllers\\API\\EntriesBlogController::index",
+                "parameters": [
+                    {
+                        "name": "index",
+                        "in": "query",
+                        "description": "Número de página a mostrar, comienza desde 0",
+                        "required": false,
+                        "schema": {
+                            "type": "number"
+                        },
+                        "example": "0"
+                    },
+                    {
+                        "name": "byPage",
+                        "in": "query",
+                        "description": "Número de registros por página",
+                        "required": false,
+                        "schema": {
+                            "type": "number"
+                        },
+                        "example": "100"
+                    },
+                    {
+                        "name": "categoryId",
+                        "in": "query",
+                        "description": "Identificador único de la categoria",
+                        "required": false,
+                        "schema": {
+                            "type": "number"
+                        },
+                        "example": "1"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "complete": {
+                                            "type": "boolean",
+                                            "example": "true"
+                                        },
+                                        "total": {
+                                            "type": "number",
+                                            "example": "9"
+                                        },
+                                        "index": {
+                                            "type": "number",
+                                            "example": "0"
+                                        },
+                                        "rows": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "number",
+                                                        "example": "1"
+                                                    },
+                                                    "external_category_id": {
+                                                        "type": "number",
+                                                        "example": "1"
+                                                    },
+                                                    "title": {
+                                                        "type": "string",
+                                                        "example": "titulo de prueba"
+                                                    },
+                                                    "description": {
+                                                        "type": "string",
+                                                        "example": "descripción de prueba"
+                                                    },
+                                                    "body": {
+                                                        "type": "string",
+                                                        "example": "Cuerpo de la entrada"
+                                                    },
+                                                    "url_img_main": {
+                                                        "type": "string",
+                                                        "example": "src_entries_blogs/2021-04-19_210628607e3724cb3d7597285580.png"
+                                                    },
+                                                    "name_img_main": {
+                                                        "type": "string",
+                                                        "example": "Espolon_Blanco_750mL.png"
+                                                    },
+                                                    "status": {
+                                                        "type": "string",
+                                                        "example": "PUBLISHED"
+                                                    },
+                                                    "category": {
+                                                        "type": "number",
+                                                        "example": "Mis derechos en el trasnporte publico"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            },
+                                            "collectionFormat": "multi"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
         "/api/v2/events": {
             "get": {
                 "summary": "Lista de eventos de un cliente",
@@ -2107,6 +2249,52 @@
                                         "deleted": {
                                             "type": "boolean",
                                             "example": "true"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/api/categories": {
+            "get": {
+                "summary": "Consulta de todas las categorias para el blog",
+                "operationId": "App\\Http\\Controllers\\API\\ExternalCategoryController::index",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "number",
+                                                        "example": "1"
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "Mis derechos como paciente en un"
+                                                    },
+                                                    "description": {
+                                                        "type": "string",
+                                                        "example": "Mis derechos como paciente en un"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            },
+                                            "collectionFormat": "multi"
                                         }
                                     },
                                     "type": "object"
