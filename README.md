@@ -71,6 +71,9 @@ En el dominio [https://apiqa.usercenter.mx/](https://apiqa.usercenter.mx/) se en
     - CURP
     - Código postal
 
+- Consulta de usuarios pendientes de sincronizar por **Software ATA**
+- Chequeo de estatus de usuarios leidos por **Software ATA**
+
 - Autenticación obligatoria para contratación de asesoría pagada
 
 - Creación de código de referencia para el registro de usuarios
