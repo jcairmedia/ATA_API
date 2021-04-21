@@ -33,6 +33,7 @@ class PaginateEntriesDomain
             $responseDB->where(['blog_entries.status' => $status]);
         }
         $responseDB->where('blog_entries.deleted_at', '=', null);
+        $responseDB->orderBy('blog_entries.updated_at', 'desc');
         $responseDB->select(['blog_entries.*', 'exc.name as category']);
         if (count($config) > 0) {
             foreach ($config as $key => $value) {
