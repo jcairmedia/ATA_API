@@ -6,6 +6,9 @@ use App\Main\Users\Domain\FindUserByIdDomain;
 use App\Main\Users\Services\SynchronizedUserExternalServices;
 use Illuminate\Console\Command;
 
+/**
+ * Command for verify synchronize user with ATA.
+ */
 class getStateUsersRegisterInSoftwareATA extends Command
 {
     /**
