@@ -24,6 +24,7 @@ class NotificationsByUsersController extends Controller
             // Save notification by user in BD.
             (new NotificationByUser(['title' => $title, 'body' => $body, 'user_id' => $userId, 'user_session_id' => $user->id]))->save();
 
+            // Para más info consultar https://github.com/Alymosul/exponent-server-sdk-php
             $channel = 'App.User.'.$userId;
             $expo = new Expo(new ExpoRegistrar(new ExpoDatabaseDriver()));
             $notification = ['body' => $body, 'title' => $title];

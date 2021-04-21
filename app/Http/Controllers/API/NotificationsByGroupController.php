@@ -41,6 +41,7 @@ class NotificationsByGroupController extends Controller
             $notificationModel->save();
 
             // Send Notification
+            // Para más info consultar https://github.com/Alymosul/exponent-server-sdk-php
             $expo = new Expo(new ExpoRegistrar(new ExpoDatabaseDriver()));
             $notification = ['body' => $body, 'title' => $title];
             $expo->notify($arrayTokens, $notification, false);

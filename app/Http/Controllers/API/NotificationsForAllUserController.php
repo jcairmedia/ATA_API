@@ -23,13 +23,13 @@ class NotificationsForAllUserController extends Controller
             // Guardar
             (new CreateNotificationForAllUsersDomain())(new NotificationsForAllUser(['title' => $title, 'body' => $body, 'user_session_id' => $user->id]));
             // Get all user clientes y customer
-            // TODO:Enviar Notification
             $listModelPushNotification = (new GetTokenExpoUsersDomain())();
             if ($listModelPushNotification->count() <= 0) {
                 throw new \Exception('No hay usuario para enviar notificaciones');
             }
             $arrayTokens = $listModelPushNotification->pluck('key')->toArray();
 
+            // Para más info consultar https://github.com/Alymosul/exponent-server-sdk-php
             $expo = new \ExponentPhpSDK\Expo(new \ExponentPhpSDK\ExpoRegistrar(new \NotificationChannels\ExpoPushNotifications\Repositories\ExpoDatabaseDriver()));
             $notification = ['body' => $body, 'title' => $title];
             \Log::error('notificaciones generales: '.print_r($arrayTokens, 1));
