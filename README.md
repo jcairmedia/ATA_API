@@ -80,7 +80,15 @@ En el dominio [https://apiqa.usercenter.mx/](https://apiqa.usercenter.mx/) se en
 
 - Consulta Jurídica (Blog) 
 
+
+
 Estas funcionalidades estan definidas en la **rama develop** y la base de datos a la que se conecta es **usercent_ataqa**.
+
+Para la documentación de los endpoints se uso [Swagger](). 
+Para actualizar la documentación ejecutar el siguiente comando
+
+`php artisan l5-swagger:generate`
+
 
 Para más información sobre los nuevos end points que resuelven las funcionalidades consultar la documentacion respectiva.
 
