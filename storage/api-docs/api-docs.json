@@ -790,7 +790,7 @@
                     {
                         "name": "name",
                         "in": "query",
-                        "description": "Número de página a mostrar, comienza desde 0",
+                        "description": "Nombre del archivo que se guardo en BD",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -2604,7 +2604,7 @@
         "/api/meeting/paid/offline": {
             "post": {
                 "summary": "Registrar una cita de pago en tienda",
-                "description": "Se puede hacer uso de este end point con un JWT\n     *              o sin el agregando los valores para los campos name, lastname_1, lastname_2, curp, email, phone, street, out_number, int_number y idcp",
+                "description": "Se puede hacer uso de este end point con un JWT\r\n     *              o sin el agregando los valores para los campos name, lastname_1, lastname_2, curp, email, phone, street, out_number, int_number y idcp",
                 "operationId": "App\\Http\\Controllers\\API\\OfflinePaidMeetingController::index",
                 "requestBody": {
                     "description": "Registrar una cita por pago en tienda",
